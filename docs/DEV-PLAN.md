@@ -507,12 +507,32 @@ Key rules:
 **Impact on Phase 3 (storefront):**
 - Nuxt must detect or accept locale + region context on every page request
 - Server routes must pass region/locale context when fetching from Medusa and Strapi
-- URLs should follow a clear locale strategy (e.g. `/en/`, `/de/`, prefix-based — decide before Phase 3)
+- URL strategy: **country-code prefix**, default (US) has no prefix — matches existing site exactly
 
-**Open sub-questions (needed before Phase 2):**
-- [ ] What currencies and locales are active on the current WooCommerce site?
-- [ ] Is locale determined by URL prefix, subdomain, or auto-detected from browser/geo?
-- [ ] Is there a "default" locale / currency that unauthenticated visitors get?
+**Confirmed regions (from live site):**
+
+| URL prefix | Region | Language | Currency |
+|---|---|---|---|
+| `/` (default) | United States | English | USD |
+| `/ca/` | Canada | English | CAD |
+| `/gb/` | Britain / UK | English | GBP |
+| `/au/` | Australia | English | AUD |
+| `/fr/` | France | French | EUR |
+| `/de/` | Germany | German | EUR |
+| `/es/` | Spain | Spanish | EUR |
+| `/it/` | Italy | Italian | EUR |
+| `/he/` | Israel | Hebrew | ILS |
+| `/br/` | Brazil | Portuguese (BR) | BRL |
+| `/ja/` | Japan | Japanese | JPY |
+
+**Medusa regions to create (Phase 2.1):** one region per row above — 11 total.
+**Strapi i18n locales to enable (Phase 2.2):** `en`, `fr`, `de`, `es`, `it`, `he`, `pt-BR`, `ja`.
+Note: `ca`, `gb`, `au` are English-language regions with different currencies — they share the `en` locale in Strapi but have separate Medusa regions for currency/price set purposes.
+
+**URL rules for Nuxt (Phase 3):**
+- `nuxt-i18n` strategy: `prefix_except_default` — US (en) has no prefix, all others prefixed with country code
+- Route files: `pages/[locale]/product/[handle].vue` or via i18n module automatic prefix injection
+- The country code is the routing key, not the language code (e.g. `/ca/` not `/en-ca/`)
 
 ---
 
@@ -968,9 +988,27 @@ Three payment providers must be supported. All are implemented as **Medusa v2 pa
 - [ ] What is the existing site's URL and domain — does the new site need to run on the same domain with zero downtime cutover? (needed before Phase 8)
 - Payment gateways confirmed: **Braintree** (primary), **BlueSnap**, **Afterpay** — all three need Medusa payment provider integrations before Phase 5
 - [ ] Is there a staging VPS already provisioned, or does it need to be set up from scratch? (needed before Phase 8)
-- [ ] What currencies and locales are active today? (needed before Phase 2)
+- ~~What currencies and locales are active today?~~ **Closed** — 11 regions confirmed, see multi-region section above
 - [ ] What WooCommerce plugins are used for subscriptions? (needed before migration planning)
 - [ ] Are order IDs referenced externally? (needed before migration planning)
+
+---
+
+## Strapi API token architecture
+
+Three separate tokens are needed. Create these in Strapi Admin → Settings → API Tokens.
+
+| Token | Used by | Permission level | Scope |
+|---|---|---|---|
+| `STRAPI_SYNC_TOKEN` | Medusa `apps/commerce` Strapi Module (`@strapi/client`) | **Full access** or custom read-write | `product`, `product-variant`, `product-option`, `product-option-value` content types + media library upload |
+| `STRAPI_STOREFRONT_TOKEN` | Nuxt `apps/storefront` sdk-content (editorial reads) | **Read-only** | Editorial content types only: `landing-page`, `blog-post`, `marketing-banner`, etc. |
+| *(Medusa Secret API Key)* | Strapi webhook → Medusa (`POST /webhooks/strapi`) | N/A — created in **Medusa Admin**, not Strapi | Used as `Authorization: Bearer <key>` header on the Strapi webhook config |
+
+**Notes:**
+- Product data does NOT require `STRAPI_STOREFRONT_TOKEN` from the storefront — it arrives via Medusa's virtual link in a single Medusa Store API call
+- `STRAPI_SYNC_TOKEN` must have write access to the media library so product images can be uploaded from Medusa
+- Both Strapi tokens go in `.env` — add them after creating tokens in Strapi Admin during Phase 2 setup
+- The Medusa Secret API Key is created in Medusa Admin → Settings → Secret API Keys during Phase 2.6
 
 ---
 
