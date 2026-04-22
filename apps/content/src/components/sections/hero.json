@@ -3,7 +3,7 @@
   "info": {
     "displayName": "Hero",
     "icon": "landscape",
-    "description": "Full-width hero banner with headline, subheadline, CTA, and background image or video"
+    "description": "Full-viewport hero with background video, fallback image, richtext headline, and CTA button."
   },
   "options": {},
   "attributes": {
@@ -11,44 +11,25 @@
       "type": "boolean",
       "default": true
     },
-    "ab_test_key": {
-      "type": "string"
-    },
-    "ab_test_value": {
-      "type": "string"
-    },
     "headline": {
-      "type": "string",
+      "type": "richtext",
       "required": true
-    },
-    "subheadline": {
-      "type": "text"
     },
     "cta": {
       "type": "component",
       "repeatable": false,
       "component": "shared.link"
     },
-    "cta_secondary": {
+    "background_video": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.link"
+      "component": "shared.video-pair"
     },
-    "background_image": {
+    "placeholder_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
-    },
-    "background_video_url": {
-      "type": "string"
-    },
-    "overlay_opacity": {
-      "type": "integer"
-    },
-    "text_align": {
-      "type": "enumeration",
-      "enum": ["left", "center", "right"],
-      "default": "center"
+      "allowedTypes": ["images"],
+      "description": "Shown while video loads or when autoplay is blocked"
     }
   }
 }

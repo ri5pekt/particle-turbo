@@ -49,3 +49,6 @@ apps/content/public/uploads
 
 # Medusa
 apps/commerce/uploads
+
+# Backups (DB dumps + media exports — copy manually between machines, never commit)
+backups/

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_video_pairs",
+  "info": {
+    "displayName": "Background Video",
+    "icon": "play",
+    "description": "Desktop and mobile video files for background hero sections"
+  },
+  "options": {},
+  "attributes": {
+    "desktop": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"],
+      "required": true
+    },
+    "mobile": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"],
+      "description": "Optional. Falls back to desktop video if not provided."
+    }
+  }
+}
