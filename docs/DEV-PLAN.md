@@ -1,6 +1,6 @@
 # particle-turbo — Dev Plan
 
-Last updated: 2026-04-22 (rev 2 — added multi-region and migration constraints)
+Last updated: 2026-04-22 (rev 3 — aligned Medusa↔Strapi integration with official guide)
 
 ---
 
@@ -23,7 +23,7 @@ Last updated: 2026-04-22 (rev 2 — added multi-region and migration constraints
 | Commerce engine | Medusa **v2** | Module-based architecture, not v1 |
 | CMS | Strapi **v5** | Document Service API |
 | Storefront styling | Custom **SCSS** | Match existing PHP/CSS site — no UI component lib |
-| Cross-system linking key | `external_id` | Field exists on both Medusa product and Strapi product content type |
+| Cross-system linking key | `medusaId` in Strapi / `metadata.strapi_id` in Medusa | Strapi stores the Medusa ID; Medusa stores the Strapi ID in product metadata. Official pattern from [Medusa v2 Strapi guide](https://docs.medusajs.com/resources/integrations/guides/strapi). |
 | WooCommerce compatibility | Deferred | Thin Nuxt server routes when actually needed |
 | Production deployment | VPS + Docker Compose | Hostinger or similar, single-server |
 | Cloudflare | Staging/prod only | Not needed locally |
@@ -183,7 +183,7 @@ Create short markdown files in `docs/decisions/`:
 - `007-cloudflare-staging-prod-only.md`
 - `008-no-core-modifications.md`
 - `009-woo-bridge-deferred.md`
-- `010-external-id-linking-key.md`
+- `010-external-id-linking-key.md` *(superseded by ADR 011 — see Phase 2)*
 
 Keep them to ~10 lines each. Purpose, decision, consequences.
 
@@ -245,39 +245,137 @@ Keep them to ~10 lines each. Purpose, decision, consequences.
 
 ---
 
-## Phase 2 — Define domain model
+## Phase 2 — Define domain model + wire Medusa↔Strapi integration
 
-**Goal:** A product can exist in both Medusa and Strapi with a clear `external_id` link.
+**Goal:** A product exists in both Medusa and Strapi, the two systems sync automatically, and the storefront can read both in a single API call.
 
-### 2.1 — Medusa side
+> **Reference:** [Official Medusa v2 Strapi integration guide](https://docs.medusajs.com/resources/integrations/guides/strapi) — full code at [medusajs/examples/strapi-integration](https://github.com/medusajs/examples/tree/main/strapi-integration). Follow that guide; do not reinvent the wheel.
 
-- Configure **regions and currencies first** — before any products or prices are created
+---
+
+### 2.1 — Medusa side: regions + currencies first
+
+- Configure **regions and currencies before any products** — prices are region-specific and cannot be retrofitted cleanly
 - Define at least 2 regions (e.g. US/USD and one EU locale/EUR) so the model is validated multi-region from the start
-- Decide which custom fields go on the Medusa product (e.g. `external_id`, warehouse routing metadata, marketing flags)
-- Implement as Medusa v2 module-level customization (not core edits)
 - Seed one example product with **per-region prices** (not a single global price)
 
-### 2.2 — Strapi side
+### 2.2 — Strapi side: define content types via schema.json files
 
-- Enable the **i18n plugin** in Strapi before creating any content types
-- Create `product-content` content type in Strapi with:
-  - `external_id` (string, required, unique) — matches Medusa product's `external_id`
-  - `seo_title`, `seo_description`
-  - `hero` (component)
-  - `content_blocks` (dynamic zone — expandable later)
-  - `faq_blocks` (component array)
-- Seed one example product-content entry matching the Medusa product's `external_id`
+The official guide defines **4 content types** using `schema.json` files (not the Admin UI), which makes them version-controlled and repeatable. Create these in `apps/content/src/api/`:
 
-### 2.3 — Write ADR
+| Content type | Key fields | Notes |
+|---|---|---|
+| `product` | `medusaId` (uid, required, unique), `title`, `subtitle`, `description` (richtext), `handle`, `images`, `thumbnail`, `locale`, `variants` (1:M), `options` (1:M) | Mirror of Medusa product — Strapi adds content enrichment on top |
+| `product-variant` | `medusaId`, `title`, `sku`, `images`, `thumbnail`, `locale`, `product` (M:1), `option_values` (M:M) | |
+| `product-option` | `medusaId`, `title`, `locale`, `product` (M:1), `values` (1:M) | |
+| `product-option-value` | `medusaId`, `value`, `locale`, `option` (M:1), `variants` (M:M) | |
 
-- `011-product-composition-model.md` — describe how the two records link
+Each content type also needs:
+- `lifecycles.ts` — cascade-delete child records (variants/options/values) when parent is deleted
+- `controllers/`, `services/`, `routes/` — use Strapi's `factories.createCore*` pattern (one-liners)
+
+> **SEO / marketing content** (hero, content_blocks, FAQs, seo_title, seo_description etc.) are **separate Strapi content types**, not mixed into the product sync types. These are editorial content managed by Content Managers. They do NOT sync back to Medusa — they are consumed directly by the Nuxt storefront via the Strapi API.
+
+### 2.3 — Medusa side: Strapi Module + workflows
+
+Create `apps/commerce/src/modules/strapi/` using `@strapi/client`:
+
+```
+src/modules/strapi/
+  loaders/
+    init-client.ts    ← initialises @strapi/client, registers in Medusa DI container
+  service.ts          ← CRUD helpers: create(), update(), delete(), uploadImages(), etc.
+  index.ts            ← module export + STRAPI_MODULE constant
+```
+
+Module options (passed via `medusa-config.js` `modules` array):
+- `apiUrl` — Strapi API URL
+- `apiToken` — Strapi read/write API token (stored in .env, never committed)
+- `defaultLocale` — optional
+
+Then create workflows + steps that implement the sync:
+
+```
+src/workflows/
+  create-product-in-strapi.ts     ← called by product.created subscriber
+  update-product-in-strapi.ts     ← called by product.updated subscriber
+  delete-product-in-strapi.ts     ← called by product.deleted subscriber
+  create-options-in-strapi.ts     ← sub-workflow
+  create-variants-in-strapi.ts    ← sub-workflow
+  handle-strapi-webhook.ts        ← called when Strapi POSTs back to Medusa
+  steps/
+    create-product-in-strapi.ts
+    upload-images-to-strapi.ts
+    create-variants-in-strapi.ts
+    update-product-variants-metadata.ts
+    ... (one step file per distinct step)
+```
+
+Key patterns from the official guide:
+- Use Medusa **Workflows + Steps** for all sync logic (not direct service calls) — gives compensation on failure
+- Use `acquireLockStep` / `releaseLockStep` around product sync to prevent race conditions
+- Store Strapi IDs back in Medusa using `metadata.strapi_id` and `metadata.strapi_document_id` on the product/variant
+- Use `useQueryGraphStep` (built-in Medusa step) to fetch Medusa data inside workflows
+
+### 2.4 — Create virtual read-only link (Medusa Query)
+
+Create a Medusa Link Module that joins `product` ↔ `strapi_product`. This enables the storefront to fetch both Medusa and Strapi product data in a **single Medusa Store API call** using `*strapi_product` in the `fields` query param.
+
+```
+src/links/
+  product-strapi.ts   ← defineLink(ProductModule.linkable.product, STRAPI_MODULE.strapi_product)
+```
+
+This is a virtual read-only link — it does not create a DB foreign key; it allows Medusa's Query system to join data at query time.
+
+### 2.5 — Medusa subscribers (Medusa → Strapi direction)
+
+```
+src/subscribers/
+  product-created.ts   ← listens to product.created → runs createProductInStrapiWorkflow
+  product-updated.ts   ← listens to product.updated → runs updateProductInStrapiWorkflow
+  product-deleted.ts   ← listens to product.deleted → runs deleteProductInStrapiWorkflow
+```
+
+### 2.6 — Strapi → Medusa webhook
+
+Create:
+- `apps/commerce/src/api/webhooks/strapi/route.ts` — `POST /webhooks/strapi` endpoint that runs `handleStrapiWebhookWorkflow`
+- `apps/commerce/src/api/middlewares.ts` — validates the webhook `Authorization: Bearer <secret-api-key>` header using Medusa's API Key Module
+
+**Deduplication:** Use Medusa's Caching Module (with Redis) to hash the webhook payload and skip re-processing. This breaks the Medusa→Strapi→Medusa infinite loop.
+
+**Strapi webhook setup (after services are running):**
+1. Create a Secret API Key in Medusa Admin → Settings → Secret API Keys
+2. Create a webhook in Strapi Admin → Settings → Webhooks pointing to `http://commerce:9000/webhooks/strapi` with `Authorization: Bearer <key>` header — event: `Entry: Update`
+
+### 2.7 — Enable Medusa Caching Module
+
+Needed for webhook deduplication and product/cart caching. Enable in `medusa-config.js`:
+
+```js
+modules: [
+  {
+    resolve: '@medusajs/medusa/caching',
+    options: {
+      providers: [{ resolve: '@medusajs/caching-redis', id: 'caching-redis', options: { redisUrl: process.env.REDIS_URL } }]
+    }
+  }
+],
+featureFlags: { caching: true }
+```
+
+### 2.8 — Write ADRs
+
+- `011-medusa-strapi-sync-pattern.md` — two-way sync via subscribers + webhooks; dedup via caching; virtual link for single-call data access
+- `012-strapi-schema-as-code.md` — content types defined via schema.json files in version control, not Admin UI
 
 ### Phase 2 deliverable
 
-- One product exists in Medusa
-- One matching content entry exists in Strapi
-- Both share the same `external_id` value
-- Ownership boundaries are documented
+- One product exists in Medusa and auto-syncs to Strapi on creation
+- Strapi product content can be edited in Strapi Admin and updates flow back to Medusa
+- Storefront can fetch `product + strapi_product` in a single Medusa Store API call
+- Regions/currencies configured before any product prices are seeded
 
 ---
 
@@ -287,15 +385,29 @@ Keep them to ~10 lines each. Purpose, decision, consequences.
 
 ### 3.1 — Shared SDK packages
 
-Fill in `packages/sdk-commerce` and `packages/sdk-content` with:
-- Typed wrappers around Medusa JS client and Strapi REST API
-- Functions: `getProductByExternalId`, `getProductContent`, `getCollectionProducts`, etc.
-- Keep thin — no business logic, just typed API calls
+Fill in `packages/sdk-commerce` and `packages/sdk-content`:
+
+**`sdk-commerce`** — typed wrapper around Medusa JS client (`@medusajs/js-sdk`):
+- Product fetches with `*strapi_product` field selector (gets Medusa + Strapi data in one call — this is the key architectural win from Phase 2's virtual link)
+- Functions: `getProductByHandle`, `listProducts`, `getCollectionProducts`, `getCart`, etc.
+- Export Strapi-from-Medusa utility helpers: `getStrapiProduct`, `getProductTitle`, `getProductDescription`, etc. (modelled on the official guide's `src/lib/util/strapi.ts`)
+
+**`sdk-content`** — typed wrapper around Strapi REST API (`@strapi/client`):
+- Used **only** for content types that are NOT synced from Medusa (landing pages, blog posts, marketing banners, SEO fields for non-product pages)
+- For product content: use `sdk-commerce` + `*strapi_product` selector — do NOT make a separate Strapi call
+- Functions: `getPage`, `getBlogPost`, `getNavigationMenu`, `getSiteSettings`, etc.
+
+**Important distinction:**
+| Data type | Fetch from | Why |
+|---|---|---|
+| Product (commerce + content) | Medusa Store API with `*strapi_product` | Single call; virtual link joins both |
+| Non-product editorial (pages, blog, marketing) | Strapi REST API directly | Not synced to Medusa |
 
 ### 3.2 — Nuxt composables and server routes
 
-- `server/api/product/[handle].get.ts` — fetches from both Medusa and Strapi, merges, returns
-- `composables/useProduct.ts` — wraps the server route
+- `server/api/product/[handle].get.ts` — fetches from Medusa with `*strapi_product` selector; no separate Strapi call needed for product data
+- `server/api/page/[slug].get.ts` — fetches from Strapi for CMS-managed pages
+- `composables/useProduct.ts` — wraps the product server route
 - `composables/useCollection.ts`
 
 ### 3.3 — Pages
@@ -862,10 +974,79 @@ Three payment providers must be supported. All are implemented as **Medusa v2 pa
 
 ---
 
+---
+
+## Medusa ↔ Strapi integration — architecture reference
+
+> This section summarises the official integration pattern so it is always visible when working in this repo.
+> Full guide: https://docs.medusajs.com/resources/integrations/guides/strapi
+> Full code example: https://github.com/medusajs/examples/tree/main/strapi-integration
+
+### Data flow diagram
+
+```
+┌─────────────────────────────┐        ┌──────────────────────────────┐
+│          MEDUSA              │        │           STRAPI              │
+│                              │        │                               │
+│  product.created event ──────┼──────► │  Product entry (medusaId)    │
+│  product.updated event ──────┼──────► │  Variant entries             │
+│  product.deleted event ──────┼──────► │  Option entries               │
+│                              │        │                               │
+│  POST /webhooks/strapi ◄─────┼────────┼─ Strapi webhook (entry.update)│
+│  (updates Medusa product)    │        │                               │
+│                              │        │  + Editorial content types:   │
+│  metadata.strapi_id          │        │    landing-page, blog-post,   │
+│  metadata.strapi_document_id │        │    marketing-banner, etc.     │
+└─────────────────────────────┘        └──────────────────────────────┘
+         │
+         │  Virtual link (Medusa Query)
+         ▼
+┌──────────────────────────────────────────────────────────┐
+│  Nuxt storefront                                          │
+│                                                           │
+│  GET /store/products?fields=*strapi_product               │
+│    → gets Medusa commerce data + Strapi content in 1 call │
+│                                                           │
+│  GET /strapi/api/landing-pages/:slug                      │
+│    → gets non-product editorial content directly          │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Linking key convention
+
+| System | Field | Contains |
+|---|---|---|
+| Strapi (all product content types) | `medusaId` | The Medusa product/variant/option ID |
+| Medusa product `metadata` | `strapi_id` | The Strapi numeric ID |
+| Medusa product `metadata` | `strapi_document_id` | The Strapi document ID (v5 document API) |
+
+### Duplicate-update prevention
+
+Medusa → Strapi → Medusa creates an infinite update loop. Prevention mechanism:
+1. When Medusa sends an update to Strapi, Strapi fires a webhook back to Medusa
+2. Medusa's webhook handler hashes the payload with `simpleHash(JSON.stringify(body))`
+3. Checks if that hash is in Redis cache (TTL: 60s) — if yes, skip processing
+4. If no, process the update and cache the hash
+
+This requires the Medusa **Caching Module** with Redis to be enabled.
+
+### Packages needed (Phase 2)
+
+```bash
+# in apps/commerce
+pnpm add @strapi/client
+
+# for caching (Medusa module — requires featureFlag.caching: true)
+pnpm add @medusajs/caching-redis
+```
+
+---
+
 ## Working convention
 
 - One phase at a time. Do not begin Phase N+1 until Phase N deliverable is confirmed.
 - Every structural or ownership decision gets a short ADR in `docs/decisions/`.
 - `.env` files are never committed. Only `.env.example` files with dummy values.
-- All service source code is TypeScript. No plain JS files in `apps/` or `packages/`.
+- All service source code is TypeScript. No plain JS files in `apps/` or `packages/` (exception: `medusa-config.js` during Phase 1 due to ts-node constraint — will be resolved when Phase 2 adds proper build pipeline).
 - Keep Dockerfiles simple during local dev — use official Node base images, mount source, run dev server inside container.
+- Follow the [official Medusa v2 Strapi guide](https://docs.medusajs.com/resources/integrations/guides/strapi) for the sync implementation in Phase 2 — do not invent a custom pattern.
