@@ -1,0 +1,11 @@
+// =============================================================================
+// Global styles entry point
+// =============================================================================
+// This file is loaded globally. Component-specific styles live in .vue <style>.
+
+// Base reset / normalize
+@use 'base/reset';
+@use 'base/typography';
+
+// Global utilities
+@use 'utils/accessibility';

@@ -72,7 +72,7 @@ services:
     profiles: ["apps"]
     build:
       context: ./apps/commerce
-      dockerfile: infra/docker/commerce.Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -98,7 +98,7 @@ services:
     profiles: ["apps"]
     build:
       context: ./apps/content
-      dockerfile: infra/docker/content.Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "1337:1337"
@@ -127,7 +127,7 @@ services:
     profiles: ["apps"]
     build:
       context: ./apps/storefront
-      dockerfile: infra/docker/storefront.Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "3000:3000"

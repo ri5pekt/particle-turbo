@@ -1,0 +1,53 @@
+// Accessibility utilities
+
+// Visually hidden but accessible to screen readers
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Visible when focused — for skip links
+.sr-only-focusable:focus,
+.sr-only-focusable:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+// Skip to main content link — placed at top of every page
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: $space-4;
+  z-index: $z-toast;
+  padding: $space-2 $space-4;
+  background-color: $color-primary;
+  color: $color-secondary;
+  font-weight: 700;
+  border-radius: 0 0 4px 4px;
+  transition: top $transition-fast;
+
+  &:focus {
+    top: 0;
+    outline: 3px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// Ensure focus is always visible — never remove outline without replacement
+:focus-visible {
+  outline: 3px solid $color-accent;
+  outline-offset: 2px;
+}

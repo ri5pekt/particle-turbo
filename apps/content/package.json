@@ -1,0 +1,24 @@
+{
+  "name": "@particle-turbo/content",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "strapi develop",
+    "build": "strapi build",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@strapi/strapi": "^5.0.0",
+    "@strapi/plugin-users-permissions": "^5.0.0",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@strapi/typescript-utils": "^5.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=22.x.x"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@particle-turbo/commerce",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "medusa develop",
+    "build": "medusa build",
+    "start": "node .medusa/server/src/main.js",
+    "db:migrate": "medusa db:migrate",
+    "db:seed": "medusa exec ./src/scripts/seed.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@medusajs/admin-sdk": "^2.0.0",
+    "@medusajs/cli": "^2.0.0",
+    "@medusajs/framework": "^2.0.0",
+    "@medusajs/medusa": "^2.0.0"
+  },
+  "devDependencies": {
+    "@particle-turbo/config-typescript": "workspace:*",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
