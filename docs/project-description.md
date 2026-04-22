@@ -276,14 +276,12 @@ custom content sections
 The storefront should merge those two sources into one rendered page.
 
 There must be a stable linking field between the two systems.
-Examples:
 
-product handle
-external id
-sku family
-canonical product key
-
-Choose one clear linking strategy and use it consistently.
+Decision (see ADR 011): use the official Medusa v2 + Strapi integration pattern.
+- Strapi stores `medusaId` (the Medusa entity ID) on each synced content type
+- Medusa stores `metadata.strapi_id` and `metadata.strapi_document_id` back on products/variants
+- Links are maintained automatically by two-way sync workflows — not set by hand
+- The storefront fetches both Medusa and Strapi data in a single Medusa API call via a virtual read-only Link Module (`?fields=*strapi_product`)
 
 9. Caching strategy
 

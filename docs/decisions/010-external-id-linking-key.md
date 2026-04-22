@@ -1,21 +1,17 @@
-# ADR 010 — external_id as the Medusa ↔ Strapi linking key
+# ADR 010 — Medusa ↔ Strapi linking key
 
-**Status:** Accepted
+**Status:** Superseded by ADR 011
 
-## Decision
-Use `external_id` as the stable field that links a Medusa product to its corresponding Strapi product content entry.
+## Original decision (superseded)
+Use a custom `external_id` field on both the Medusa product and the Strapi content entry as the stable cross-system link.
 
-## How it works
-- Every Medusa product has a custom `external_id` field (string, unique)
-- Every Strapi `product-content` entry has an `external_id` field (string, required, unique)
-- The storefront fetches a product from Medusa by handle/slug, then fetches the matching Strapi content by `external_id`
-- `external_id` is locale-agnostic — it identifies the product, not the locale. Strapi handles locale variants internally.
+## Why it was superseded
+After reviewing the [official Medusa v2 Strapi integration guide](https://docs.medusajs.com/resources/integrations/guides/strapi), the canonical pattern is different and does not require a custom field on the Medusa side.
 
-## Why not product handle
-- Handle can change (slug renames for SEO purposes)
-- `external_id` is stable and intentionally opaque — it survives handle changes
+## Current decision — see ADR 011
+- Strapi stores `medusaId` (the Medusa product/variant/option ID) on each synced content type
+- Medusa stores `metadata.strapi_id` and `metadata.strapi_document_id` on its products and variants — written automatically by the sync workflow, not by hand
+- The link is maintained by two-way sync workflows, not a manually managed shared key
 
-## Consequences
-- `external_id` must be set when creating products in either system
-- During WooCommerce migration, existing product IDs or a generated stable key will be used as `external_id`
-- If a Strapi content entry is missing for a product, the storefront must degrade gracefully (render commerce data only)
+## Migration note
+During WooCommerce data migration, the Medusa product IDs (assigned at import time) become the `medusaId` values in Strapi. No separate stable key is needed.

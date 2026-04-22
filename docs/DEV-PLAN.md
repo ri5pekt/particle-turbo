@@ -497,7 +497,7 @@ Key rules:
 - Different regions/locales can have **independent prices** — not just converted rates. A product can be $29 USD and €35 EUR with no automatic conversion relationship between them.
 - This maps cleanly to Medusa v2's built-in **Regions + Price Lists** model. Each region has its own currency and its own price set per product variant.
 - Strapi content types must also be **locale-aware**. Strapi v5 has built-in i18n — content types (product content, landing pages, articles, SEO fields) need the `locale` field enabled from day one.
-- The `external_id` linking key must be locale-agnostic — it links a Medusa product to its Strapi content entry, and Strapi handles locale variants internally.
+- The Medusa ↔ Strapi link (`medusaId` in Strapi / `metadata.strapi_id` in Medusa) is locale-agnostic — it identifies the product entity; Strapi handles locale variants internally via i18n.
 
 **Impact on Phase 2 (domain model):**
 - Medusa: configure regions + currencies before seeding any product prices
@@ -532,7 +532,7 @@ This is a significant engineering task that needs its own dedicated phase (betwe
 - Medusa v2 must be configured with all regions/currencies **before** migration runs, so imported prices land in the right price sets
 - Customer records must be imported before order records (orders reference customers)
 - Subscriptions may require a custom Medusa v2 module — Medusa does not have native subscription support out of the box
-- Product `external_id` values should be set during migration to preserve the Medusa ↔ Strapi link for existing products
+- After migration, the sync workflows must be run once to push all imported Medusa products into Strapi (populating `medusaId` on each Strapi entry and `metadata.strapi_id` on each Medusa product)
 - Migration should be a **one-time scripted process**, not a live sync — run it, verify, cut over
 
 **Migration phase (to be planned in detail later — call it Phase 2.5 or a separate track):**
