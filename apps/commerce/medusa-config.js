@@ -20,6 +20,16 @@ module.exports = defineConfig({
   },
   admin: {
     disable: false,
+    // Disable Vite HMR WebSocket — it opens on a random port that Docker doesn't
+    // expose, causing a harmless but noisy ERR_CONNECTION_REFUSED in the browser.
+    // Manual refresh still works; HMR is not usable in Docker anyway.
+    vite: (config) => ({
+      ...config,
+      server: {
+        ...config?.server,
+        hmr: false,
+      },
+    }),
   },
   // Custom modules added here as the project grows (Phase 2+)
   modules: [],
