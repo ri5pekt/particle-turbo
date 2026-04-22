@@ -1,0 +1,10 @@
+{
+  "name": "@particle-turbo/config-typescript",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./tsconfig.base.json",
+    "./nuxt": "./tsconfig.nuxt.json",
+    "./node": "./tsconfig.node.json"
+  }
+}

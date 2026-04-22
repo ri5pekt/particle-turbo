@@ -1,0 +1,161 @@
+name: particle-turbo
+
+# Infrastructure services (postgres x2, redis) start with `docker compose up` or `pnpm docker:infra`.
+# App services (storefront, commerce, content) require their Dockerfiles from Phase 1.
+# Run the full stack with: `docker compose --profile apps up`
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Infrastructure
+  # ---------------------------------------------------------------------------
+
+  postgres-commerce:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_COMMERCE_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_COMMERCE_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_COMMERCE_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-commerce-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_COMMERCE_USER} -d ${POSTGRES_COMMERCE_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - particle-network
+
+  postgres-content:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_CONTENT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_CONTENT_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_CONTENT_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-content-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_CONTENT_USER} -d ${POSTGRES_CONTENT_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - particle-network
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - particle-network
+
+  # ---------------------------------------------------------------------------
+  # App services — requires Phase 1 Dockerfiles
+  # Start with: docker compose --profile apps up
+  # ---------------------------------------------------------------------------
+
+  commerce:
+    profiles: ["apps"]
+    build:
+      context: ./apps/commerce
+      dockerfile: infra/docker/commerce.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./apps/commerce:/app
+      - commerce-node-modules:/app/node_modules
+    environment:
+      DATABASE_URL: ${MEDUSA_DATABASE_URL}
+      REDIS_URL: ${MEDUSA_REDIS_URL}
+      JWT_SECRET: ${MEDUSA_JWT_SECRET}
+      COOKIE_SECRET: ${MEDUSA_COOKIE_SECRET}
+      MEDUSA_ADMIN_EMAIL: ${MEDUSA_ADMIN_EMAIL}
+      MEDUSA_ADMIN_PASSWORD: ${MEDUSA_ADMIN_PASSWORD}
+    depends_on:
+      postgres-commerce:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - particle-network
+
+  content:
+    profiles: ["apps"]
+    build:
+      context: ./apps/content
+      dockerfile: infra/docker/content.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./apps/content:/app
+      - content-node-modules:/app/node_modules
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres-content
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_CONTENT_DB}
+      DATABASE_USERNAME: ${POSTGRES_CONTENT_USER}
+      DATABASE_PASSWORD: ${POSTGRES_CONTENT_PASSWORD}
+      JWT_SECRET: ${STRAPI_JWT_SECRET}
+      APP_KEYS: ${STRAPI_APP_KEYS}
+      API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET}
+      NODE_ENV: development
+    depends_on:
+      postgres-content:
+        condition: service_healthy
+    networks:
+      - particle-network
+
+  storefront:
+    profiles: ["apps"]
+    build:
+      context: ./apps/storefront
+      dockerfile: infra/docker/storefront.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/storefront:/app
+      - storefront-node-modules:/app/node_modules
+      - storefront-nuxt-cache:/app/.nuxt
+    environment:
+      NUXT_PUBLIC_MEDUSA_URL: ${NUXT_PUBLIC_MEDUSA_URL}
+      NUXT_PUBLIC_STRAPI_URL: ${NUXT_PUBLIC_STRAPI_URL}
+      NUXT_MEDUSA_API_KEY: ${NUXT_MEDUSA_API_KEY}
+      NUXT_STRAPI_API_TOKEN: ${NUXT_STRAPI_API_TOKEN}
+      NODE_ENV: development
+    depends_on:
+      - commerce
+      - content
+    networks:
+      - particle-network
+
+volumes:
+  postgres-commerce-data:
+  postgres-content-data:
+  redis-data:
+  commerce-node-modules:
+  content-node-modules:
+  storefront-node-modules:
+  storefront-nuxt-cache:
+
+networks:
+  particle-network:
+    driver: bridge

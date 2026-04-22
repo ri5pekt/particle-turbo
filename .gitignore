@@ -1,0 +1,51 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Turbo
+.turbo
+
+# Build outputs
+dist
+build
+.output
+.nuxt
+.medusa
+
+# Environment — never commit real env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*.suo
+
+# Docker overrides
+docker-compose.override.yml
+
+# Strapi
+apps/content/.tmp
+apps/content/public/uploads
+
+# Medusa
+apps/commerce/uploads
