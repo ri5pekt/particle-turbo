@@ -31,6 +31,15 @@ module.exports = defineConfig({
       },
     }),
   },
-  // Custom modules added here as the project grows (Phase 2+)
-  modules: [],
+  modules: [
+    // Strapi integration module — handles two-way sync via REST API
+    {
+      resolve: "./src/modules/strapi",
+      options: {
+        // Internal Docker network URL — Medusa talks to the content service directly
+        apiUrl: process.env.STRAPI_API_URL || "http://content:1337/api",
+        apiToken: process.env.STRAPI_SYNC_TOKEN,
+      },
+    },
+  ],
 })

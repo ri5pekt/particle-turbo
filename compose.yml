@@ -76,6 +76,7 @@ services:
     restart: unless-stopped
     ports:
       - "9000:9000"
+      - "24678:24678"  # Vite HMR WebSocket (fixed port used by Medusa admin dev server)
     volumes:
       - .:/workspace
       - commerce-ws-nm:/workspace/node_modules
@@ -91,6 +92,9 @@ services:
       STORE_CORS: ${STORE_CORS}
       ADMIN_CORS: ${ADMIN_CORS}
       AUTH_CORS: ${AUTH_CORS}
+      STRAPI_API_URL: ${STRAPI_API_URL:-http://content:1337/api}
+      STRAPI_SYNC_TOKEN: ${STRAPI_SYNC_TOKEN}
+      MEDUSA_STRAPI_WEBHOOK_KEY: ${MEDUSA_STRAPI_WEBHOOK_KEY}
       NODE_ENV: development
     depends_on:
       postgres-commerce:

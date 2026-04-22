@@ -1,6 +1,6 @@
 # particle-turbo — Dev Plan
 
-Last updated: 2026-04-22 (rev 3 — aligned Medusa↔Strapi integration with official guide)
+Last updated: 2026-04-22 (rev 4 — Phase 2 complete; flexible page builder architecture added to Phase 3)
 
 ---
 
@@ -245,189 +245,207 @@ Keep them to ~10 lines each. Purpose, decision, consequences.
 
 ---
 
-## Phase 2 — Define domain model + wire Medusa↔Strapi integration
+## Phase 2 — Define domain model + wire Medusa↔Strapi integration — ✅ Complete
 
-**Goal:** A product exists in both Medusa and Strapi, the two systems sync automatically, and the storefront can read both in a single API call.
+> Full implementation notes and task list have been archived. See the "Status" block below.
 
-> **Reference:** [Official Medusa v2 Strapi integration guide](https://docs.medusajs.com/resources/integrations/guides/strapi) — full code at [medusajs/examples/strapi-integration](https://github.com/medusajs/examples/tree/main/strapi-integration). Follow that guide; do not reinvent the wheel.
+### Phase 2 — Status summary
+
+**Completed 2026-04-22.** Key outcomes:
+
+**Completed 2026-04-22.** Key outcomes:
+
+- 8 Medusa regions configured (US, GB, AU, CA, EU, BR, JP, IL)
+- Sample product seeded with per-region prices
+- Strapi `product` content type defined via `schema.json` (version-controlled; product-variant/option/value removed — particleformen.com has no product variations)
+- Medusa → Strapi sync working: `product.created/updated/deleted` events trigger workflow → product appears in Strapi with `medusaId`
+- Strapi → Medusa webhook endpoint live: `POST /webhooks/strapi` writes `strapi_document_id` back to Medusa product metadata
+- Two-way sync verified end-to-end
+
+**Engineering notes (lessons learned):**
+- `ts-node` must be a devDependency in `apps/commerce` — Medusa's runtime loader uses `require()` to load TypeScript subscribers/workflows; without `ts-node` this fails silently
+- Medusa's `defineConfig` calls `require()` on custom modules at startup before `ts-node` is registered — custom modules need a CommonJS `.js` entry alongside their `.ts` source
+- `tsconfig.json` must use `"module": "node16"` + `"moduleResolution": "node16"` to resolve `@medusajs/framework/workflows-sdk` and other sub-path package exports
+- `STRAPI_SYNC_TOKEN` and `STRAPI_API_URL` must be listed explicitly in the `compose.yml` `environment` block — Docker Compose does not auto-inject `.env` keys into container environments
 
 ---
 
-### 2.1 — Medusa side: regions + currencies first
+## Phase 3 — Flexible page builder + storefront scaffold
 
-- Configure **regions and currencies before any products** — prices are region-specific and cannot be retrofitted cleanly
-- Define at least 2 regions (e.g. US/USD and one EU locale/EUR) so the model is validated multi-region from the start
-- Seed one example product with **per-region prices** (not a single global price)
+**Goal:** Every page (home, PDP, landing pages) is composed from an ordered list of sections in Strapi. The Nuxt storefront renders those sections with A/B testing and show/hide support built in.
 
-### 2.2 — Strapi side: define content types via schema.json files
+> **Design decision:** All pages share the same section library. No page has hard-coded layout — everything is a Dynamic Zone. This is the Strapi equivalent of ACF Flexible Content.
 
-The official guide defines **4 content types** using `schema.json` files (not the Admin UI), which makes them version-controlled and repeatable. Create these in `apps/content/src/api/`:
+---
 
-| Content type | Key fields | Notes |
-|---|---|---|
-| `product` | `medusaId` (uid, required, unique), `title`, `subtitle`, `description` (richtext), `handle`, `images`, `thumbnail`, `locale`, `variants` (1:M), `options` (1:M) | Mirror of Medusa product — Strapi adds content enrichment on top |
-| `product-variant` | `medusaId`, `title`, `sku`, `images`, `thumbnail`, `locale`, `product` (M:1), `option_values` (M:M) | |
-| `product-option` | `medusaId`, `title`, `locale`, `product` (M:1), `values` (1:M) | |
-| `product-option-value` | `medusaId`, `value`, `locale`, `option` (M:1), `variants` (M:M) | |
+### 3.1 — Strapi: shared components
 
-Each content type also needs:
-- `lifecycles.ts` — cascade-delete child records (variants/options/values) when parent is deleted
-- `controllers/`, `services/`, `routes/` — use Strapi's `factories.createCore*` pattern (one-liners)
-
-> **SEO / marketing content** (hero, content_blocks, FAQs, seo_title, seo_description etc.) are **separate Strapi content types**, not mixed into the product sync types. These are editorial content managed by Content Managers. They do NOT sync back to Medusa — they are consumed directly by the Nuxt storefront via the Strapi API.
-
-### 2.3 — Medusa side: Strapi Module + workflows
-
-Create `apps/commerce/src/modules/strapi/` using `@strapi/client`:
+Create reusable building blocks in `apps/content/src/components/`:
 
 ```
-src/modules/strapi/
-  loaders/
-    init-client.ts    ← initialises @strapi/client, registers in Medusa DI container
-  service.ts          ← CRUD helpers: create(), update(), delete(), uploadImages(), etc.
-  index.ts            ← module export + STRAPI_MODULE constant
+components/
+  shared/
+    seo.json           ← { seo_title, seo_description, og_image (media) }
+    link.json          ← { label, url, target: "self"|"blank" }
+    faq-item.json      ← { question, answer (richtext) }
+    benefit-item.json  ← { icon (media), headline, body }
+    testimonial.json   ← { quote, author, role, avatar (media), rating (1–5) }
+    step.json          ← { step_number (int), text, image (media) }
 ```
 
-Module options (passed via `medusa-config.js` `modules` array):
-- `apiUrl` — Strapi API URL
-- `apiToken` — Strapi read/write API token (stored in .env, never committed)
-- `defaultLocale` — optional
+Every **section** component also includes three control fields for visibility:
 
-Then create workflows + steps that implement the sync:
-
-```
-src/workflows/
-  create-product-in-strapi.ts     ← called by product.created subscriber
-  update-product-in-strapi.ts     ← called by product.updated subscriber
-  delete-product-in-strapi.ts     ← called by product.deleted subscriber
-  create-options-in-strapi.ts     ← sub-workflow
-  create-variants-in-strapi.ts    ← sub-workflow
-  handle-strapi-webhook.ts        ← called when Strapi POSTs back to Medusa
-  steps/
-    create-product-in-strapi.ts
-    upload-images-to-strapi.ts
-    create-variants-in-strapi.ts
-    update-product-variants-metadata.ts
-    ... (one step file per distinct step)
+```json
+"enabled":        { "type": "boolean", "default": true },
+"ab_test_key":    { "type": "string"  },
+"ab_test_value":  { "type": "string"  }
 ```
 
-Key patterns from the official guide:
-- Use Medusa **Workflows + Steps** for all sync logic (not direct service calls) — gives compensation on failure
-- Use `acquireLockStep` / `releaseLockStep` around product sync to prevent race conditions
-- Store Strapi IDs back in Medusa using `metadata.strapi_id` and `metadata.strapi_document_id` on the product/variant
-- Use `useQueryGraphStep` (built-in Medusa step) to fetch Medusa data inside workflows
+- `enabled: false` → section hidden everywhere
+- `ab_test_key: "variant", ab_test_value: "b"` → section only renders when `?variant=b` is in the URL
+- Default traffic (no param) sees the control version; test traffic sees the variant
 
-### 2.4 — Create virtual read-only link (Medusa Query)
+---
 
-Create a Medusa Link Module that joins `product` ↔ `strapi_product`. This enables the storefront to fetch both Medusa and Strapi product data in a **single Medusa Store API call** using `*strapi_product` in the `fields` query param.
+### 3.2 — Strapi: section components
+
+Create in `apps/content/src/components/sections/`:
+
+| Component | Key fields |
+|---|---|
+| `hero` | headline, subheadline, cta (`link`), background_image, background_video_url |
+| `text-image` | body (richtext), image, layout: `"image_left"` \| `"image_right"` |
+| `benefits` | title, items (`benefit-item[]` repeatable) |
+| `testimonials` | title, items (`testimonial[]` repeatable) |
+| `faq` | title, items (`faq-item[]` repeatable) |
+| `rich-text` | content (richtext) |
+| `cta-banner` | headline, cta (`link`), background_color |
+| `video` | url, poster (media), autoplay (boolean) |
+| `before-after` | before_image, after_image, caption |
+| `how-to-use` | title, steps (`step[]` repeatable) |
+| `ingredients` | title, intro (richtext), items (`benefit-item[]` repeatable — reused for icon + name + description) |
+| `product-showcase` | title, medusa_handles (text, comma-separated — resolved at runtime by Nuxt), layout: `"grid"` \| `"carousel"` |
+
+Each component JSON lives at `components/sections/<name>.json`.
+
+---
+
+### 3.3 — Strapi: page content types
+
+**`page`** — generic slug-based page (home `/`, any landing page):
 
 ```
-src/links/
-  product-strapi.ts   ← defineLink(ProductModule.linkable.product, STRAPI_MODULE.strapi_product)
+apps/content/src/api/page/
+  content-types/page/
+    schema.json   ← { slug (uid, unique), title, seo (shared.seo, single), sections (dynamiczone) }
+  controllers/page.ts
+  services/page.ts
+  routes/page.ts
 ```
 
-This is a virtual read-only link — it does not create a DB foreign key; it allows Medusa's Query system to join data at query time.
+Dynamic zone includes all `sections.*` components.
 
-### 2.5 — Medusa subscribers (Medusa → Strapi direction)
+**`product-page-content`** — editorial enrichment for PDPs (marketing copy on top of Medusa commerce data):
 
 ```
-src/subscribers/
-  product-created.ts   ← listens to product.created → runs createProductInStrapiWorkflow
-  product-updated.ts   ← listens to product.updated → runs updateProductInStrapiWorkflow
-  product-deleted.ts   ← listens to product.deleted → runs deleteProductInStrapiWorkflow
+apps/content/src/api/product-page-content/
+  content-types/product-page-content/
+    schema.json   ← { medusaHandle (string, unique), seo (shared.seo, single), sections (dynamiczone) }
 ```
 
-### 2.6 — Strapi → Medusa webhook
+Nuxt fetches `product-page-content` by `medusaHandle` and merges it with Medusa product data.
 
-Create:
-- `apps/commerce/src/api/webhooks/strapi/route.ts` — `POST /webhooks/strapi` endpoint that runs `handleStrapiWebhookWorkflow`
-- `apps/commerce/src/api/middlewares.ts` — validates the webhook `Authorization: Bearer <secret-api-key>` header using Medusa's API Key Module
+---
 
-**Deduplication:** Use Medusa's Caching Module (with Redis) to hash the webhook payload and skip re-processing. This breaks the Medusa→Strapi→Medusa infinite loop.
+### 3.4 — Nuxt: section renderer
 
-**Strapi webhook setup (after services are running):**
-1. Create a Secret API Key in Medusa Admin → Settings → Secret API Keys
-2. Create a webhook in Strapi Admin → Settings → Webhooks pointing to `http://commerce:9000/webhooks/strapi` with `Authorization: Bearer <key>` header — event: `Entry: Update`
+Create `apps/storefront/components/SectionRenderer.vue` — the single entry point for rendering any page's sections array:
 
-### 2.7 — Enable Medusa Caching Module
+```vue
+<!-- loops through sections from Strapi, applies visibility rules -->
+<SectionRenderer :sections="page.sections" />
+```
 
-Needed for webhook deduplication and product/cart caching. Enable in `medusa-config.js`:
+Visibility logic (applied per section before render):
 
-```js
-modules: [
-  {
-    resolve: '@medusajs/medusa/caching',
-    options: {
-      providers: [{ resolve: '@medusajs/caching-redis', id: 'caching-redis', options: { redisUrl: process.env.REDIS_URL } }]
-    }
+```typescript
+function isVisible(section: StrapiSection): boolean {
+  if (!section.enabled) return false
+  if (section.ab_test_key) {
+    return route.query[section.ab_test_key] === section.ab_test_value
   }
-],
-featureFlags: { caching: true }
+  return true
+}
 ```
 
-### 2.8 — Write ADRs
+One Vue component per section type:
 
-- `011-medusa-strapi-sync-pattern.md` — two-way sync via subscribers + webhooks; dedup via caching; virtual link for single-call data access
-- `012-strapi-schema-as-code.md` — content types defined via schema.json files in version control, not Admin UI
+```
+components/sections/
+  SectionHero.vue
+  SectionTextImage.vue
+  SectionBenefits.vue
+  SectionTestimonials.vue
+  SectionFaq.vue
+  SectionRichText.vue
+  SectionCtaBanner.vue
+  SectionVideo.vue
+  SectionBeforeAfter.vue
+  SectionHowToUse.vue
+  SectionIngredients.vue
+  SectionProductShowcase.vue
+```
 
-### Phase 2 deliverable
-
-- One product exists in Medusa and auto-syncs to Strapi on creation
-- Strapi product content can be edited in Strapi Admin and updates flow back to Medusa
-- Storefront can fetch `product + strapi_product` in a single Medusa Store API call
-- Regions/currencies configured before any product prices are seeded
+`SectionRenderer` maps `section.__component` (e.g. `"sections.hero"`) to the correct Vue component.
 
 ---
 
-## Phase 3 — Initial storefront composition
-
-**Goal:** Real SSR pages render from live data.
-
-### 3.1 — Shared SDK packages
+### 3.5 — Nuxt: shared SDK packages
 
 Fill in `packages/sdk-commerce` and `packages/sdk-content`:
 
-**`sdk-commerce`** — typed wrapper around Medusa JS client (`@medusajs/js-sdk`):
-- Product fetches with `*strapi_product` field selector (gets Medusa + Strapi data in one call — this is the key architectural win from Phase 2's virtual link)
-- Functions: `getProductByHandle`, `listProducts`, `getCollectionProducts`, `getCart`, etc.
-- Export Strapi-from-Medusa utility helpers: `getStrapiProduct`, `getProductTitle`, `getProductDescription`, etc. (modelled on the official guide's `src/lib/util/strapi.ts`)
+**`sdk-commerce`** — typed wrapper around `@medusajs/js-sdk`:
+- `getProductByHandle(handle)` — fetches product from Medusa Store API
+- `listProducts(filters)`, `getCollectionProducts(handle)`, `getCart(id)`, etc.
 
-**`sdk-content`** — typed wrapper around Strapi REST API (`@strapi/client`):
-- Used **only** for content types that are NOT synced from Medusa (landing pages, blog posts, marketing banners, SEO fields for non-product pages)
-- For product content: use `sdk-commerce` + `*strapi_product` selector — do NOT make a separate Strapi call
-- Functions: `getPage`, `getBlogPost`, `getNavigationMenu`, `getSiteSettings`, etc.
+**`sdk-content`** — typed wrapper around Strapi REST API:
+- `getPage(slug)` — fetches `page` content type (used by catch-all route)
+- `getProductPageContent(handle)` — fetches `product-page-content` by `medusaHandle`
+- `getSiteSettings()`, `getNavigationMenu()`, etc.
+- Uses `NUXT_STRAPI_API_TOKEN` (read-only) — never the sync token
 
-**Important distinction:**
-| Data type | Fetch from | Why |
+**Data fetch pattern per page type:**
+
+| Page | Commerce data | Editorial data |
 |---|---|---|
-| Product (commerce + content) | Medusa Store API with `*strapi_product` | Single call; virtual link joins both |
-| Non-product editorial (pages, blog, marketing) | Strapi REST API directly | Not synced to Medusa |
+| Homepage (`/`) | None | `sdk-content.getPage("/")` → sections |
+| Landing page (`/collections/skincare`) | None | `sdk-content.getPage(slug)` → sections |
+| PDP (`/product/[handle]`) | `sdk-commerce.getProductByHandle(handle)` | `sdk-content.getProductPageContent(handle)` → sections |
 
-### 3.2 — Nuxt composables and server routes
+---
 
-- `server/api/product/[handle].get.ts` — fetches from Medusa with `*strapi_product` selector; no separate Strapi call needed for product data
-- `server/api/page/[slug].get.ts` — fetches from Strapi for CMS-managed pages
-- `composables/useProduct.ts` — wraps the product server route
-- `composables/useCollection.ts`
+### 3.6 — Nuxt: pages
 
-### 3.3 — Pages
+- `pages/[...slug].vue` — catch-all; fetches `page` from Strapi by slug; renders `<SectionRenderer>`
+- `pages/product/[handle].vue` — PDP; fetches from Medusa (price, add-to-cart) + Strapi (sections); renders `<SectionRenderer>` below commerce block
+- `pages/product-category/[handle].vue` — category listing (URL matches WooCommerce pattern)
 
-- `pages/index.vue` — homepage (static for now, wired for CMS later)
-- `pages/products/[handle].vue` — product page composed from Medusa + Strapi
-- `pages/collections/[handle].vue` — collection/category listing
-
-### 3.4 — SCSS setup
+### 3.7 — SCSS setup
 
 - Mirror the structure from the existing PHP/CSS site
 - Create `assets/scss/base/`, `assets/scss/components/`, `assets/scss/pages/`
 - Global variables / tokens in `assets/scss/variables.scss`
 - Import strategy via `nuxt.config.ts` preprocessor options
 
+---
+
 ### Phase 3 deliverable
 
-- Product page renders with commerce data (price, variants) from Medusa
-- Product page renders with content blocks (SEO, hero, FAQ) from Strapi
-- Storefront uses custom SCSS matching existing site style guide
+- Strapi has `page` and `product-page-content` content types; section component library is defined
+- Nuxt `SectionRenderer` can render any section type with visibility/A/B testing
+- Homepage (`/`) and PDP (`/product/[handle]`) render from live data
+- SCSS scaffold matches existing site structure
+- `pnpm db:seed` or Strapi admin can be used to populate test page content
 
 ---
 
@@ -1000,7 +1018,7 @@ Three separate tokens are needed. Create these in Strapi Admin → Settings → 
 
 | Token | Used by | Permission level | Scope |
 |---|---|---|---|
-| `STRAPI_SYNC_TOKEN` | Medusa `apps/commerce` Strapi Module (`@strapi/client`) | **Full access** or custom read-write | `product`, `product-variant`, `product-option`, `product-option-value` content types + media library upload |
+| `STRAPI_SYNC_TOKEN` | Medusa `apps/commerce` Strapi Module (`@strapi/client`) | **Full access** or custom read-write | `product` content type + media library upload |
 | `STRAPI_STOREFRONT_TOKEN` | Nuxt `apps/storefront` sdk-content (editorial reads) | **Read-only** | Editorial content types only: `landing-page`, `blog-post`, `marketing-banner`, etc. |
 | *(Medusa Secret API Key)* | Strapi webhook → Medusa (`POST /webhooks/strapi`) | N/A — created in **Medusa Admin**, not Strapi | Used as `Authorization: Bearer <key>` header on the Strapi webhook config |
 
@@ -1027,8 +1045,8 @@ Three separate tokens are needed. Create these in Strapi Admin → Settings → 
 │          MEDUSA              │        │           STRAPI              │
 │                              │        │                               │
 │  product.created event ──────┼──────► │  Product entry (medusaId)    │
-│  product.updated event ──────┼──────► │  Variant entries             │
-│  product.deleted event ──────┼──────► │  Option entries               │
+│  product.updated event ──────┼──────► │  (product-level only;         │
+│  product.deleted event ──────┼──────► │   no variants/options)        │
 │                              │        │                               │
 │  POST /webhooks/strapi ◄─────┼────────┼─ Strapi webhook (entry.update)│
 │  (updates Medusa product)    │        │                               │
@@ -1085,6 +1103,6 @@ pnpm add @medusajs/caching-redis
 - One phase at a time. Do not begin Phase N+1 until Phase N deliverable is confirmed.
 - Every structural or ownership decision gets a short ADR in `docs/decisions/`.
 - `.env` files are never committed. Only `.env.example` files with dummy values.
-- All service source code is TypeScript. No plain JS files in `apps/` or `packages/` (exception: `medusa-config.js` during Phase 1 due to ts-node constraint — will be resolved when Phase 2 adds proper build pipeline).
+- All service source code is TypeScript. Exceptions: `medusa-config.js` (CommonJS required by Medusa CLI) and `apps/commerce/src/modules/*/index.js` + `service.js` (Medusa's `defineConfig` calls `require()` on custom modules at startup before `ts-node` is registered — a CommonJS `.js` entry alongside `.ts` is required). The `.ts` files remain authoritative for type-checking; the `.js` files mirror the runtime logic.
 - Keep Dockerfiles simple during local dev — use official Node base images, mount source, run dev server inside container.
 - Follow the [official Medusa v2 Strapi guide](https://docs.medusajs.com/resources/integrations/guides/strapi) for the sync implementation in Phase 2 — do not invent a custom pattern.
