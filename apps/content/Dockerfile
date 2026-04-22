@@ -1,24 +1,33 @@
 # Development Dockerfile for apps/content (Strapi v5)
-# Source is mounted via Docker Compose volume — this image only installs deps.
+# Build context: project root (required for pnpm workspace resolution)
 
 FROM node:20-alpine
 
-# Enable corepack for pnpm
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-
-# Strapi build requires Python and build tools for native modules
+# Strapi requires native build tools for some dependencies
 RUN apk add --no-cache python3 make g++
 
-WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && pnpm config set store-dir /pnpm/store --global
 
-# Install dependencies
-# node_modules is a named Docker volume so it persists across source mounts
-COPY package.json ./
-RUN pnpm install --no-frozen-lockfile
+WORKDIR /workspace
+
+# Copy workspace manifests (cached layer)
+COPY package.json pnpm-workspace.yaml ./
+COPY packages/config-typescript/package.json    packages/config-typescript/
+COPY packages/config-eslint/package.json        packages/config-eslint/
+COPY packages/config-eslint/index.js            packages/config-eslint/
+COPY packages/types-shared/package.json         packages/types-shared/
+COPY packages/sdk-commerce/package.json         packages/sdk-commerce/
+COPY packages/sdk-content/package.json          packages/sdk-content/
+COPY packages/utils/package.json                packages/utils/
+COPY apps/content/package.json                  apps/content/
+
+# Install workspace deps for the content app
+RUN pnpm install --filter @particle-turbo/content... --no-frozen-lockfile
+
+WORKDIR /workspace/apps/content
 
 EXPOSE 1337
 
-# Run Strapi dev server
 CMD ["pnpm", "dev"]

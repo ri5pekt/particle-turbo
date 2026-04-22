@@ -41,8 +41,10 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          // Inject variables into every component without needing to import
-          additionalData: '@use "~/assets/scss/variables" as *;',
+          // Prepend variables to every .scss file so tokens are globally available.
+          // @import (not @use) is required here — additionalData runs before
+          // the file is parsed, so Sass module-system @use rules cannot be used.
+          additionalData: '@import "~/assets/scss/variables";',
         },
       },
     },

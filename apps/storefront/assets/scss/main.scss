@@ -4,8 +4,10 @@
 // This file is loaded globally. Component-specific styles live in .vue <style>.
 
 // Base reset / normalize
-@use 'base/reset';
-@use 'base/typography';
+// Using @import (not @use) so that injected $variables from nuxt.config.ts
+// additionalData are visible inside the partials (Sass @use creates isolated scopes).
+@import 'base/reset';
+@import 'base/typography';
 
 // Global utilities
-@use 'utils/accessibility';
+@import 'utils/accessibility';

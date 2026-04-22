@@ -37,7 +37,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_CONTENT_PASSWORD}
       POSTGRES_DB: ${POSTGRES_CONTENT_DB}
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres-content-data:/var/lib/postgresql/data
     healthcheck:
@@ -71,14 +71,16 @@ services:
   commerce:
     profiles: ["apps"]
     build:
-      context: ./apps/commerce
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/commerce/Dockerfile
     restart: unless-stopped
     ports:
       - "9000:9000"
     volumes:
-      - ./apps/commerce:/app
-      - commerce-node-modules:/app/node_modules
+      - .:/workspace
+      - commerce-ws-nm:/workspace/node_modules
+      - commerce-node-modules:/workspace/apps/commerce/node_modules
+    working_dir: /workspace/apps/commerce
     environment:
       DATABASE_URL: ${MEDUSA_DATABASE_URL}
       REDIS_URL: ${MEDUSA_REDIS_URL}
@@ -86,6 +88,10 @@ services:
       COOKIE_SECRET: ${MEDUSA_COOKIE_SECRET}
       MEDUSA_ADMIN_EMAIL: ${MEDUSA_ADMIN_EMAIL}
       MEDUSA_ADMIN_PASSWORD: ${MEDUSA_ADMIN_PASSWORD}
+      STORE_CORS: ${STORE_CORS}
+      ADMIN_CORS: ${ADMIN_CORS}
+      AUTH_CORS: ${AUTH_CORS}
+      NODE_ENV: development
     depends_on:
       postgres-commerce:
         condition: service_healthy
@@ -97,14 +103,16 @@ services:
   content:
     profiles: ["apps"]
     build:
-      context: ./apps/content
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/content/Dockerfile
     restart: unless-stopped
     ports:
       - "1337:1337"
     volumes:
-      - ./apps/content:/app
-      - content-node-modules:/app/node_modules
+      - .:/workspace
+      - content-ws-nm:/workspace/node_modules
+      - content-node-modules:/workspace/apps/content/node_modules
+    working_dir: /workspace/apps/content
     environment:
       DATABASE_CLIENT: postgres
       DATABASE_HOST: postgres-content
@@ -116,6 +124,11 @@ services:
       APP_KEYS: ${STRAPI_APP_KEYS}
       API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT}
       ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET}
+      STRAPI_ADMIN_EMAIL: ${STRAPI_ADMIN_EMAIL}
+      STRAPI_ADMIN_INITIAL_PASSWORD: ${STRAPI_ADMIN_INITIAL_PASSWORD}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      HOST: 0.0.0.0
+      PORT: 1337
       NODE_ENV: development
     depends_on:
       postgres-content:
@@ -126,15 +139,17 @@ services:
   storefront:
     profiles: ["apps"]
     build:
-      context: ./apps/storefront
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/storefront/Dockerfile
     restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
-      - ./apps/storefront:/app
-      - storefront-node-modules:/app/node_modules
-      - storefront-nuxt-cache:/app/.nuxt
+      - .:/workspace
+      - storefront-ws-nm:/workspace/node_modules
+      - storefront-node-modules:/workspace/apps/storefront/node_modules
+      - storefront-nuxt-cache:/workspace/apps/storefront/.nuxt
+    working_dir: /workspace/apps/storefront
     environment:
       NUXT_PUBLIC_MEDUSA_URL: ${NUXT_PUBLIC_MEDUSA_URL}
       NUXT_PUBLIC_STRAPI_URL: ${NUXT_PUBLIC_STRAPI_URL}
@@ -151,6 +166,11 @@ volumes:
   postgres-commerce-data:
   postgres-content-data:
   redis-data:
+  # Per-service workspace node_modules (each service has its own set of installed packages)
+  commerce-ws-nm:
+  content-ws-nm:
+  storefront-ws-nm:
+  # Per-service app-level node_modules (binary symlinks etc.)
   commerce-node-modules:
   content-node-modules:
   storefront-node-modules:
