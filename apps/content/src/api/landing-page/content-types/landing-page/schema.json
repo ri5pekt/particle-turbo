@@ -1,0 +1,68 @@
+{
+  "kind": "collectionType",
+  "collectionName": "landing_pages",
+  "info": {
+    "singularName": "landing-page",
+    "pluralName": "landing-pages",
+    "displayName": "Landing Page",
+    "description": "Campaign and marketing landing pages. URL: /lp/[slug]. Each LP controls its own header/footer visibility."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "required": true,
+      "targetField": "title"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "template": {
+      "type": "enumeration",
+      "enum": [
+        "default",
+        "product-launch",
+        "brand-story",
+        "promotional",
+        "advertorial",
+        "quiz-funnel"
+      ],
+      "default": "default",
+      "description": "Template tag for editorial organisation. Does not restrict which sections are available — editors choose sections freely via the Dynamic Zone."
+    },
+    "show_header": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_footer": {
+      "type": "boolean",
+      "default": true
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "sections": {
+      "type": "dynamiczone",
+      "components": [
+        "sections.hero",
+        "sections.text-image",
+        "sections.benefits",
+        "sections.testimonials",
+        "sections.faq",
+        "sections.rich-text",
+        "sections.cta-banner",
+        "sections.video",
+        "sections.before-after",
+        "sections.how-to-use",
+        "sections.ingredients",
+        "sections.product-showcase"
+      ]
+    }
+  }
+}
