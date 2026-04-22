@@ -10,7 +10,7 @@ RUN corepack enable && pnpm config set store-dir /pnpm/store --global
 WORKDIR /workspace
 
 # Copy workspace manifests (cached layer)
-COPY package.json pnpm-workspace.yaml ./
+COPY package.json pnpm-workspace.yaml .npmrc ./
 COPY packages/config-typescript/package.json    packages/config-typescript/
 COPY packages/config-eslint/package.json        packages/config-eslint/
 COPY packages/config-eslint/index.js            packages/config-eslint/
