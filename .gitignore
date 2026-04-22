@@ -50,5 +50,6 @@ apps/content/public/uploads
 # Medusa
 apps/commerce/uploads
 
-# Backups (DB dumps + media exports — copy manually between machines, never commit)
-backups/
+# Backups — SQL dumps are committed (small), media files are not (too large)
+backups/strapi-uploads*/
+backups/strapi-uploads-latest/
