@@ -644,56 +644,10 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiProductPageContentProductPageContent
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'product_page_contents';
-  info: {
-    description: 'Editorial sections for PDPs. Keyed by medusaHandle. Commerce data (price, stock) comes from Medusa \u2014 this type owns the marketing copy on top.';
-    displayName: 'Product Page Content';
-    pluralName: 'product-page-contents';
-    singularName: 'product-page-content';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::product-page-content.product-page-content'
-    > &
-      Schema.Attribute.Private;
-    medusaHandle: Schema.Attribute.UID & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<
-      [
-        'sections.hero',
-        'sections.text-image',
-        'sections.benefits',
-        'sections.testimonials',
-        'sections.faq',
-        'sections.rich-text',
-        'sections.cta-banner',
-        'sections.video',
-        'sections.before-after',
-        'sections.how-to-use',
-        'sections.ingredients',
-        'sections.product-showcase',
-      ]
-    >;
-    seo: Schema.Attribute.Component<'shared.seo', false>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
+    description: 'Synced from Medusa (commerce fields). Editors add SEO and page sections here \u2014 sync never overwrites those fields.';
     displayName: 'Product';
     pluralName: 'products';
     singularName: 'product';
@@ -718,6 +672,23 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
+    sections: Schema.Attribute.DynamicZone<
+      [
+        'sections.hero',
+        'sections.text-image',
+        'sections.benefits',
+        'sections.testimonials',
+        'sections.faq',
+        'sections.rich-text',
+        'sections.cta-banner',
+        'sections.video',
+        'sections.before-after',
+        'sections.how-to-use',
+        'sections.ingredients',
+        'sections.product-showcase',
+      ]
+    >;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     subtitle: Schema.Attribute.String;
     thumbnail: Schema.Attribute.Media<'images'>;
     title: Schema.Attribute.String;
@@ -1287,7 +1258,6 @@ declare module '@strapi/strapi' {
       'api::landing-page.landing-page': ApiLandingPageLandingPage;
       'api::navigation.navigation': ApiNavigationNavigation;
       'api::page.page': ApiPagePage;
-      'api::product-page-content.product-page-content': ApiProductPageContentProductPageContent;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
       'plugin::content-releases.release': PluginContentReleasesRelease;

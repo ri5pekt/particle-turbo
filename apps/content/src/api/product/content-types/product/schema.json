@@ -4,7 +4,8 @@
   "info": {
     "singularName": "product",
     "pluralName": "products",
-    "displayName": "Product"
+    "displayName": "Product",
+    "description": "Synced from Medusa (commerce fields). Editors add SEO and page sections here — sync never overwrites those fields."
   },
   "options": {
     "draftAndPublish": false
@@ -30,14 +31,36 @@
       "unique": true
     },
     "thumbnail": {
-      "allowedTypes": ["images"],
       "type": "media",
-      "multiple": false
+      "multiple": false,
+      "allowedTypes": ["images"]
     },
     "images": {
-      "allowedTypes": ["images"],
       "type": "media",
-      "multiple": true
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "sections": {
+      "type": "dynamiczone",
+      "components": [
+        "sections.hero",
+        "sections.text-image",
+        "sections.benefits",
+        "sections.testimonials",
+        "sections.faq",
+        "sections.rich-text",
+        "sections.cta-banner",
+        "sections.video",
+        "sections.before-after",
+        "sections.how-to-use",
+        "sections.ingredients",
+        "sections.product-showcase"
+      ]
     }
   }
 }
