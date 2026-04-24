@@ -3,7 +3,7 @@
   "info": {
     "displayName": "Home Page Hero",
     "icon": "landscape",
-    "description": "Full-viewport hero with background video, fallback image, split headline (main + colored highlight), and CTA button."
+    "description": "Full-viewport hero with background video, fallback image, HTML headline, and CTA button."
   },
   "options": {},
   "attributes": {
@@ -12,14 +12,8 @@
       "default": true
     },
     "headline": {
-      "type": "string",
+      "type": "richtext",
       "required": true
-    },
-    "headline_highlight": {
-      "type": "string"
-    },
-    "headline_color": {
-      "type": "string"
     },
     "cta": {
       "type": "component",
