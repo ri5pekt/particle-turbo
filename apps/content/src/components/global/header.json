@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_global_headers",
+  "info": {
+    "displayName": "Header",
+    "icon": "layout",
+    "description": "Global header configuration. Navigation is managed separately via the Navigation collection (identifier: main-nav)."
+  },
+  "options": {},
+  "attributes": {
+    "transparent_on_home": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, the header renders without a background on the homepage hero until the user scrolls."
+    },
+    "cta_label": {
+      "type": "string",
+      "description": "Optional CTA button label shown in the header nav (e.g. 'Shop Now'). Leave blank to hide."
+    },
+    "cta_url": {
+      "type": "string",
+      "description": "URL for the header CTA button."
+    }
+  }
+}

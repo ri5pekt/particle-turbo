@@ -68,6 +68,16 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.link"
+    },
+    "header": {
+      "type": "component",
+      "repeatable": false,
+      "component": "global.header"
+    },
+    "footer": {
+      "type": "component",
+      "repeatable": false,
+      "component": "global.footer"
     }
   }
 }

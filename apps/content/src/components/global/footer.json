@@ -1,0 +1,48 @@
+{
+  "collectionName": "components_global_footers",
+  "info": {
+    "displayName": "Footer",
+    "icon": "layout",
+    "description": "Global footer configuration. Link columns are managed via the Navigation collection (identifiers: footer-particle, footer-products, footer-bundles, footer-legal)."
+  },
+  "options": {},
+  "attributes": {
+    "newsletter_heading": {
+      "type": "string",
+      "default": "Newsletter"
+    },
+    "show_newsletter_form": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_trustpilot": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show the Trustpilot mini widget in the newsletter column."
+    },
+    "payment_heading": {
+      "type": "string",
+      "default": "We Accept"
+    },
+    "payment_icons": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"],
+      "description": "Payment method logos shown in the footer (e.g. PayPal, Visa, Mastercard)."
+    },
+    "show_skin_cancer_badge": {
+      "type": "boolean",
+      "default": true
+    },
+    "skin_cancer_badge": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Skin Cancer Foundation membership badge image."
+    },
+    "copyright_text": {
+      "type": "string",
+      "default": "© Particle. All Rights Reserved"
+    }
+  }
+}

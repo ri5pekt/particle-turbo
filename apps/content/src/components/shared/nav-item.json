@@ -14,6 +14,17 @@
     "url": {
       "type": "string"
     },
+    "is_section_heading": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true this item renders as a non-clickable group heading (e.g. 'Face', 'Body') inside a megamenu dropdown."
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Optional thumbnail shown next to the link in a megamenu (e.g. product photo)."
+    },
     "children": {
       "type": "component",
       "repeatable": true,
