@@ -49,6 +49,12 @@
       "repeatable": true,
       "component": "global.footer-column",
       "description": "Footer link columns (e.g. Particle, Products, Bundles & Sets). Add as many as needed."
+    },
+    "legal_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link",
+      "description": "Links shown in the bottom bar next to copyright (e.g. Privacy Policy, Terms & Conditions, Refund Policy)."
     }
   }
 }

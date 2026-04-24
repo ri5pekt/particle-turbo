@@ -39,20 +39,11 @@
       "component": "shared.seo",
       "description": "Fallback SEO used on pages that do not have their own SEO component"
     },
-    "social_facebook": {
-      "type": "string"
-    },
-    "social_instagram": {
-      "type": "string"
-    },
-    "social_twitter": {
-      "type": "string"
-    },
-    "social_youtube": {
-      "type": "string"
-    },
-    "social_tiktok": {
-      "type": "string"
+    "social_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "global.social-link",
+      "description": "Social media profiles shown in the footer. Add, remove, or reorder freely."
     },
     "contact_email": {
       "type": "email"
