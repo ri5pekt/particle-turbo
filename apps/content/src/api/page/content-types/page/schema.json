@@ -5,7 +5,7 @@
     "singularName": "page",
     "pluralName": "pages",
     "displayName": "Page",
-    "description": "Core site pages: home, FAQ, contact, all-products, cart, checkout, order-received"
+    "description": "Core site pages: home, FAQ, contact, all-products, cart, checkout, order-received. Each page has a hero and global SEO."
   },
   "options": {
     "draftAndPublish": true
@@ -26,22 +26,10 @@
       "repeatable": false,
       "component": "shared.seo"
     },
-    "sections": {
-      "type": "dynamiczone",
-      "components": [
-        "sections.hero",
-        "sections.text-image",
-        "sections.benefits",
-        "sections.testimonials",
-        "sections.faq",
-        "sections.rich-text",
-        "sections.cta-banner",
-        "sections.video",
-        "sections.before-after",
-        "sections.how-to-use",
-        "sections.ingredients",
-        "sections.product-showcase"
-      ]
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.hero"
     }
   }
 }

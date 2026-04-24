@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_global_nav_top_items",
+  "info": {
+    "displayName": "Nav Top Item",
+    "icon": "bulletList",
+    "description": "A top-level header navigation item. Add mega_menu items for a dropdown, or just set url for a direct link."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "description": "Set for direct links. Leave blank if this item opens a dropdown."
+    },
+    "mega_menu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "global.mega-item",
+      "description": "Dropdown items. Mix section headings (is_heading=true) with product links (with image)."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_global_footer_columns",
+  "info": {
+    "displayName": "Footer Column",
+    "icon": "bulletList",
+    "description": "A single link column in the footer (e.g. Particle, Products, Bundles & Sets)."
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": true,
+      "description": "Column heading shown in bold above the links (e.g. Particle, Products)."
+    },
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
+    }
+  }
+}

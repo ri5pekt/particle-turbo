@@ -43,6 +43,12 @@
     "copyright_text": {
       "type": "string",
       "default": "© Particle. All Rights Reserved"
+    },
+    "columns": {
+      "type": "component",
+      "repeatable": true,
+      "component": "global.footer-column",
+      "description": "Footer link columns (e.g. Particle, Products, Bundles & Sets). Add as many as needed."
     }
   }
 }

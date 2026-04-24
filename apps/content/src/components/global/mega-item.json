@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_global_mega_items",
+  "info": {
+    "displayName": "Mega Menu Item",
+    "icon": "bulletList",
+    "description": "A single item inside a megamenu dropdown. Set is_heading=true for section dividers like 'Face' or 'Body'."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string"
+    },
+    "is_heading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Renders as a non-clickable section heading (e.g. Face, Body, Fragrance). No url needed."
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Optional product thumbnail shown next to the link in the megamenu."
+    }
+  }
+}

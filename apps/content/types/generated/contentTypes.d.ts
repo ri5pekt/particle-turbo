@@ -524,6 +524,7 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    hero: Schema.Attribute.Component<'sections.hero', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -531,22 +532,6 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<
-      [
-        'sections.hero',
-        'sections.text-image',
-        'sections.benefits',
-        'sections.testimonials',
-        'sections.faq',
-        'sections.rich-text',
-        'sections.cta-banner',
-        'sections.video',
-        'sections.before-after',
-        'sections.how-to-use',
-        'sections.ingredients',
-        'sections.product-showcase',
-      ]
-    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     show_footer: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     show_header: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
@@ -603,7 +588,7 @@ export interface ApiNavigationNavigation extends Struct.CollectionTypeSchema {
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
-    description: 'Core site pages: home, FAQ, contact, all-products, cart, checkout, order-received';
+    description: 'Core site pages: home, FAQ, contact, all-products, cart, checkout, order-received. Each page has a hero and global SEO.';
     displayName: 'Page';
     pluralName: 'pages';
     singularName: 'page';
@@ -615,26 +600,11 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    hero: Schema.Attribute.Component<'sections.hero', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<
-      [
-        'sections.hero',
-        'sections.text-image',
-        'sections.benefits',
-        'sections.testimonials',
-        'sections.faq',
-        'sections.rich-text',
-        'sections.cta-banner',
-        'sections.video',
-        'sections.before-after',
-        'sections.how-to-use',
-        'sections.ingredients',
-        'sections.product-showcase',
-      ]
-    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -647,7 +617,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
-    description: 'Synced from Medusa (commerce fields). Editors add SEO and page sections here \u2014 sync never overwrites those fields.';
+    description: 'Editorial product content. Joined to Medusa by matching handle. Editors add SEO, sections, and rich description here.';
     displayName: 'Product';
     pluralName: 'products';
     singularName: 'product';
@@ -661,6 +631,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText;
     handle: Schema.Attribute.String & Schema.Attribute.Unique;
+    hero: Schema.Attribute.Component<'sections.hero', false>;
     images: Schema.Attribute.Media<'images', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -668,26 +639,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'api::product.product'
     > &
       Schema.Attribute.Private;
-    medusaId: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<
-      [
-        'sections.hero',
-        'sections.text-image',
-        'sections.benefits',
-        'sections.testimonials',
-        'sections.faq',
-        'sections.rich-text',
-        'sections.cta-banner',
-        'sections.video',
-        'sections.before-after',
-        'sections.how-to-use',
-        'sections.ingredients',
-        'sections.product-showcase',
-      ]
-    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     subtitle: Schema.Attribute.String;
     thumbnail: Schema.Attribute.Media<'images'>;
@@ -719,6 +671,8 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     default_seo: Schema.Attribute.Component<'shared.seo', false>;
     favicon: Schema.Attribute.Media<'images'>;
+    footer: Schema.Attribute.Component<'global.footer', false>;
+    header: Schema.Attribute.Component<'global.header', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

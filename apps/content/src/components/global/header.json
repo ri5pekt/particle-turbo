@@ -19,6 +19,12 @@
     "cta_url": {
       "type": "string",
       "description": "URL for the header CTA button."
+    },
+    "nav": {
+      "type": "component",
+      "repeatable": true,
+      "component": "global.nav-top-item",
+      "description": "Top-level navigation items. Each item can have a megamenu dropdown with images and section headings."
     }
   }
 }
