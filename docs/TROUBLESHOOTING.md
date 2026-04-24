@@ -16,10 +16,8 @@ Use this as a first-stop reference before searching the internet.
 6. [TypeScript: `Cannot find module '@medusajs/framework/workflows-sdk'`](#6-typescript-cannot-find-module-medusajsframeworkworkflows-sdk)
 7. [TypeScript: `Property 'logger' does not exist on type StepExecutionContext`](#7-typescript-property-logger-does-not-exist-on-type-stepexecutioncontext)
 8. [TypeScript: Inconsistent `StepResponse` return types in a step](#8-typescript-inconsistent-stepresponse-return-types-in-a-step)
-9. [TypeScript: Type mismatch on `req.body.entry` in webhook route](#9-typescript-type-mismatch-on-reqbodyentry-in-webhook-route)
-10. [Strapi: 403 Forbidden when Medusa calls Strapi API from inside Docker](#10-strapi-403-forbidden-when-medusa-calls-strapi-api-from-inside-docker)
-11. [Docker: `.env` variables not available inside container](#11-docker-env-variables-not-available-inside-container)
-12. [pnpm: Packages not resolving in nested monorepo workspace](#12-pnpm-packages-not-resolving-in-nested-monorepo-workspace)
+9. [Docker: `.env` variables not available inside container](#9-docker-env-variables-not-available-inside-container)
+10. [pnpm: Packages not resolving in nested monorepo workspace](#10-pnpm-packages-not-resolving-in-nested-monorepo-workspace)
 
 ---
 
@@ -124,7 +122,7 @@ Then restart the container.
 
 **Symptom**
 ```
-Error: Cannot find module '/workspace/apps/commerce/src/modules/strapi'
+Error: Cannot find module '/workspace/apps/commerce/src/modules/my-module'
 ```
 Appears during `docker compose up` before Medusa's dev server starts.
 
@@ -134,22 +132,22 @@ Medusa's `defineConfig` is executed by Node.js at process start, before `ts-node
 **Fix**
 Create a parallel CommonJS `.js` file alongside every `.ts` file that Medusa needs at startup:
 
-`apps/commerce/src/modules/strapi/index.js`:
+`apps/commerce/src/modules/my-module/index.js`:
 ```js
 "use strict"
-const StrapiModuleService = require("./service")
-const STRAPI_MODULE = "strapiModuleService"
+const MyModuleService = require("./service")
+const MY_MODULE = "myModuleService"
 module.exports = {
-  Module: { key: STRAPI_MODULE, isQueryable: false },
-  STRAPI_MODULE,
+  Module: { key: MY_MODULE, isQueryable: false },
+  MY_MODULE,
 }
 ```
 
-`apps/commerce/src/modules/strapi/service.js`:
+`apps/commerce/src/modules/my-module/service.js`:
 ```js
 "use strict"
-class StrapiModuleService { /* ... */ }
-module.exports = StrapiModuleService
+class MyModuleService { /* ... */ }
+module.exports = MyModuleService
 ```
 
 The `.ts` files remain authoritative for types and IDE support. The `.js` files mirror the runtime logic and are what Node actually executes at startup.
@@ -254,75 +252,7 @@ export const myStep = createStep(
 
 ---
 
-## 9. TypeScript: Type mismatch on `req.body.entry` in webhook route
-
-**Symptom**
-```
-error TS2345: Type 'Record<string, any>' is missing the following properties
-from type '{ id: string; documentId: string; medusaId: string; }': id, documentId, medusaId
-```
-Occurred in `apps/commerce/src/api/webhooks/strapi/route.ts`.
-
-**Root cause**
-The webhook handler workflow expected a typed `entry` object with specific fields. The route was casting `req.body.entry` as a generic `Record<string, any>` which is incompatible with the explicit type.
-
-**Fix**
-Define the exact expected shape in the route file and use it:
-```typescript
-type StrapiWebhookEntry = {
-  id: string
-  documentId: string
-  medusaId: string
-}
-
-const entry = req.body.entry as StrapiWebhookEntry
-```
-If `ts-node` appears to be using a stale compiled version of the file despite edits, force a container recreation:
-```bash
-docker compose up --force-recreate commerce
-```
-
----
-
-## 10. Strapi: 403 Forbidden when Medusa calls Strapi API from inside Docker
-
-**Symptom**
-```
-Error: Strapi API GET /products?filters[medusaId][$eq]=... failed [403]:
-{"status":403,"name":"ForbiddenError","message":"Forbidden","details":{}}
-```
-Occurred when Medusa's sync workflow ran after a product was created/updated.
-
-**Root cause (incorrect assumption)**
-First guess was that the API token was wrong or the content type permissions in Strapi were not set. But the token worked fine when called from the host machine with `curl`.
-
-**Root cause (actual)**
-The environment variables `STRAPI_API_URL` and `STRAPI_SYNC_TOKEN` were defined in `.env` on the host but were **not listed in the `compose.yml` `environment` block** for the `commerce` service. Docker Compose does not automatically inject every `.env` key into every container — it only injects keys that are explicitly declared in `environment:`.
-
-The `commerce` container was therefore running with both variables unset (`undefined`). The Strapi module fell back to an empty string for the token, which produced an anonymous (unauthenticated) request — hence 403.
-
-**Fix**
-Add the missing variables to the `commerce` service in `compose.yml`:
-```yaml
-services:
-  commerce:
-    environment:
-      STRAPI_API_URL: ${STRAPI_API_URL:-http://content:1337/api}
-      STRAPI_SYNC_TOKEN: ${STRAPI_SYNC_TOKEN}
-      MEDUSA_STRAPI_WEBHOOK_KEY: ${MEDUSA_STRAPI_WEBHOOK_KEY}
-```
-Then recreate the container:
-```bash
-docker compose up --force-recreate commerce
-```
-
-**Rule to remember:** Every environment variable your app needs must appear in both `.env` (value) **and** `compose.yml` `environment:` block (declaration). Presence in `.env` alone is not enough.
-
----
-
-## 11. Docker: `.env` variables not available inside container
-
-*(See also issue #10 — this is the general pattern.)*
+## 9. Docker: `.env` variables not available inside container
 
 **Symptom**
 App code reads `process.env.MY_VAR` and gets `undefined` inside the container, even though `MY_VAR` is set in `.env`.
@@ -343,7 +273,7 @@ For every app environment variable:
 
 ---
 
-## 12. pnpm: Packages not resolving in nested monorepo workspace
+## 10. pnpm: Packages not resolving in nested monorepo workspace
 
 **Symptom**
 Various `Cannot find module` or `Failed to resolve import` errors where a package is installed but not visible to the tool that needs it (Vite, ts-node, etc.).
@@ -377,4 +307,4 @@ If it throws, the package is not visible from that context.
 
 ---
 
-*Last updated: 2026-04-22 — Phase 0–2*
+*Last updated: 2026-04-22 — Phase 0–2. Sync-specific issues removed 2026-04-22 (sync architecture removed — see ADR 010/011).*
