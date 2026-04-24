@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_sections_product_showcases",
+  "info": {
+    "displayName": "Product Showcase",
+    "icon": "shoppingCart",
+    "description": "Display a curated set of products by their Medusa handle. Nuxt resolves the handles to live product data at render time."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "ab_test_key": {
+      "type": "string"
+    },
+    "ab_test_value": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "medusa_handles": {
+      "type": "text",
+      "description": "Comma-separated list of Medusa product handles, e.g. particle-hair-clay,particle-face-wash"
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": ["grid", "carousel"],
+      "default": "grid"
+    },
+    "cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link"
+    }
+  }
+}

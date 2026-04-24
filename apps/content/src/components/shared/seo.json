@@ -1,31 +1,31 @@
 {
-    "collectionName": "components_shared_seos",
-    "info": {
-        "displayName": "SEO Settings",
-        "icon": "search",
-        "description": "Meta title, description, OG image, canonical URL"
+  "collectionName": "components_shared_seos",
+  "info": {
+    "displayName": "SEO",
+    "icon": "search",
+    "description": "Meta title, description, OG image, canonical URL"
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "required": true
     },
-    "options": {},
-    "attributes": {
-        "metaTitle": {
-            "type": "string",
-            "required": true
-        },
-        "metaDescription": {
-            "type": "text",
-            "required": true
-        },
-        "ogImage": {
-            "type": "media",
-            "multiple": false,
-            "allowedTypes": ["images"]
-        },
-        "canonicalURL": {
-            "type": "string"
-        },
-        "noIndex": {
-            "type": "boolean",
-            "default": false
-        }
+    "metaDescription": {
+      "type": "text",
+      "required": true
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "canonicalURL": {
+      "type": "string"
+    },
+    "noIndex": {
+      "type": "boolean",
+      "default": false
     }
+  }
 }

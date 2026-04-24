@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_sections_testimonials",
+  "info": {
+    "displayName": "Testimonials",
+    "icon": "quote",
+    "description": "Customer reviews displayed as a grid or carousel"
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "ab_test_key": {
+      "type": "string"
+    },
+    "ab_test_value": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.testimonial"
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": ["grid", "carousel"],
+      "default": "carousel"
+    }
+  }
+}

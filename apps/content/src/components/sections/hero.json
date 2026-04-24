@@ -1,9 +1,9 @@
 {
   "collectionName": "components_sections_heroes",
   "info": {
-    "displayName": "Home Page Hero",
+    "displayName": "Hero",
     "icon": "landscape",
-    "description": "Full-viewport hero with background video, fallback image, HTML headline, and CTA button."
+    "description": "Full-width hero banner with headline, subheadline, CTA, and background image or video"
   },
   "options": {},
   "attributes": {
@@ -11,25 +11,44 @@
       "type": "boolean",
       "default": true
     },
+    "ab_test_key": {
+      "type": "string"
+    },
+    "ab_test_value": {
+      "type": "string"
+    },
     "headline": {
       "type": "richtext",
       "required": true
+    },
+    "subheadline": {
+      "type": "text"
     },
     "cta": {
       "type": "component",
       "repeatable": false,
       "component": "shared.link"
     },
-    "background_video": {
+    "cta_secondary": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.video-pair"
+      "component": "shared.link"
     },
-    "placeholder_image": {
+    "background_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"],
-      "description": "Shown while video loads or when autoplay is blocked"
+      "allowedTypes": ["images"]
+    },
+    "background_video_url": {
+      "type": "string"
+    },
+    "overlay_opacity": {
+      "type": "integer"
+    },
+    "text_align": {
+      "type": "enumeration",
+      "enum": ["left", "center", "right"],
+      "default": "center"
     }
   }
 }
