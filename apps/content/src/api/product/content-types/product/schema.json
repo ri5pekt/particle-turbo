@@ -5,18 +5,13 @@
     "singularName": "product",
     "pluralName": "products",
     "displayName": "Product",
-    "description": "Synced from Medusa (commerce fields). Editors add SEO and page sections here — sync never overwrites those fields."
+    "description": "Editorial product content. Joined to Medusa by matching handle. Editors add SEO, sections, and rich description here."
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "medusaId": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "title": {
       "type": "string"
     },
