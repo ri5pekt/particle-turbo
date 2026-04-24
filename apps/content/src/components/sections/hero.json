@@ -1,9 +1,9 @@
 {
   "collectionName": "components_sections_heroes",
   "info": {
-    "displayName": "Hero",
+    "displayName": "Home Page Hero",
     "icon": "landscape",
-    "description": "Full-viewport hero with background video, fallback image, richtext headline, and CTA button."
+    "description": "Full-viewport hero with background video, fallback image, split headline (main + colored highlight), and CTA button."
   },
   "options": {},
   "attributes": {
@@ -12,8 +12,14 @@
       "default": true
     },
     "headline": {
-      "type": "richtext",
+      "type": "string",
       "required": true
+    },
+    "headline_highlight": {
+      "type": "string"
+    },
+    "headline_color": {
+      "type": "string"
     },
     "cta": {
       "type": "component",
