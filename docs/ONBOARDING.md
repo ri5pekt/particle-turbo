@@ -40,7 +40,6 @@ Key values you need:
 - All `POSTGRES_*` credentials
 - All `MEDUSA_*` secrets
 - All `STRAPI_*` secrets and app keys
-- `STRAPI_SYNC_TOKEN` and `MEDUSA_STRAPI_WEBHOOK_KEY`
 - `NUXT_MEDUSA_API_KEY` and `NUXT_STRAPI_API_TOKEN`
 
 ---
@@ -118,7 +117,7 @@ If you restored a database dump, permissions are already set — skip this.
 
 If this is a fresh install:
 1. Go to Strapi admin → Settings → Users & Permissions plugin → Roles → Public
-2. Grant `find` + `findOne` on: Article, Article Category, Landing Page, Navigation, Page, Product Page Content
+2. Grant `find` + `findOne` on: Article, Article Category, Landing Page, Navigation, Page, Product
 3. Grant `find` on: Site Settings
 4. Click Save
 

@@ -50,6 +50,5 @@ apps/content/public/uploads
 # Medusa
 apps/commerce/uploads
 
-# Backups — SQL dumps are committed (small), media files are not (too large)
-backups/strapi-uploads*/
-backups/strapi-uploads-latest/
+# Backups — transfer artifacts only, never commit
+backups/

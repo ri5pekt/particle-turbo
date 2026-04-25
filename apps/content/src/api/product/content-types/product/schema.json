@@ -5,7 +5,7 @@
     "singularName": "product",
     "pluralName": "products",
     "displayName": "Product",
-    "description": "Editorial product content. Joined to Medusa by matching handle. Editors add SEO, sections, and rich description here."
+    "description": "Editorial product content. Editors add SEO, PDP sections, media, and rich description here."
   },
   "options": {
     "draftAndPublish": false
@@ -44,6 +44,12 @@
       "type": "component",
       "repeatable": false,
       "component": "sections.hero"
+    },
+    "sections": {
+      "type": "dynamiczone",
+      "components": [
+        "pdp.add-to-cart-regular"
+      ]
     }
   }
 }

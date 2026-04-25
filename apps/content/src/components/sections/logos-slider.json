@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_sections_logos_sliders",
+  "info": {
+    "displayName": "Logos Slider",
+    "icon": "landscape",
+    "description": "Infinite auto-scrolling strip of press/partner logos. Add logos in display order — the frontend will loop them."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "logos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.logo-item"
+    }
+  }
+}

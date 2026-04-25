@@ -1,0 +1,65 @@
+{
+  "collectionName": "components_shared_best_seller_items",
+  "info": {
+    "displayName": "Best Seller Item",
+    "icon": "shoppingCart",
+    "description": "A product card in the homepage best-sellers section."
+  },
+  "options": {},
+  "attributes": {
+    "pre_title": {
+      "type": "string",
+      "required": true
+    },
+    "title_html": {
+      "type": "string",
+      "required": true,
+      "description": "HTML is allowed for emphasis, e.g. <strong>Face</strong> Cream."
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "button_label": {
+      "type": "string",
+      "default": "Discover"
+    },
+    "hover_effect": {
+      "type": "enumeration",
+      "enum": [
+        "none",
+        "scale",
+        "rotate"
+      ],
+      "default": "none"
+    },
+    "back_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "main_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "front_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "mobile_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

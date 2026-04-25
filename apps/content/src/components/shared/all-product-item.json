@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_shared_all_product_items",
+  "info": {
+    "displayName": "All Product Item",
+    "icon": "shoppingCart",
+    "description": "A product card in the homepage All Products section."
+  },
+  "options": {},
+  "attributes": {
+    "category_slug": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "button_label": {
+      "type": "string",
+      "default": "Discover"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

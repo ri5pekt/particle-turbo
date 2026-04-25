@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_sections_insta_blocks",
+  "info": {
+    "displayName": "Insta Block",
+    "icon": "instagram",
+    "description": "Homepage Instagram/social proof block with title, subtitle, decorative molecules, and a video."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "subtitle_html": {
+      "type": "string",
+      "default": "Get Obsessed <span>#particleformen</span>"
+    },
+    "title_html": {
+      "type": "string",
+      "required": true,
+      "default": "1 MILLION<span>Particle </span> Men"
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"],
+      "required": true
+    },
+    "molecule_one": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "molecule_two": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

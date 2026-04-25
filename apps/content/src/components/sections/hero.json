@@ -3,7 +3,7 @@
   "info": {
     "displayName": "Hero",
     "icon": "landscape",
-    "description": "Full-width hero banner with headline, subheadline, CTA, and background image or video"
+    "description": "Full-width hero banner with headline, CTA, and background image or video"
   },
   "options": {},
   "attributes": {
@@ -11,25 +11,12 @@
       "type": "boolean",
       "default": true
     },
-    "ab_test_key": {
-      "type": "string"
-    },
-    "ab_test_value": {
-      "type": "string"
-    },
     "headline": {
-      "type": "richtext",
-      "required": true
-    },
-    "subheadline": {
-      "type": "text"
+      "type": "text",
+      "required": true,
+      "description": "Plain text field — HTML tags are allowed (e.g. <strong>, <span>)."
     },
     "cta": {
-      "type": "component",
-      "repeatable": false,
-      "component": "shared.link"
-    },
-    "cta_secondary": {
       "type": "component",
       "repeatable": false,
       "component": "shared.link"
@@ -39,11 +26,21 @@
       "multiple": false,
       "allowedTypes": ["images"]
     },
-    "background_video_url": {
-      "type": "string"
+    "background_video": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"],
+      "description": "Desktop background video (mp4 recommended)."
+    },
+    "mobile_video": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"],
+      "description": "Mobile background video. Upload a portrait-cropped version for small screens."
     },
     "overlay_opacity": {
-      "type": "integer"
+      "type": "integer",
+      "description": "Dark overlay strength 0–100 over the background."
     },
     "text_align": {
       "type": "enumeration",

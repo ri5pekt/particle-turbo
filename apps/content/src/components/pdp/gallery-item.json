@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_pdp_gallery_items",
+  "info": {
+    "displayName": "PDP Gallery Item",
+    "icon": "picture",
+    "description": "A gallery slide for PDP add-to-cart sections."
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"]
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

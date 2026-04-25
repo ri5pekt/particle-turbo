@@ -35,7 +35,18 @@ Browser
 
 Join key: **product `handle`** (identical in both Medusa and Strapi, e.g. `particle-face-wash`).
 
-If Strapi has no entry for a handle, the server route returns Medusa-only data with safe defaults.
+If Strapi has no entry for a handle, the server route returns a safe non-purchasable/editorial fallback where possible. Do not add back `medusaId`; stale `medusaId` references were deliberately removed.
+
+Current storefront data flow:
+
+| Flow | Nuxt route/component | Source of truth |
+|---|---|---|
+| Home page | `/`, `SectionRenderer` | Strapi `page` slug `home` |
+| PDP | `/product/[handle]`, `PdpSectionRenderer` | Strapi product sections + Medusa product by same `handle` |
+| Add to cart | `PdpAddToCartRegular.vue` → `useCart()` | Strapi quantity card controls requested quantity; Medusa owns variant, price, totals |
+| Cart drawer | `CartDrawer.vue` | Medusa cart via Nuxt `/api/cart/**` |
+| Cart page | `/cart`, `sections.cart-main` | Strapi `page` slug `cart` for layout/copy; Medusa cart for line items/totals |
+| Admin bar | `AdminBar.vue` | Dev/admin overlay only; edit links to Strapi/Medusa admin |
 
 ---
 
@@ -71,7 +82,7 @@ This is the definitive reference. Every type of change maps to exactly one actio
 | What changed | Action required |
 |---|---|
 | TypeScript source files in `src/` (routes, subscribers, workflows, modules, steps) | **Nothing** — `medusa develop` detects the change and auto-restarts within ~5s |
-| `medusa-config.ts` | **`docker compose restart commerce`** — config is loaded at process start |
+| `medusa-config.js` / `medusa-config.ts` | **`docker compose restart commerce`** — config is loaded at process start |
 | `package.json` dependencies added/removed | **`docker compose build --no-cache commerce`** then `docker compose --profile apps up -d` |
 | Environment variables in `.env` | **`docker compose restart commerce`** — env is read at container start |
 | `compose.yml` environment block for `commerce` | **`docker compose up --force-recreate commerce`** |
@@ -89,6 +100,8 @@ This is the definitive reference. Every type of change maps to exactly one actio
 | Environment variables in `.env` | **`docker compose restart content`** |
 
 > **Important:** After any schema change, Strapi performs an automatic DB migration (adds/removes columns). The restart takes ~20–30s. Wait for `Strapi started successfully` in the logs before testing.
+
+> **Nuxt component discovery:** When adding a new top-level component folder such as `components/admin/` or `components/cart/`, restart `storefront` if auto-imports do not appear immediately.
 
 ### Nuxt (`apps/storefront`)
 
@@ -184,7 +197,8 @@ apps/content/
       site-setting/             ← Global site config (single type)
     components/
       shared/                   ← Reusable components (seo, link, faq-item, etc.)
-      sections/                 ← Page builder sections (hero, benefits, faq, etc.)
+      sections/                 ← Page builder sections (hero, logos, best-sellers, cart-main, etc.)
+      pdp/                      ← PDP-only component schemas
 ```
 
 ### Nuxt (`apps/storefront`)
@@ -201,6 +215,7 @@ apps/storefront/
     middleware/                 ← Server middleware (auth, locale, etc.)
   assets/scss/                  ← Global SCSS styles
   composables/                  ← Vue composables
+    useCart.ts                  ← Medusa cart state + drawer state + cart mutations
 ```
 
 ---
@@ -280,6 +295,33 @@ export default defineEventHandler(async (event) => {
 
 ---
 
+## Current Strapi sections and pages
+
+| Content | Status |
+|---|---|
+| `page` slug `home` | Published; renders hero + `logos-slider`, `best-sellers`, `all-products`, `insta-block` |
+| `page` slug `cart` | Published; renders `sections.cart-main` |
+| `product` handle `particle-face-mask` | Published; has PDP-only `pdp.add-to-cart-regular` section |
+| `sections.cart-main` | Cart page main table + order summary; copy is editorial, line items/totals are Medusa |
+| `pdp.add-to-cart-regular` | PDP gallery + purchase options; selected quantity is sent to Medusa |
+
+---
+
+## Local Medusa data requirements for cart
+
+For Store API cart/products to work locally:
+
+1. The publishable API key in `NUXT_MEDUSA_API_KEY` must be linked to the default sales channel.
+2. Product variants must be purchasable. In this local seed, inventory checks were disabled because no stock location was configured:
+   ```powershell
+   docker compose exec postgres-commerce psql -U medusa -d medusa_db -c "UPDATE product_variant SET manage_inventory = false WHERE manage_inventory = true;"
+   ```
+3. `apps/commerce/medusa-config.js` must not reference the removed Strapi sync module.
+
+If add-to-cart returns a Medusa 400, check `docker compose logs commerce --tail=80` first.
+
+---
+
 ## Common mistakes to avoid
 
 | Mistake | Correct approach |
@@ -290,6 +332,9 @@ export default defineEventHandler(async (event) => {
 | Calling Medusa/Strapi APIs from Vue `<script setup>` | Use Nuxt server routes — never expose API keys to the browser |
 | Creating a Medusa module without a `.js` stub | Medusa's `require()` at startup can't load `.ts` — create both `.ts` and `.js` |
 | Dropping a Strapi column with data via schema.json only | Drop the column in Postgres first, then restart Strapi |
+| Reintroducing `medusaId` in Strapi product content | Use matching `handle` as the cross-system link key |
+| Using external URLs for Strapi editorial images/videos | Upload media to Strapi and use media fields |
+| Returning Medusa `DELETE /line-items` directly to the UI | Medusa returns `204`; refetch and return the updated cart from the Nuxt route |
 
 ---
 
@@ -330,4 +375,6 @@ docker compose exec postgres-content psql -U strapi -d strapi_db -c "SELECT COUN
 | `docs/DEV-PLAN.md` | Full project plan, phase status, confirmed architecture decisions |
 | `docs/ONBOARDING.md` | Setting up the project on a new machine |
 | `docs/TROUBLESHOOTING.md` | Known issues and their fixes |
+| `docs/CONTENT-SEEDING.md` | How to populate Strapi content from the scraped particleformen.com site |
+| `docs/NUXT-BUILD.md` | Nuxt storefront build plan: design tokens, fonts, build order, component map |
 | `docs/decisions/` | Architecture Decision Records (ADRs) |

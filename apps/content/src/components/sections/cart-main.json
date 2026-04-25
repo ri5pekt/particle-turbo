@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_sections_cart_main",
+  "info": {
+    "displayName": "Cart Main",
+    "icon": "shoppingCart",
+    "description": "Main cart table and order summary powered by Medusa."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title_prefix": {
+      "type": "string",
+      "default": "My"
+    },
+    "title_accent": {
+      "type": "string",
+      "default": "Cart"
+    },
+    "checkout_label": {
+      "type": "string",
+      "default": "Proceed to secure checkout"
+    },
+    "empty_title": {
+      "type": "string",
+      "default": "Your cart is empty."
+    },
+    "empty_button_label": {
+      "type": "string",
+      "default": "Continue Shopping"
+    },
+    "empty_button_url": {
+      "type": "string",
+      "default": "/"
+    },
+    "monthly_orders_text": {
+      "type": "string",
+      "default": "50,000+ Orders Last Month!"
+    }
+  }
+}

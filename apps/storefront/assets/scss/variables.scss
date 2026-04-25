@@ -23,23 +23,41 @@ $bp-2xl: 1536px;
 @mixin xl { @media (min-width: $bp-xl) { @content; } }
 
 // -----------------------------------------------------------------------------
-// Colors — filled in during Phase 3 from the existing site audit
+// Colors — extracted from the original Particle site
 // -----------------------------------------------------------------------------
-$color-primary:    #000000;
-$color-secondary:  #ffffff;
-$color-accent:     #000000;
-$color-text:       #1a1a1a;
-$color-text-muted: #6b6b6b;
-$color-border:     #e0e0e0;
-$color-bg:         #ffffff;
-$color-bg-alt:     #f8f8f8;
-$color-error:      #d32f2f;
-$color-success:    #2e7d32;
+$color-navy-deep: #030b2e;
+$color-navy: #050446;
+$color-navy-mid: #222a58;
+$color-topstrip: #09152b;
+$color-footer: #293850;
+$color-sky: #52bbe8;
+$color-blue: #0038b1;
+$color-sky-light: #69c3eb;
+$color-hero-bg: #ebf0f4;
+$color-footer-rule: #adadb8;
+$color-footer-sep: #424b65;
+$color-white: #ffffff;
+
+$color-primary: $color-navy;
+$color-secondary: $color-white;
+$color-accent: $color-sky;
+$color-text: $color-navy;
+$color-text-muted: $color-navy-mid;
+$color-border: #e0e0e0;
+$color-bg: $color-white;
+$color-bg-alt: #f8f8f8;
+$color-error: #d32f2f;
+$color-success: #2e7d32;
 
 // -----------------------------------------------------------------------------
-// Typography — filled in during Phase 3 from the existing site audit
+// Typography
 // -----------------------------------------------------------------------------
-$font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-display: 'Neue Haas Grotesk Display Pro', 'Arial Narrow', Arial, sans-serif;
+$font-body: 'Raleway', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-ui: 'Prompt', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-accent: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-heading: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-sans: $font-body;
 $font-serif: Georgia, 'Times New Roman', serif;
 $font-mono: 'Courier New', Courier, monospace;
 
@@ -71,7 +89,11 @@ $space-24: 6rem;      // 96px
 // -----------------------------------------------------------------------------
 // Layout
 // -----------------------------------------------------------------------------
-$container-max: 1280px;
+$container-max: 1406px;
+$section-inner-max: 1640px;
+$header-height: 77px;
+$topstrip-height: 40px;
+$main-padding-top: 125px;
 $container-padding: $space-4;
 
 // -----------------------------------------------------------------------------

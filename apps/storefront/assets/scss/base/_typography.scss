@@ -1,8 +1,15 @@
-// Global typography — expanded in Phase 3 from existing site audit
+body {
+  font-family: $font-body;
+  color: $color-navy;
+  font-size: $text-base;
+  line-height: 1.5;
+}
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
   line-height: 1.2;
   font-weight: 700;
+  color: $color-navy;
 }
 
 h1 { font-size: $text-4xl; }
@@ -12,7 +19,9 @@ h4 { font-size: $text-xl; }
 h5 { font-size: $text-lg; }
 h6 { font-size: $text-base; }
 
-p {
-  margin-bottom: $space-4;
-  &:last-child { margin-bottom: 0; }
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }

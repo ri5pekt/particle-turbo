@@ -18,6 +18,11 @@ Use this as a first-stop reference before searching the internet.
 8. [TypeScript: Inconsistent `StepResponse` return types in a step](#8-typescript-inconsistent-stepresponse-return-types-in-a-step)
 9. [Docker: `.env` variables not available inside container](#9-docker-env-variables-not-available-inside-container)
 10. [pnpm: Packages not resolving in nested monorepo workspace](#10-pnpm-packages-not-resolving-in-nested-monorepo-workspace)
+11. [Medusa: removed Strapi sync module still referenced in config](#11-medusa-removed-strapi-sync-module-still-referenced-in-config)
+12. [Medusa Store API: publishable key has no sales channel](#12-medusa-store-api-publishable-key-has-no-sales-channel)
+13. [Medusa add-to-cart: sales channel has no stock location](#13-medusa-add-to-cart-sales-channel-has-no-stock-location)
+14. [Strapi admin product list still sorts by deleted `medusaId`](#14-strapi-admin-product-list-still-sorts-by-deleted-medusaid)
+15. [Medusa line-item delete returns `204` empty body](#15-medusa-line-item-delete-returns-204-empty-body)
 
 ---
 
@@ -307,4 +312,101 @@ If it throws, the package is not visible from that context.
 
 ---
 
-*Last updated: 2026-04-22 — Phase 0–2. Sync-specific issues removed 2026-04-22 (sync architecture removed — see ADR 010/011).*
+## 11. Medusa: removed Strapi sync module still referenced in config
+
+**Symptom**
+```
+Error in loading config: Cannot find module '/workspace/apps/commerce/src/modules/strapi'
+```
+The `commerce` container restarts repeatedly.
+
+**Root cause**
+The old Medusa ↔ Strapi sync module was removed, but `apps/commerce/medusa-config.js` still listed `./src/modules/strapi` in `modules`.
+
+**Fix**
+Remove that module entry. Current local config uses:
+```js
+modules: []
+```
+Then restart Medusa:
+```powershell
+docker compose restart commerce
+```
+
+---
+
+## 12. Medusa Store API: publishable key has no sales channel
+
+**Symptom**
+Medusa Store API returns:
+```json
+{"type":"invalid_data","message":"Publishable key needs to have a sales channel configured"}
+```
+
+**Root cause**
+The publishable key configured as `NUXT_MEDUSA_API_KEY` existed, but it was not linked to the default sales channel.
+
+**Fix**
+Link active publishable keys to the default sales channel:
+```powershell
+docker compose exec postgres-commerce psql -U medusa -d medusa_db -c "INSERT INTO publishable_api_key_sales_channel (publishable_key_id, sales_channel_id, id) SELECT ak.id, sc.id, 'pksc_' || substr(md5(ak.id || sc.id), 1, 26) FROM api_key ak CROSS JOIN sales_channel sc WHERE ak.type = 'publishable' AND ak.revoked_at IS NULL ON CONFLICT (publishable_key_id, sales_channel_id) DO NOTHING;"
+```
+
+---
+
+## 13. Medusa add-to-cart: sales channel has no stock location
+
+**Symptom**
+Adding a cart line item returns:
+```json
+{
+  "type": "invalid_data",
+  "message": "Sales channel ... is not associated with any stock location for variant ..."
+}
+```
+
+**Root cause**
+Local seeded variants had `manage_inventory = true`, but the local Medusa seed had no stock location linked to the sales channel.
+
+**Temporary local fix**
+Disable inventory checks for local dev:
+```powershell
+docker compose exec postgres-commerce psql -U medusa -d medusa_db -c "UPDATE product_variant SET manage_inventory = false WHERE manage_inventory = true;"
+```
+
+**Production fix**
+Configure stock locations and inventory properly in Medusa instead of disabling inventory.
+
+---
+
+## 14. Strapi admin product list still sorts by deleted `medusaId`
+
+**Symptom**
+Strapi Admin product collection throws an error about `medusaId` even though the field was removed from schemas.
+
+**Root cause**
+The backend schema was clean, but Strapi Content Manager layout preferences in `strapi_core_store_settings` and/or browser local storage still referenced `medusaId` as a sort/list column.
+
+**Fix**
+Reset product content-manager settings in the Strapi database so list/main/sort fields use existing columns:
+```powershell
+docker compose exec postgres-content psql -U strapi -d strapi_db -c "SELECT key, value FROM strapi_core_store_settings WHERE key ILIKE '%api::product.product%';"
+```
+If stale config remains, update/remove it so product list fields are `id`, `title`, `subtitle`, `handle` and sort by `title`. Also clear Strapi admin local/session storage or open a clean URL without `?sort=medusaId:DESC`.
+
+---
+
+## 15. Medusa line-item delete returns `204` empty body
+
+**Symptom**
+Nuxt cart remove route crashes or the browser sees `Unexpected end of JSON input` after deleting a line item.
+
+**Root cause**
+Medusa Store API `DELETE /store/carts/:id/line-items/:lineId` returns `204 No Content`, not an updated cart JSON body.
+
+**Fix**
+In the Nuxt server route, call Medusa delete, then refetch `/store/carts/:id` and return the updated cart to the UI.
+
+---
+
+*Last updated: 2026-04-26 — Nuxt home/PDP/cart flows, Medusa cart fixes, and Strapi admin cleanup notes added.*

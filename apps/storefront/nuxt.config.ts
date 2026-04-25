@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     strapiApiToken: '',
     // Public values — exposed to the browser via useRuntimeConfig().public
     public: {
+      adminBarEnabled: false,
       medusaUrl: '',
       strapiUrl: '',
     },
@@ -60,7 +61,7 @@ export default defineNuxtConfig({
   css: ['~/assets/scss/main.scss'],
 
   // Modules — added progressively as needed
-  modules: [],
+  modules: ['@vueuse/nuxt'],
 
   compatibilityDate: '2024-11-01',
 })

@@ -1,6 +1,6 @@
 # particle-turbo — Dev Plan
 
-Last updated: 2026-04-22 (rev 5 — Medusa↔Strapi sync removed; Nuxt handle-based join adopted)
+Last updated: 2026-04-26 (rev 6 — Nuxt home/PDP/cart flows implemented; Medusa-backed cart active)
 
 ---
 
@@ -35,6 +35,36 @@ Last updated: 2026-04-22 (rev 5 — Medusa↔Strapi sync removed; Nuxt handle-ba
 | Custom integrations | Fulfillment, address validation, taxes, fraud, tracking, analytics | All must be rewritten; each maps to a specific layer in the new stack |
 | Admin roles | Full Admin, E-commerce Manager, Content Manager, Customer Support, Marketing | Separate Medusa + Strapi panels; no unified dashboard in early phases |
 | Payment gateways | Braintree (primary), BlueSnap, Afterpay | Medusa v2 payment provider modules; Braintree handles subscription vaults |
+
+---
+
+## Current implementation snapshot — 2026-04-26
+
+Done locally:
+
+- Nuxt storefront shell with fixed header, mega menu, mobile menu, footer, self-hosted fonts, and original-site styling tokens.
+- Strapi home page renders `hero`, `logos-slider`, `best-sellers`, `all-products`, and `insta-block`.
+- Strapi product page for `particle-face-mask` uses a PDP-only dynamic zone with `pdp.add-to-cart-regular`.
+- Nuxt PDP route `/product/[handle]` fetches Strapi editorial content and Medusa commerce data by matching `handle`.
+- Medusa-backed add-to-cart works from the PDP quantity cards.
+- Cart drawer opens after add-to-cart and updates the header cart count.
+- `/cart` exists as a Strapi-backed page with `sections.cart-main`, showing live Medusa line items and recalculated totals after quantity update/remove.
+- Dev/admin toolbar exists as a collapsed top tab with Strapi edit, Medusa edit, open cart, clear cart, and reload actions.
+
+Important operational findings:
+
+- Do not reintroduce Strapi `medusaId`; matching `handle` is the active cross-system link.
+- Strapi editorial media must use upload/media fields, not external image URLs.
+- Local Medusa cart needed publishable key → sales channel linking and local inventory checks disabled until stock locations are configured.
+- Medusa line-item delete returns `204`, so Nuxt must refetch and return the updated cart.
+
+Next major work:
+
+- Checkout: shipping, payment session, order placement, confirmation page.
+- Customer/guest auth: Medusa customer login/register/logout, previous orders, guest cart attach/merge.
+- Remaining PDPs and PDP sections for the catalog.
+- Category/product listing pages matching WooCommerce URL patterns.
+- Additional cart sections from Strapi (`Bundle and Save`, reviews, trust blocks, upsells).
 
 ---
 
@@ -361,15 +391,15 @@ apps/content/src/api/page/
 
 Dynamic zone includes all `sections.*` components.
 
-**`product-page-content`** — editorial enrichment for PDPs (marketing copy on top of Medusa commerce data):
+**Current PDP content model** — editorial enrichment for PDPs lives in `api::product.product`:
 
 ```
-apps/content/src/api/product-page-content/
-  content-types/product-page-content/
-    schema.json   ← { medusaHandle (string, unique), seo (shared.seo, single), sections (dynamiczone) }
+apps/content/src/api/product/
+  content-types/product/
+    schema.json   ← { handle, title, subtitle, description, thumbnail, images, seo, sections }
 ```
 
-Nuxt fetches `product-page-content` by `medusaHandle` and merges it with Medusa product data.
+The `sections` dynamic zone is PDP-only and currently allows `pdp.add-to-cart-regular`. Nuxt fetches this Strapi product by `handle` and merges it with the Medusa product fetched by the same `handle`.
 
 ---
 
@@ -426,7 +456,7 @@ Fill in `packages/sdk-commerce` and `packages/sdk-content`:
 
 **`sdk-content`** — typed wrapper around Strapi REST API:
 - `getPage(slug)` — fetches `page` content type (used by catch-all route)
-- `getProductPageContent(handle)` — fetches `product-page-content` by `medusaHandle`
+- `getProductByHandle(handle)` — fetches Strapi `product` editorial content by matching `handle`
 - `getSiteSettings()`, `getNavigationMenu()`, etc.
 - Uses `NUXT_STRAPI_API_TOKEN` (read-only) — never the sync token
 
@@ -436,7 +466,7 @@ Fill in `packages/sdk-commerce` and `packages/sdk-content`:
 |---|---|---|
 | Homepage (`/`) | None | `sdk-content.getPage("/")` → sections |
 | Landing page (`/collections/skincare`) | None | `sdk-content.getPage(slug)` → sections |
-| PDP (`/product/[handle]`) | `sdk-commerce.getProductByHandle(handle)` | `sdk-content.getProductPageContent(handle)` → sections |
+| PDP (`/product/[handle]`) | `sdk-commerce.getProductByHandle(handle)` | `sdk-content.getProductByHandle(handle)` → PDP sections |
 
 ---
 
@@ -457,7 +487,7 @@ Fill in `packages/sdk-commerce` and `packages/sdk-content`:
 
 ### Phase 3 deliverable
 
-- Strapi has `page` and `product-page-content` content types; section component library is defined
+- Strapi has `page`, `product`, and section/PDP component schemas; section component library is defined
 - Nuxt `SectionRenderer` can render any section type with visibility/A/B testing
 - Homepage (`/`) and PDP (`/product/[handle]`) render from live data
 - SCSS scaffold matches existing site structure
@@ -586,7 +616,7 @@ This is a significant engineering task that needs its own dedicated phase (betwe
 - Medusa v2 must be configured with all regions/currencies **before** migration runs, so imported prices land in the right price sets
 - Customer records must be imported before order records (orders reference customers)
 - Subscriptions may require a custom Medusa v2 module — Medusa does not have native subscription support out of the box
-- After migration, the sync workflows must be run once to push all imported Medusa products into Strapi (populating `medusaId` on each Strapi entry and `metadata.strapi_id` on each Medusa product)
+- After migration, ensure every Medusa product that needs editorial PDP content has a matching Strapi `product` entry with the same `handle`. Do not use `medusaId` or sync workflows.
 - Migration should be a **one-time scripted process**, not a live sync — run it, verify, cut over
 
 **Migration phase (to be planned in detail later — call it Phase 2.5 or a separate track):**
@@ -1030,19 +1060,17 @@ Three payment providers must be supported. All are implemented as **Medusa v2 pa
 
 ## Strapi API token architecture
 
-Three separate tokens are needed. Create these in Strapi Admin → Settings → API Tokens.
+Sync/webhook tokens from the old architecture are removed. Create only the tokens that are still used.
 
 | Token | Used by | Permission level | Scope |
 |---|---|---|---|
-| `STRAPI_SYNC_TOKEN` | Medusa `apps/commerce` Strapi Module (`@strapi/client`) | **Full access** or custom read-write | `product` content type + media library upload |
-| `STRAPI_STOREFRONT_TOKEN` | Nuxt `apps/storefront` sdk-content (editorial reads) | **Read-only** | Editorial content types only: `landing-page`, `blog-post`, `marketing-banner`, etc. |
-| *(Medusa Secret API Key)* | Strapi webhook → Medusa (`POST /webhooks/strapi`) | N/A — created in **Medusa Admin**, not Strapi | Used as `Authorization: Bearer <key>` header on the Strapi webhook config |
+| `NUXT_STRAPI_API_TOKEN` | Nuxt `apps/storefront` server routes | Read-only is preferred; write is only needed for local seed scripts if reused | Site settings, pages, products, media reads |
+| Strapi Admin session token | One-off content seeding scripts | Admin user permissions | Create/update/publish pages/products and upload media |
 
 **Notes:**
-- Product data does NOT require `STRAPI_STOREFRONT_TOKEN` from the storefront — it arrives via Medusa's virtual link in a single Medusa Store API call
-- `STRAPI_SYNC_TOKEN` must have write access to the media library so product images can be uploaded from Medusa
-- Both Strapi tokens go in `.env` — add them after creating tokens in Strapi Admin during Phase 2 setup
-- The Medusa Secret API Key is created in Medusa Admin → Settings → Secret API Keys during Phase 2.6
+- Nuxt server routes query Strapi directly; the browser never receives the token.
+- Content seeding should use Strapi Admin API login (`/admin/login`) and Content Manager endpoints, as documented in `docs/CONTENT-SEEDING.md`.
+- Product images used by editorial sections are uploaded to Strapi; Medusa product thumbnails may still contain imported commerce/catalog URLs until the catalog migration is cleaned up.
 
 ---
 

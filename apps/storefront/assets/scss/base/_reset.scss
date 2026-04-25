@@ -1,4 +1,3 @@
-// Minimal CSS reset — built in Phase 3 from existing site styles
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -12,9 +11,9 @@ html {
 }
 
 body {
-  font-family: $font-sans;
-  color: $color-text;
-  background-color: $color-bg;
+  font-family: $font-body;
+  color: $color-navy;
+  background-color: $color-white;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,7 +22,6 @@ body {
 img,
 video {
   max-width: 100%;
-  height: auto;
   display: block;
 }
 
@@ -34,6 +32,22 @@ textarea {
   font: inherit;
 }
 
+button {
+  border: 0;
+  color: inherit;
+  background: transparent;
+  appearance: none;
+}
+
+.btn-reset {
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+  appearance: none;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -42,4 +56,15 @@ a {
 ul,
 ol {
   list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li {
+  margin: 0;
 }

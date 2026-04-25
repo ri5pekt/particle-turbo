@@ -1,5 +1,11 @@
 <template>
   <div id="app">
-    <NuxtPage />
+    <ClientOnly>
+      <AdminBar />
+    </ClientOnly>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <CartDrawer />
   </div>
 </template>

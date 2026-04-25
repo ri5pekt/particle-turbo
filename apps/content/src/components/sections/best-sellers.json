@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_sections_best_sellers",
+  "info": {
+    "displayName": "Best Sellers",
+    "icon": "shoppingCart",
+    "description": "Homepage best-sellers product card grid."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Best Sellers"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.best-seller-item"
+    }
+  }
+}

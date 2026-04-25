@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_shared_logo_items",
+  "info": {
+    "displayName": "Logo Item",
+    "icon": "picture",
+    "description": "A single logo in a logos slider or press bar."
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "alt": {
+      "type": "string",
+      "required": true,
+      "description": "Alt text for screen readers (e.g. 'Men's Health logo')"
+    },
+    "url": {
+      "type": "string",
+      "description": "Optional link if the logo should be clickable."
+    }
+  }
+}

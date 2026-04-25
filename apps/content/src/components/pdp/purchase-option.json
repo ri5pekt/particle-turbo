@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_pdp_purchase_options",
+  "info": {
+    "displayName": "PDP Purchase Option",
+    "icon": "shoppingCart",
+    "description": "A quantity/price option in the PDP add-to-cart box."
+  },
+  "options": {},
+  "attributes": {
+    "quantity": {
+      "type": "integer",
+      "required": true
+    },
+    "unit_label": {
+      "type": "string",
+      "required": true
+    },
+    "price_per_unit": {
+      "type": "string",
+      "required": true
+    },
+    "total_label": {
+      "type": "string"
+    },
+    "save_label": {
+      "type": "string"
+    },
+    "badge_label": {
+      "type": "string"
+    },
+    "default_selected": {
+      "type": "boolean",
+      "default": false
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

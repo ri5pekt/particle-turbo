@@ -1,0 +1,59 @@
+{
+  "collectionName": "components_pdp_add_to_cart_regulars",
+  "info": {
+    "displayName": "Add to Cart - Regular",
+    "icon": "shoppingCart",
+    "description": "Regular PDP hero section with vertical gallery and product purchase panel."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "brand_label": {
+      "type": "string",
+      "default": "Particle"
+    },
+    "product_title": {
+      "type": "string",
+      "required": true
+    },
+    "review_count": {
+      "type": "integer"
+    },
+    "rating_percent": {
+      "type": "decimal",
+      "default": 100
+    },
+    "headline": {
+      "type": "text",
+      "required": true
+    },
+    "excerpt": {
+      "type": "richtext"
+    },
+    "stock_text": {
+      "type": "string"
+    },
+    "add_to_cart_label": {
+      "type": "string",
+      "default": "Add To Cart"
+    },
+    "gallery": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.gallery-item"
+    },
+    "guarantees": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.guarantee-item"
+    },
+    "purchase_options": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.purchase-option"
+    }
+  }
+}

@@ -88,6 +88,9 @@ importers:
 
   apps/storefront:
     dependencies:
+      '@headlessui/vue':
+        specifier: ^1.7.23
+        version: 1.7.23(vue@3.5.33(typescript@5.9.3))
       '@particle-turbo/sdk-commerce':
         specifier: workspace:*
         version: link:../../packages/sdk-commerce
@@ -97,6 +100,12 @@ importers:
       '@particle-turbo/types-shared':
         specifier: workspace:*
         version: link:../../packages/types-shared
+      '@vueuse/core':
+        specifier: ^14.2.1
+        version: 14.2.1(vue@3.5.33(typescript@5.9.3))
+      '@vueuse/nuxt':
+        specifier: ^14.2.1
+        version: 14.2.1(magicast@0.5.2)(nuxt@3.21.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@20.19.39)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(commander@14.0.3)(db0@0.3.4)(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(optionator@0.9.4)(rollup-plugin-visualizer@7.0.1(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(typescript@5.9.3)(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(sass@1.99.0)(terser@5.46.1)(yaml@2.8.3))(yaml@2.8.3))(vue@3.5.33(typescript@5.9.3))
       nuxt:
         specifier: ^3.0.0
         version: 3.21.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@20.19.39)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(commander@14.0.3)(db0@0.3.4)(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(optionator@0.9.4)(rollup-plugin-visualizer@7.0.1(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(typescript@5.9.3)(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(sass@1.99.0)(terser@5.46.1)(yaml@2.8.3))(yaml@2.8.3)
@@ -1091,6 +1100,12 @@ packages:
 
   '@hapi/bourne@3.0.0':
     resolution: {integrity: sha512-Waj1cwPXJDucOib4a3bAISsKJVb15MKi9IvmTI/7ssVEm6sywXGjVJDhl6/umt1pK1ZS7PacXU3A1PmFKHEZ2w==}
+
+  '@headlessui/vue@1.7.23':
+    resolution: {integrity: sha512-JzdCNqurrtuu0YW6QaDtR2PIYCKPUWq28csDyMvN4zmGccmE7lz40Is6hc3LA4HFeCI7sekZ/PQMTNmn9I/4Wg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      vue: ^3.2.0
 
   '@hookform/error-message@2.0.1':
     resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
@@ -5004,6 +5019,11 @@ packages:
   '@tanstack/virtual-core@3.14.0':
     resolution: {integrity: sha512-JLANqGy/D6k4Ujmh8Tr25lGimuOXNiaVyXaCAZS0W+1390sADdGnyUdSWNIfd49gebtIxGMij4IktRVzrdr12Q==}
 
+  '@tanstack/vue-virtual@3.13.24':
+    resolution: {integrity: sha512-A0k2qF0zFSUStXSZkGXABouXr2Tw2Ztl/cVIYG9qy84uR8W7UNjAcX3DvzBS3YnDcwvLxab8v7dbmYBZ39itDA==}
+    peerDependencies:
+      vue: ^2.7.0 || ^3.0.0
+
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
     engines: {node: '>=18'}
@@ -5301,6 +5321,9 @@ packages:
   '@types/use-sync-external-store@0.0.3':
     resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
 
+  '@types/web-bluetooth@0.0.21':
+    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
   '@types/wrap-ansi@3.0.0':
     resolution: {integrity: sha512-ltIpx+kM7g/MLRZfkbL7EsCEjfzCcScLpkg37eXEtx5kmrAKBkTJwd1GIAjDSL8wTpM6Hzn5YO4pSb91BEwu1g==}
 
@@ -5466,6 +5489,25 @@ packages:
 
   '@vue/shared@3.5.33':
     resolution: {integrity: sha512-5vR2QIlmaLG77Ygd4pMP6+SGQ5yox9VhtnbDWTy9DzMzdmeLxZ1QqxrywEZ9sa1AVubfIJyaCG3ytyWU81ufcQ==}
+
+  '@vueuse/core@14.2.1':
+    resolution: {integrity: sha512-3vwDzV+GDUNpdegRY6kzpLm4Igptq+GA0QkJ3W61Iv27YWwW/ufSlOfgQIpN6FZRMG0mkaz4gglJRtq5SeJyIQ==}
+    peerDependencies:
+      vue: ^3.5.0
+
+  '@vueuse/metadata@14.2.1':
+    resolution: {integrity: sha512-1ButlVtj5Sb/HDtIy1HFr1VqCP4G6Ypqt5MAo0lCgjokrk2mvQKsK2uuy0vqu/Ks+sHfuHo0B9Y9jn9xKdjZsw==}
+
+  '@vueuse/nuxt@14.2.1':
+    resolution: {integrity: sha512-DHgFMUpyH98M1YM9pbnRjFXMAMKEsHntJeOp8rOXs8QN2cvJBzEZ+TTWIBSPESNFOEwM02RA6BDsaTL35OK4Mw==}
+    peerDependencies:
+      nuxt: ^3.0.0 || ^4.0.0-0
+      vue: ^3.5.0
+
+  '@vueuse/shared@14.2.1':
+    resolution: {integrity: sha512-shTJncjV9JTI4oVNyF1FQonetYAiTBd+Qj7cY89SWbXSkx7gyhrgtEdF2ZAVWS1S3SHlaROO6F2IesJxQEkZBw==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -13365,6 +13407,11 @@ snapshots:
 
   '@hapi/bourne@3.0.0': {}
 
+  '@headlessui/vue@1.7.23(vue@3.5.33(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/vue-virtual': 3.13.24(vue@3.5.33(typescript@5.9.3))
+      vue: 3.5.33(typescript@5.9.3)
+
   '@hookform/error-message@2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.49.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
@@ -18739,6 +18786,11 @@ snapshots:
 
   '@tanstack/virtual-core@3.14.0': {}
 
+  '@tanstack/vue-virtual@3.13.24(vue@3.5.33(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/virtual-core': 3.14.0
+      vue: 3.5.33(typescript@5.9.3)
+
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.29.0
@@ -19075,6 +19127,8 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.3': {}
 
+  '@types/web-bluetooth@0.0.21': {}
+
   '@types/wrap-ansi@3.0.0': {}
 
   '@ucast/core@1.10.2': {}
@@ -19319,6 +19373,30 @@ snapshots:
       vue: 3.5.33(typescript@5.9.3)
 
   '@vue/shared@3.5.33': {}
+
+  '@vueuse/core@14.2.1(vue@3.5.33(typescript@5.9.3))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 14.2.1
+      '@vueuse/shared': 14.2.1(vue@3.5.33(typescript@5.9.3))
+      vue: 3.5.33(typescript@5.9.3)
+
+  '@vueuse/metadata@14.2.1': {}
+
+  '@vueuse/nuxt@14.2.1(magicast@0.5.2)(nuxt@3.21.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@20.19.39)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(commander@14.0.3)(db0@0.3.4)(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(optionator@0.9.4)(rollup-plugin-visualizer@7.0.1(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(typescript@5.9.3)(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(sass@1.99.0)(terser@5.46.1)(yaml@2.8.3))(yaml@2.8.3))(vue@3.5.33(typescript@5.9.3))':
+    dependencies:
+      '@nuxt/kit': 4.4.2(magicast@0.5.2)
+      '@vueuse/core': 14.2.1(vue@3.5.33(typescript@5.9.3))
+      '@vueuse/metadata': 14.2.1
+      local-pkg: 1.1.2
+      nuxt: 3.21.2(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@20.19.39)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(commander@14.0.3)(db0@0.3.4)(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(optionator@0.9.4)(rollup-plugin-visualizer@7.0.1(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(typescript@5.9.3)(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(sass@1.99.0)(terser@5.46.1)(yaml@2.8.3))(yaml@2.8.3)
+      vue: 3.5.33(typescript@5.9.3)
+    transitivePeerDependencies:
+      - magicast
+
+  '@vueuse/shared@14.2.1(vue@3.5.33(typescript@5.9.3))':
+    dependencies:
+      vue: 3.5.33(typescript@5.9.3)
 
   '@webassemblyjs/ast@1.14.1':
     dependencies:

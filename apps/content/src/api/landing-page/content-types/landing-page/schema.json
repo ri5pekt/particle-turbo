@@ -55,17 +55,11 @@
     "sections": {
       "type": "dynamiczone",
       "components": [
-        "sections.text-image",
-        "sections.benefits",
-        "sections.testimonials",
-        "sections.faq",
-        "sections.rich-text",
-        "sections.cta-banner",
-        "sections.video",
-        "sections.before-after",
-        "sections.how-to-use",
-        "sections.ingredients",
-        "sections.product-showcase"
+        "sections.logos-slider",
+        "sections.best-sellers",
+        "sections.all-products",
+        "sections.insta-block",
+        "sections.cart-main"
       ]
     }
   }

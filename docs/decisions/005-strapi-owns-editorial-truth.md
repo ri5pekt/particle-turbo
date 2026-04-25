@@ -17,5 +17,5 @@ Strapi is the single source of truth for all editorial and content data. No othe
 ## Consequences
 - Medusa never stores SEO copy or marketing content
 - All content is locale-aware via Strapi i18n — every content type has locale variants
-- Product sync content types (`product`, `product-variant`, `product-option`, `product-option-value`) are linked to Medusa via `medusaId` field — maintained automatically by the two-way sync (see ADR 011)
+- Product editorial content is linked to Medusa by matching product `handle` (see ADR 010/011). The older `medusaId` sync approach has been removed and should not be reintroduced.
 - Editorial content types (landing pages, blog posts, banners, SEO fields) are Strapi-only and not synced to Medusa

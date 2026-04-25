@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_pdp_guarantee_items",
+  "info": {
+    "displayName": "PDP Guarantee Item",
+    "icon": "check",
+    "description": "Small guarantee row under the PDP product excerpt."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

@@ -532,6 +532,15 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    sections: Schema.Attribute.DynamicZone<
+      [
+        'sections.logos-slider',
+        'sections.best-sellers',
+        'sections.all-products',
+        'sections.insta-block',
+        'sections.cart-main',
+      ]
+    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     show_footer: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     show_header: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
@@ -548,37 +557,6 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.DefaultTo<'default'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiNavigationNavigation extends Struct.CollectionTypeSchema {
-  collectionName: 'navigations';
-  info: {
-    description: 'Site menus identified by slug. Create entries: main-nav, footer-nav, footer-legal. Nuxt fetches by identifier.';
-    displayName: 'Navigation';
-    pluralName: 'navigations';
-    singularName: 'navigation';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    identifier: Schema.Attribute.UID & Schema.Attribute.Required;
-    items: Schema.Attribute.Component<'shared.nav-item', true>;
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::navigation.navigation'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -605,6 +583,15 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    sections: Schema.Attribute.DynamicZone<
+      [
+        'sections.logos-slider',
+        'sections.best-sellers',
+        'sections.all-products',
+        'sections.insta-block',
+        'sections.cart-main',
+      ]
+    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -617,7 +604,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
-    description: 'Editorial product content. Joined to Medusa by matching handle. Editors add SEO, sections, and rich description here.';
+    description: 'Editorial product content. Editors add SEO, PDP sections, media, and rich description here.';
     displayName: 'Product';
     pluralName: 'products';
     singularName: 'product';
@@ -640,6 +627,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    sections: Schema.Attribute.DynamicZone<['pdp.add-to-cart-regular']>;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     subtitle: Schema.Attribute.String;
     thumbnail: Schema.Attribute.Media<'images'>;
@@ -685,11 +673,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
     site_name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Particle For Men'>;
-    social_facebook: Schema.Attribute.String;
-    social_instagram: Schema.Attribute.String;
-    social_tiktok: Schema.Attribute.String;
-    social_twitter: Schema.Attribute.String;
-    social_youtube: Schema.Attribute.String;
+    social_links: Schema.Attribute.Component<'global.social-link', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1210,7 +1194,6 @@ declare module '@strapi/strapi' {
       'api::article-category.article-category': ApiArticleCategoryArticleCategory;
       'api::article.article': ApiArticleArticle;
       'api::landing-page.landing-page': ApiLandingPageLandingPage;
-      'api::navigation.navigation': ApiNavigationNavigation;
       'api::page.page': ApiPagePage;
       'api::product.product': ApiProductProduct;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;

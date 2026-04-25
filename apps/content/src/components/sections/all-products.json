@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_sections_all_products",
+  "info": {
+    "displayName": "All Products",
+    "icon": "shoppingCart",
+    "description": "Tabbed homepage product grid."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "All Products"
+    },
+    "subtitle_html": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.product-category"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.all-product-item"
+    }
+  }
+}

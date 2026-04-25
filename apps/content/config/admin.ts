@@ -10,4 +10,7 @@ export default ({ env }: { env: (key: string, fallback?: string) => string }) =>
       salt: env('TRANSFER_TOKEN_SALT', 'change-me-transfer-token-salt'),
     },
   },
+  rateLimit: {
+    enabled: false,
+  },
 })

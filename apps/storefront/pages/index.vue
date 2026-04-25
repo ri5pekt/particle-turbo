@@ -1,14 +1,39 @@
 <template>
-  <main class="home">
-    <h1>particle-turbo</h1>
-    <p>Storefront is running. Phase 3 will build real pages here.</p>
-    <ul>
-      <li>Commerce (Medusa): <a :href="medusaUrl" target="_blank">{{ medusaUrl }}</a></li>
-      <li>Content (Strapi): <a :href="strapiUrl" target="_blank">{{ strapiUrl }}</a></li>
-    </ul>
-  </main>
+  <div class="home-page">
+    <HeroSection :hero="page?.hero" />
+    <SectionRenderer
+      v-for="section in page?.sections || []"
+      :key="section.id || section.__component"
+      :section="section"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-const { public: { medusaUrl, strapiUrl } } = useRuntimeConfig()
+import type { PageData } from '~/types/content'
+
+const { data: page, error } = await useAsyncData<PageData>('home-page', () => {
+  return $fetch('/api/pages/home')
+})
+
+if (error.value) {
+  throw createError(error.value)
+}
+
+useSeoMeta({
+  title: () => page.value?.seo?.metaTitle || page.value?.title || 'Particle',
+  description: () => page.value?.seo?.metaDescription || '',
+  robots: () => page.value?.seo?.noIndex ? 'noindex,nofollow' : 'index,follow',
+})
+
+useHead(() => ({
+  link: page.value?.seo?.canonicalURL
+    ? [
+        {
+          rel: 'canonical',
+          href: page.value.seo.canonicalURL,
+        },
+      ]
+    : [],
+}))
 </script>
