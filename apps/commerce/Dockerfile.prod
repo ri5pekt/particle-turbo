@@ -18,6 +18,8 @@ COPY apps/commerce ./apps/commerce
 
 RUN pnpm install --filter @particle-turbo/commerce... --frozen-lockfile
 RUN pnpm --filter @particle-turbo/commerce build
+RUN mkdir -p apps/commerce/.medusa/server/public/admin \
+    && cp -R apps/commerce/dist/public/admin/. apps/commerce/.medusa/server/public/admin/
 
 WORKDIR /workspace/apps/commerce
 
