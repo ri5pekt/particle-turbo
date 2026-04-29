@@ -95,12 +95,29 @@
           <span>{{ section.brand_label || 'Particle' }}</span> {{ section.product_title }}
         </h1>
 
-        <a href="#reviews" class="review-scroll">
+        <a href="#stampedcreambot" class="review-scroll">
           <div class="product-cart__reviews">
-            <div class="stars-rating stars-rating--small">
-              <span :style="{ width: `${section.rating_percent || 100}%` }" />
+            <div class="stars-rating stars-rating--small" aria-hidden="true">
+              <svg
+                v-for="(fill, index) in reviewStarFills"
+                :key="index"
+                class="stars-rating__star"
+                viewBox="0 0 24 24"
+                focusable="false"
+              >
+                <defs>
+                  <linearGradient :id="starGradientId(index)" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop :offset="`${fill}%`" stop-color="#f5b301" />
+                    <stop :offset="`${fill}%`" stop-color="#d9d9d9" />
+                  </linearGradient>
+                </defs>
+                <path
+                  :fill="`url(#${starGradientId(index)})`"
+                  d="M12 1.5l3.13 6.34 7 .99-5.06 4.93 1.19 6.96L12 17.43l-6.26 3.29 1.19-6.96-5.06-4.93 7-.99L12 1.5z"
+                />
+              </svg>
             </div>
-            <span v-if="section.review_count" class="text">{{ section.review_count }}</span>
+            <span v-if="reviewText" class="text">{{ reviewText }}</span>
           </div>
         </a>
 
@@ -163,15 +180,15 @@
                 <div class="th-products__content">
                   <div class="th-products__unit">{{ option.unit_label }}</div>
                   <div class="th-products__price">
-                    <strong>$</strong>
-                    <span class="price-num">{{ option.price_per_unit }}</span>
-                    <span> /Per Unit</span>
+                    <strong>{{ option.priceSymbol }}</strong>
+                    <span class="price-num">{{ option.priceAmount }}</span>
+                    <span>{{ option.pricePerUnitLabel }}</span>
                   </div>
-                  <div v-if="option.total_label" class="th-products__total">
-                    {{ option.total_label }} Total
+                  <div class="th-products__total">
+                    {{ option.totalDisplay }} Total
                   </div>
-                  <div v-if="option.save_label" class="th-products__save">
-                    You Save: {{ option.save_label }}
+                  <div v-if="option.saveDisplay" class="th-products__save">
+                    You Save: {{ option.saveDisplay }}
                   </div>
                 </div>
               </div>
@@ -213,10 +230,21 @@ const isMobileThumbs = useMediaQuery('(max-width: 768px)')
 const isCompactThumbs = useMediaQuery('(max-width: 1310px)')
 
 const gallery = computed(() => props.section.gallery?.filter((item) => item.image?.url) || [])
-const purchaseOptions = computed(() => props.section.purchase_options?.filter((option) => option.image?.url) || [])
+const purchaseOptions = computed(() => getPricedPdpPurchaseOptions(props.section.purchase_options, props.product))
 const activeGalleryItem = computed(() => gallery.value[activeSlide.value])
 const activeOption = ref(0)
 const activePurchaseOption = computed(() => purchaseOptions.value[activeOption.value])
+const stampedSummary = useStampedReviewsSummary(() => props.product, () => props.section.product_title)
+const reviewRatingPercent = computed(() => stampedSummary.ratingPercent.value ?? sectionRatingPercent.value)
+const reviewText = computed(() => stampedSummary.reviewText.value || sectionReviewText.value)
+const reviewStarFills = computed(() => {
+  const rating = Math.min(5, Math.max(0, (reviewRatingPercent.value / 100) * 5))
+
+  return Array.from({ length: 5 }, (_, index) => Math.min(100, Math.max(0, (rating - index) * 100)))
+})
+const starGradientId = (index: number) => {
+  return `pdp-regular-star-${props.section.id || 'hero'}-${index}`
+}
 const medusaVariantId = computed(() => props.product?.commerce?.default_variant_id)
 const isAddingToCart = computed(() => cart.isLoading.value)
 const addToCartMessage = computed(() => {
@@ -236,6 +264,12 @@ const isAddToCartDisabled = computed(() => {
 const visibleThumbs = 4
 const thumbWindowStart = ref(0)
 const maxThumbStart = computed(() => Math.max(0, gallery.value.length - visibleThumbs))
+const sectionRatingPercent = computed(() => Math.min(100, Math.max(0, props.section.rating_percent || 100)))
+const sectionReviewText = computed(() => {
+  return props.section.review_count
+    ? `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(props.section.review_count)} Reviews`
+    : ''
+})
 const thumbOffset = computed(() => {
   if (isMobileThumbs.value) {
     return 0
@@ -483,30 +517,17 @@ const handleAddToCart = async () => {
 }
 
 .stars-rating--small {
-  position: relative;
-  width: 104px;
-  min-width: 104px;
-  height: 21px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: max-content;
+}
 
-  &::before {
-    color: #d6d6d6;
-    font-size: 20px;
-    letter-spacing: 1px;
-    content: '★★★★★';
-  }
-
-  span {
-    position: absolute;
-    inset: 0 auto 0 0;
-    overflow: hidden;
-
-    &::before {
-      color: #f5a623;
-      font-size: 20px;
-      letter-spacing: 1px;
-      content: '★★★★★';
-    }
-  }
+.stars-rating__star {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
 }
 
 .product-cart__reviews .text {

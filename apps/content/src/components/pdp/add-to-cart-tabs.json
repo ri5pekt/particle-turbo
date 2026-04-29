@@ -1,0 +1,72 @@
+{
+  "collectionName": "components_pdp_add_to_cart_tabs",
+  "info": {
+    "displayName": "Add to Cart - Tabs",
+    "icon": "shoppingCart",
+    "description": "PDP hero with auto story slider, tabs, quantity cards, hurry stock bar, and add-to-cart."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "brand_label": {
+      "type": "string",
+      "default": "Particle"
+    },
+    "product_title": {
+      "type": "string",
+      "required": true
+    },
+    "headline": {
+      "type": "text",
+      "required": true
+    },
+    "review_count": {
+      "type": "integer"
+    },
+    "rating_percent": {
+      "type": "decimal",
+      "default": 100
+    },
+    "add_to_cart_label": {
+      "type": "string",
+      "default": "Add To Cart"
+    },
+    "hurry_label": {
+      "type": "string",
+      "default": "HURRY! Selling out fast!"
+    },
+    "hurry_stock_count": {
+      "type": "integer"
+    },
+    "hurry_stock_suffix": {
+      "type": "string",
+      "default": "left in stock."
+    },
+    "hurry_bar_percent": {
+      "type": "integer",
+      "default": 41
+    },
+    "autoplay_ms": {
+      "type": "integer",
+      "default": 4500
+    },
+    "gallery": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.gallery-item"
+    },
+    "tabs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.tab-item"
+    },
+    "purchase_options": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.purchase-option"
+    }
+  }
+}

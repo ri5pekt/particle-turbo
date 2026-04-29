@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_landing_advertorial_heroes",
+  "info": {
+    "displayName": "Advertorial Hero",
+    "icon": "heading",
+    "description": "Landing page headline, byline, and intro copy for long-form advertorials."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "headline": {
+      "type": "text",
+      "required": true
+    },
+    "author": {
+      "type": "string"
+    },
+    "intro_html": {
+      "type": "richtext"
+    }
+  }
+}

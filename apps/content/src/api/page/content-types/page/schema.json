@@ -38,7 +38,8 @@
         "sections.best-sellers",
         "sections.all-products",
         "sections.insta-block",
-        "sections.cart-main"
+        "sections.cart-main",
+        "sections.checkout-main"
       ]
     }
   }

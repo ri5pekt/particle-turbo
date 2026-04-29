@@ -1,9 +1,8 @@
 <template>
-  <button
+  <AppLink
     class="cart-icon"
-    type="button"
+    to="/cart"
     aria-label="Cart"
-    @click="openCart"
   >
     <img
       class="cart-icon__image"
@@ -11,11 +10,11 @@
       alt=""
     >
     <span class="cart-icon__count">{{ itemCount }}</span>
-  </button>
+  </AppLink>
 </template>
 
 <script setup lang="ts">
-const { itemCount, openCart, refreshCart } = useCart()
+const { itemCount, refreshCart } = useCart()
 
 onMounted(() => {
   refreshCart()

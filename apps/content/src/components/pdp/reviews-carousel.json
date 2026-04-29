@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_pdp_reviews_carousels",
+  "info": {
+    "displayName": "Reviews Carousel",
+    "icon": "star",
+    "description": "PDP carousel for customer reviews and testimonial videos."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title_html": {
+      "type": "text",
+      "default": "Reviews of <span>Particle men</span>"
+    },
+    "autoplay_ms": {
+      "type": "integer",
+      "default": 5500
+    },
+    "reviews": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.review-item"
+    }
+  }
+}

@@ -79,7 +79,7 @@
             <div v-if="cart?.total !== undefined" class="cart-sidebar__total">
               Total: {{ formatMoney(cart.total, cart.currency_code) }}
             </div>
-            <AppLink class="button-cart" to="/cart">
+            <AppLink class="button-cart" to="/cart" @click="closeCart">
               <span>My Cart</span>
               <img src="/icons/basket.svg" alt="">
             </AppLink>
@@ -129,17 +129,11 @@ const lineItemTitle = (item: CartLineItem) => {
   return item.product_title || item.title || item.subtitle || 'Particle product'
 }
 
-const amountToMajor = (amount: number, currencyCode = 'usd') => {
-  const zeroDecimalCurrencies = new Set(['jpy'])
-
-  return zeroDecimalCurrencies.has(currencyCode.toLowerCase()) ? amount : amount / 100
-}
-
 const formatMoney = (amount: number, currencyCode = 'usd') => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currencyCode.toUpperCase(),
-  }).format(amountToMajor(amount, currencyCode))
+  }).format(amount)
 }
 
 watch(isOpen, (open) => {

@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_pdp_more_products",
+  "info": {
+    "displayName": "More Products",
+    "icon": "shoppingCart",
+    "description": "Recommended products grid for the bottom of PDP pages."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "default": "More Products For You"
+    },
+    "limit": {
+      "type": "integer",
+      "default": 4
+    },
+    "button_label": {
+      "type": "string",
+      "default": "Shop Now"
+    }
+  }
+}

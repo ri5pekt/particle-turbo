@@ -112,6 +112,113 @@ export interface GlobalSocialLink extends Struct.ComponentSchema {
   };
 }
 
+export interface LandingAdvertorialHero extends Struct.ComponentSchema {
+  collectionName: 'components_landing_advertorial_heroes';
+  info: {
+    description: 'Landing page headline, byline, and intro copy for long-form advertorials.';
+    displayName: 'Advertorial Hero';
+    icon: 'heading';
+  };
+  attributes: {
+    author: Schema.Attribute.String;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    headline: Schema.Attribute.Text & Schema.Attribute.Required;
+    intro_html: Schema.Attribute.RichText;
+  };
+}
+
+export interface LandingMediaItem extends Struct.ComponentSchema {
+  collectionName: 'components_landing_media_items';
+  info: {
+    description: 'A reusable image item for landing page galleries.';
+    displayName: 'Landing Media Item';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+  };
+}
+
+export interface LandingReasonItem extends Struct.ComponentSchema {
+  collectionName: 'components_landing_reason_items';
+  info: {
+    description: 'A numbered advertorial reason with body copy and either one image or a gallery.';
+    displayName: 'Landing Reason Item';
+    icon: 'check';
+  };
+  attributes: {
+    alt: Schema.Attribute.String;
+    body_html: Schema.Attribute.RichText;
+    gallery: Schema.Attribute.Component<'landing.media-item', true>;
+    image: Schema.Attribute.Media<'images'>;
+    number: Schema.Attribute.Integer & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface LandingReasonList extends Struct.ComponentSchema {
+  collectionName: 'components_landing_reason_lists';
+  info: {
+    description: 'A landing-only list of numbered advertorial reasons.';
+    displayName: 'Reason List';
+    icon: 'bulletList';
+  };
+  attributes: {
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    items: Schema.Attribute.Component<'landing.reason-item', true>;
+  };
+}
+
+export interface LandingReviewsAnchor extends Struct.ComponentSchema {
+  collectionName: 'components_landing_reviews_anchors';
+  info: {
+    description: 'Landing page review widget placeholder or anchor.';
+    displayName: 'Reviews Anchor';
+    icon: 'star';
+  };
+  attributes: {
+    body: Schema.Attribute.Text;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    product_id: Schema.Attribute.String;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Customer Reviews'>;
+  };
+}
+
+export interface LandingSaleOffer extends Struct.ComponentSchema {
+  collectionName: 'components_landing_sale_offers';
+  info: {
+    description: 'Promotional sale callout with countdown labels and CTA.';
+    displayName: 'Sale Offer';
+    icon: 'priceTag';
+  };
+  attributes: {
+    background_color: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#ECF0F4'>;
+    body_html: Schema.Attribute.RichText;
+    countdown_hours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<4>;
+    cta: Schema.Attribute.Component<'shared.link', false>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    headline_html: Schema.Attribute.Text & Schema.Attribute.Required;
+  };
+}
+
+export interface LandingVideoBlock extends Struct.ComponentSchema {
+  collectionName: 'components_landing_video_blocks';
+  info: {
+    description: 'Landing page video section.';
+    displayName: 'Video Block';
+    icon: 'play';
+  };
+  attributes: {
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    poster: Schema.Attribute.Media<'images'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    video: Schema.Attribute.Media<'videos'> & Schema.Attribute.Required;
+  };
+}
+
 export interface PdpAddToCartRegular extends Struct.ComponentSchema {
   collectionName: 'components_pdp_add_to_cart_regulars';
   info: {
@@ -134,6 +241,64 @@ export interface PdpAddToCartRegular extends Struct.ComponentSchema {
     rating_percent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<100>;
     review_count: Schema.Attribute.Integer;
     stock_text: Schema.Attribute.String;
+  };
+}
+
+export interface PdpAddToCartTabs extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_add_to_cart_tabs';
+  info: {
+    description: 'PDP hero with auto story slider, tabs, quantity cards, hurry stock bar, and add-to-cart.';
+    displayName: 'Add to Cart - Tabs';
+    icon: 'shoppingCart';
+  };
+  attributes: {
+    add_to_cart_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Add To Cart'>;
+    autoplay_ms: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<4500>;
+    brand_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Particle'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    gallery: Schema.Attribute.Component<'pdp.gallery-item', true>;
+    headline: Schema.Attribute.Text & Schema.Attribute.Required;
+    hurry_bar_percent: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<41>;
+    hurry_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'HURRY! Selling out fast!'>;
+    hurry_stock_count: Schema.Attribute.Integer;
+    hurry_stock_suffix: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'left in stock.'>;
+    product_title: Schema.Attribute.String & Schema.Attribute.Required;
+    purchase_options: Schema.Attribute.Component<'pdp.purchase-option', true>;
+    rating_percent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<100>;
+    review_count: Schema.Attribute.Integer;
+    tabs: Schema.Attribute.Component<'pdp.tab-item', true>;
+  };
+}
+
+export interface PdpComparisonRow extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_comparison_rows';
+  info: {
+    description: 'A feature comparison row for the PDP ingredients accordion.';
+    displayName: 'PDP Comparison Row';
+    icon: 'bulletList';
+  };
+  attributes: {
+    competitor_value: Schema.Attribute.String & Schema.Attribute.Required;
+    feature: Schema.Attribute.String & Schema.Attribute.Required;
+    particle_value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpFaqItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_faq_items';
+  info: {
+    description: 'A question and answer row for PDP accordion sections.';
+    displayName: 'PDP FAQ Item';
+    icon: 'question';
+  };
+  attributes: {
+    answer: Schema.Attribute.Text & Schema.Attribute.Required;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -165,6 +330,65 @@ export interface PdpGuaranteeItem extends Struct.ComponentSchema {
   };
 }
 
+export interface PdpIngredientItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_ingredient_items';
+  info: {
+    description: 'A single ingredient row in the PDP ingredients accordion.';
+    displayName: 'PDP Ingredient Item';
+    icon: 'check';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpIngredientsAccordion extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_ingredients_accordions';
+  info: {
+    description: 'PDP accordion section with ingredients, comparison table, FAQ, guarantee, and supporting image.';
+    displayName: 'Ingredients Accordion';
+    icon: 'bulletList';
+  };
+  attributes: {
+    comparison_rows: Schema.Attribute.Component<'pdp.comparison-row', true>;
+    comparison_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Particle Face Cream VS Competitors'>;
+    competitor_heading: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Competitors'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    faq_items: Schema.Attribute.Component<'pdp.faq-item', true>;
+    faq_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Frequently Asked Questions'>;
+    guarantee_body: Schema.Attribute.Text;
+    guarantee_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'30 Day Money Back Guarantee'>;
+    image: Schema.Attribute.Media<'images'>;
+    image_alt: Schema.Attribute.String;
+    ingredients: Schema.Attribute.Component<'pdp.ingredient-item', true>;
+    ingredients_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Premium Ingredients'>;
+    particle_heading: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Particle Face Cream'>;
+  };
+}
+
+export interface PdpMoreProducts extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_more_products';
+  info: {
+    description: 'Recommended products grid for the bottom of PDP pages.';
+    displayName: 'More Products';
+    icon: 'shoppingCart';
+  };
+  attributes: {
+    button_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Shop Now'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    limit: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<4>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'More Products For You'>;
+  };
+}
+
 export interface PdpPurchaseOption extends Struct.ComponentSchema {
   collectionName: 'components_pdp_purchase_options';
   info: {
@@ -183,6 +407,85 @@ export interface PdpPurchaseOption extends Struct.ComponentSchema {
     save_label: Schema.Attribute.String;
     total_label: Schema.Attribute.String;
     unit_label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpReviewItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_review_items';
+  info: {
+    description: 'A customer review card for PDP review carousels.';
+    displayName: 'PDP Review Item';
+    icon: 'star';
+  };
+  attributes: {
+    about: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'>;
+    image_alt: Schema.Attribute.String;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    quote: Schema.Attribute.RichText & Schema.Attribute.Required;
+    video_url: Schema.Attribute.Text;
+  };
+}
+
+export interface PdpReviewsCarousel extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_reviews_carousels';
+  info: {
+    description: 'PDP carousel for customer reviews and testimonial videos.';
+    displayName: 'Reviews Carousel';
+    icon: 'star';
+  };
+  attributes: {
+    autoplay_ms: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5500>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    reviews: Schema.Attribute.Component<'pdp.review-item', true>;
+    title_html: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Reviews of <span>Particle men</span>'>;
+  };
+}
+
+export interface PdpStampedReviews extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_stamped_reviews';
+  info: {
+    description: 'Stamped.io main reviews widget for PDP pages.';
+    displayName: 'Stamped Reviews';
+    icon: 'star';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'stampedcreambot'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    image_url: Schema.Attribute.Text;
+    product_id: Schema.Attribute.String & Schema.Attribute.Required;
+    product_name: Schema.Attribute.String;
+    product_sku: Schema.Attribute.String;
+    product_url: Schema.Attribute.String;
+  };
+}
+
+export interface PdpTabItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_tab_items';
+  info: {
+    description: 'A tab in the PDP tabbed add-to-cart layout.';
+    displayName: 'PDP Tab Item';
+    icon: 'bulletList';
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    steps: Schema.Attribute.Component<'pdp.tab-step', true>;
+  };
+}
+
+export interface PdpTabStep extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_tab_steps';
+  info: {
+    description: 'A short title/body step used inside a PDP tab.';
+    displayName: 'PDP Tab Step';
+    icon: 'check';
+  };
+  attributes: {
+    text: Schema.Attribute.Text;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -240,6 +543,55 @@ export interface SectionsCartMain extends Struct.ComponentSchema {
       Schema.Attribute.DefaultTo<'50,000+ Orders Last Month!'>;
     title_accent: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Cart'>;
     title_prefix: Schema.Attribute.String & Schema.Attribute.DefaultTo<'My'>;
+  };
+}
+
+export interface SectionsCheckoutMain extends Struct.ComponentSchema {
+  collectionName: 'components_sections_checkout_main';
+  info: {
+    description: 'Checkout form labels and supporting copy powered by Medusa.';
+    displayName: 'Checkout Main';
+    icon: 'creditCard';
+  };
+  attributes: {
+    address_1_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Street address'>;
+    address_2_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Apartment, suite, unit, etc.'>;
+    billing_title_accent: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'details'>;
+    billing_title_prefix: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Billing'>;
+    card_cvv_label: Schema.Attribute.String & Schema.Attribute.DefaultTo<'CVV'>;
+    card_expiry_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Expiration date'>;
+    card_number_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Card number'>;
+    city_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Town / City'>;
+    email_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Email address'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    first_name_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'First name'>;
+    free_shipping_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Free Shipping'>;
+    guarantee_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'30 Day Money Back Guarantee'>;
+    last_name_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Last name'>;
+    payment_note: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Payment provider fields will replace this section when Medusa payments are configured.'>;
+    payment_title_accent: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Information'>;
+    payment_title_prefix: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Payment'>;
+    phone_label: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Phone'>;
+    postcode_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Postcode / ZIP'>;
+    ship_different_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Ship to a different address?'>;
+    state_label: Schema.Attribute.String & Schema.Attribute.DefaultTo<'State'>;
   };
 }
 
@@ -407,13 +759,32 @@ declare module '@strapi/strapi' {
       'global.mega-item': GlobalMegaItem;
       'global.nav-top-item': GlobalNavTopItem;
       'global.social-link': GlobalSocialLink;
+      'landing.advertorial-hero': LandingAdvertorialHero;
+      'landing.media-item': LandingMediaItem;
+      'landing.reason-item': LandingReasonItem;
+      'landing.reason-list': LandingReasonList;
+      'landing.reviews-anchor': LandingReviewsAnchor;
+      'landing.sale-offer': LandingSaleOffer;
+      'landing.video-block': LandingVideoBlock;
       'pdp.add-to-cart-regular': PdpAddToCartRegular;
+      'pdp.add-to-cart-tabs': PdpAddToCartTabs;
+      'pdp.comparison-row': PdpComparisonRow;
+      'pdp.faq-item': PdpFaqItem;
       'pdp.gallery-item': PdpGalleryItem;
       'pdp.guarantee-item': PdpGuaranteeItem;
+      'pdp.ingredient-item': PdpIngredientItem;
+      'pdp.ingredients-accordion': PdpIngredientsAccordion;
+      'pdp.more-products': PdpMoreProducts;
       'pdp.purchase-option': PdpPurchaseOption;
+      'pdp.review-item': PdpReviewItem;
+      'pdp.reviews-carousel': PdpReviewsCarousel;
+      'pdp.stamped-reviews': PdpStampedReviews;
+      'pdp.tab-item': PdpTabItem;
+      'pdp.tab-step': PdpTabStep;
       'sections.all-products': SectionsAllProducts;
       'sections.best-sellers': SectionsBestSellers;
       'sections.cart-main': SectionsCartMain;
+      'sections.checkout-main': SectionsCheckoutMain;
       'sections.hero': SectionsHero;
       'sections.insta-block': SectionsInstaBlock;
       'sections.logos-slider': SectionsLogosSlider;

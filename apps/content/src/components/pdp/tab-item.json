@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_pdp_tab_items",
+  "info": {
+    "displayName": "PDP Tab Item",
+    "icon": "bulletList",
+    "description": "A tab in the PDP tabbed add-to-cart layout."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.tab-step"
+    }
+  }
+}

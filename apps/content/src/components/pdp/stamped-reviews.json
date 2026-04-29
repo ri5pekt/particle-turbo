@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_pdp_stamped_reviews",
+  "info": {
+    "displayName": "Stamped Reviews",
+    "icon": "star",
+    "description": "Stamped.io main reviews widget for PDP pages."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "anchor_id": {
+      "type": "string",
+      "default": "stampedcreambot"
+    },
+    "product_id": {
+      "type": "string",
+      "required": true
+    },
+    "product_sku": {
+      "type": "string"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "product_url": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "text"
+    }
+  }
+}

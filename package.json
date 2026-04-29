@@ -11,7 +11,8 @@
     "clean": "turbo clean",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
-    "docker:infra": "docker compose up postgres-commerce postgres-content redis"
+    "docker:infra": "docker compose up postgres-commerce postgres-content redis",
+    "seed:face-cream-landing": "node scripts/seed-face-cream-landing-page.mjs"
   },
   "devDependencies": {
     "turbo": "latest"

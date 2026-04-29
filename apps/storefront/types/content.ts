@@ -196,12 +196,39 @@ export interface CartMainSectionData {
   monthly_orders_text?: string
 }
 
+export interface CheckoutMainSectionData {
+  id?: number
+  __component: 'sections.checkout-main'
+  enabled?: boolean
+  billing_title_prefix?: string
+  billing_title_accent?: string
+  payment_title_prefix?: string
+  payment_title_accent?: string
+  free_shipping_text?: string
+  guarantee_text?: string
+  ship_different_label?: string
+  payment_note?: string
+  email_label?: string
+  first_name_label?: string
+  last_name_label?: string
+  address_1_label?: string
+  address_2_label?: string
+  city_label?: string
+  state_label?: string
+  postcode_label?: string
+  phone_label?: string
+  card_number_label?: string
+  card_expiry_label?: string
+  card_cvv_label?: string
+}
+
 export type PageSection =
   | LogosSliderSectionData
   | BestSellersSectionData
   | AllProductsSectionData
   | InstaBlockSectionData
   | CartMainSectionData
+  | CheckoutMainSectionData
 
 export interface PageData {
   id?: number
@@ -211,6 +238,86 @@ export interface PageData {
   seo?: SeoSettings | null
   hero?: HeroSectionData | null
   sections?: PageSection[]
+}
+
+export interface LandingAdvertorialHeroSectionData {
+  id?: number
+  __component: 'landing.advertorial-hero'
+  enabled?: boolean
+  headline?: string
+  author?: string
+  intro_html?: string
+}
+
+export interface LandingMediaItem {
+  id?: number
+  image?: StrapiMedia | null
+  alt?: string
+}
+
+export interface LandingReasonItem {
+  id?: number
+  number?: number
+  title?: string
+  body_html?: string
+  image?: StrapiMedia | null
+  alt?: string
+  gallery?: LandingMediaItem[]
+}
+
+export interface LandingReasonListSectionData {
+  id?: number
+  __component: 'landing.reason-list'
+  enabled?: boolean
+  items?: LandingReasonItem[]
+}
+
+export interface LandingVideoBlockSectionData {
+  id?: number
+  __component: 'landing.video-block'
+  enabled?: boolean
+  title?: string
+  video?: StrapiMedia | null
+  poster?: StrapiMedia | null
+}
+
+export interface LandingSaleOfferSectionData {
+  id?: number
+  __component: 'landing.sale-offer'
+  enabled?: boolean
+  background_color?: string
+  headline_html?: string
+  body_html?: string
+  countdown_hours?: number
+  cta?: LinkItem | null
+}
+
+export interface LandingReviewsAnchorSectionData {
+  id?: number
+  __component: 'landing.reviews-anchor'
+  enabled?: boolean
+  title?: string
+  product_id?: string
+  body?: string
+}
+
+export type LandingPageSection =
+  | LandingAdvertorialHeroSectionData
+  | LandingReasonListSectionData
+  | LandingVideoBlockSectionData
+  | LandingSaleOfferSectionData
+  | LandingReviewsAnchorSectionData
+
+export interface LandingPageData {
+  id?: number
+  documentId?: string
+  title?: string
+  slug?: string
+  template?: 'default' | 'product-launch' | 'brand-story' | 'promotional' | 'advertorial' | 'quiz-funnel'
+  show_header?: boolean
+  show_footer?: boolean
+  seo?: SeoSettings | null
+  sections?: LandingPageSection[]
 }
 
 export interface PdpGalleryItem {
@@ -240,6 +347,47 @@ export interface PdpPurchaseOption {
   alt?: string
 }
 
+export interface PdpTabStep {
+  id?: number
+  title?: string
+  text?: string
+}
+
+export interface PdpTabItem {
+  id?: number
+  label?: string
+  content?: string
+  steps?: PdpTabStep[]
+}
+
+export interface PdpIngredientItem {
+  id?: number
+  label?: string
+}
+
+export interface PdpComparisonRow {
+  id?: number
+  feature?: string
+  particle_value?: string
+  competitor_value?: string
+}
+
+export interface PdpFaqItem {
+  id?: number
+  question?: string
+  answer?: string
+}
+
+export interface PdpReviewItem {
+  id?: number
+  quote?: string
+  name?: string
+  about?: string
+  image?: StrapiMedia | null
+  image_alt?: string
+  video_url?: string
+}
+
 export interface PdpAddToCartRegularSectionData {
   id?: number
   __component: 'pdp.add-to-cart-regular'
@@ -257,7 +405,81 @@ export interface PdpAddToCartRegularSectionData {
   purchase_options?: PdpPurchaseOption[]
 }
 
-export type ProductSection = PdpAddToCartRegularSectionData
+export interface PdpAddToCartTabsSectionData {
+  id?: number
+  __component: 'pdp.add-to-cart-tabs'
+  enabled?: boolean
+  brand_label?: string
+  product_title?: string
+  headline?: string
+  review_count?: number
+  rating_percent?: number
+  add_to_cart_label?: string
+  hurry_label?: string
+  hurry_stock_count?: number
+  hurry_stock_suffix?: string
+  hurry_bar_percent?: number
+  autoplay_ms?: number
+  gallery?: PdpGalleryItem[]
+  tabs?: PdpTabItem[]
+  purchase_options?: PdpPurchaseOption[]
+}
+
+export interface PdpIngredientsAccordionSectionData {
+  id?: number
+  __component: 'pdp.ingredients-accordion'
+  enabled?: boolean
+  image?: StrapiMedia | null
+  image_alt?: string
+  ingredients_title?: string
+  ingredients?: PdpIngredientItem[]
+  comparison_title?: string
+  particle_heading?: string
+  competitor_heading?: string
+  comparison_rows?: PdpComparisonRow[]
+  faq_title?: string
+  faq_items?: PdpFaqItem[]
+  guarantee_title?: string
+  guarantee_body?: string
+}
+
+export interface PdpReviewsCarouselSectionData {
+  id?: number
+  __component: 'pdp.reviews-carousel'
+  enabled?: boolean
+  title_html?: string
+  autoplay_ms?: number
+  reviews?: PdpReviewItem[]
+}
+
+export interface PdpMoreProductsSectionData {
+  id?: number
+  __component: 'pdp.more-products'
+  enabled?: boolean
+  title?: string
+  limit?: number
+  button_label?: string
+}
+
+export interface PdpStampedReviewsSectionData {
+  id?: number
+  __component: 'pdp.stamped-reviews'
+  enabled?: boolean
+  anchor_id?: string
+  product_id?: string
+  product_sku?: string
+  product_name?: string
+  product_url?: string
+  image_url?: string
+}
+
+export type ProductSection =
+  | PdpAddToCartRegularSectionData
+  | PdpAddToCartTabsSectionData
+  | PdpIngredientsAccordionSectionData
+  | PdpReviewsCarouselSectionData
+  | PdpStampedReviewsSectionData
+  | PdpMoreProductsSectionData
 
 export interface ProductData {
   id?: number

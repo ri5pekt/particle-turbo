@@ -5,7 +5,7 @@
     "singularName": "landing-page",
     "pluralName": "landing-pages",
     "displayName": "Landing Page",
-    "description": "Campaign and marketing landing pages. URL: /lp/[slug]. Each LP controls its own header/footer visibility."
+    "description": "Campaign and marketing landing pages. URL: /lpage/[slug]. Each LP controls its own header/footer visibility."
   },
   "options": {
     "draftAndPublish": true
@@ -32,7 +32,7 @@
         "quiz-funnel"
       ],
       "default": "default",
-      "description": "Template tag for editorial organisation. Does not restrict which sections are available — editors choose sections freely via the Dynamic Zone."
+      "description": "Template tag for editorial organisation. Landing pages use their own section components via the Dynamic Zone."
     },
     "show_header": {
       "type": "boolean",
@@ -47,19 +47,14 @@
       "repeatable": false,
       "component": "shared.seo"
     },
-    "hero": {
-      "type": "component",
-      "repeatable": false,
-      "component": "sections.hero"
-    },
     "sections": {
       "type": "dynamiczone",
       "components": [
-        "sections.logos-slider",
-        "sections.best-sellers",
-        "sections.all-products",
-        "sections.insta-block",
-        "sections.cart-main"
+        "landing.advertorial-hero",
+        "landing.reason-list",
+        "landing.video-block",
+        "landing.sale-offer",
+        "landing.reviews-anchor"
       ]
     }
   }

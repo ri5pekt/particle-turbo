@@ -18,6 +18,7 @@ const getCommerceProduct = async (handle: string): Promise<CommerceProduct | nul
         handle,
         region_id: regionId,
         limit: 1,
+        fields: '*variants,*variants.calculated_price,*variants.prices',
       },
     })
     const product = response.products?.[0]
@@ -63,69 +64,113 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const strapi = useStrapiServer()
+  return cachedResponse(event, {
+    key: cacheKey('product', handle),
+    ttlSeconds: 300,
+  }, async () => {
+    const strapi = useStrapiServer()
 
-  const [response, commerce] = await Promise.all([
-    strapi<StrapiListResponse<ProductData>>('/api/products', {
-      query: {
-        filters: {
-          handle: {
-            $eq: handle,
-          },
-        },
-        pagination: {
-          page: 1,
-          pageSize: 1,
-        },
-        populate: {
-          thumbnail: true,
-          images: true,
-          seo: {
-            populate: {
-              ogImage: true,
+    const [response, commerce] = await Promise.all([
+      strapi<StrapiListResponse<ProductData>>('/api/products', {
+        query: {
+          filters: {
+            handle: {
+              $eq: handle,
             },
           },
-          sections: {
-            on: {
-              'pdp.add-to-cart-regular': {
-                populate: {
-                  gallery: {
-                    populate: {
-                      image: true,
-                      video: true,
+          pagination: {
+            page: 1,
+            pageSize: 1,
+          },
+          populate: {
+            thumbnail: true,
+            images: true,
+            seo: {
+              populate: {
+                ogImage: true,
+              },
+            },
+            sections: {
+              on: {
+                'pdp.add-to-cart-regular': {
+                  populate: {
+                    gallery: {
+                      populate: {
+                        image: true,
+                        video: true,
+                      },
                     },
-                  },
-                  guarantees: {
-                    populate: {
-                      icon: true,
+                    guarantees: {
+                      populate: {
+                        icon: true,
+                      },
                     },
-                  },
-                  purchase_options: {
-                    populate: {
-                      image: true,
+                    purchase_options: {
+                      populate: {
+                        image: true,
+                      },
                     },
                   },
                 },
+                'pdp.add-to-cart-tabs': {
+                  populate: {
+                    gallery: {
+                      populate: {
+                        image: true,
+                        video: true,
+                      },
+                    },
+                    tabs: {
+                      populate: {
+                        steps: true,
+                      },
+                    },
+                    purchase_options: {
+                      populate: {
+                        image: true,
+                      },
+                    },
+                  },
+                },
+                'pdp.ingredients-accordion': {
+                  populate: {
+                    image: true,
+                    ingredients: true,
+                    comparison_rows: true,
+                    faq_items: true,
+                  },
+                },
+                'pdp.reviews-carousel': {
+                  populate: {
+                    reviews: {
+                      populate: {
+                        image: true,
+                      },
+                    },
+                  },
+                },
+                'pdp.stamped-reviews': true,
+                'pdp.more-products': true,
               },
             },
           },
         },
-      },
-    }),
-    getCommerceProduct(handle),
-  ])
+      }),
+      getCommerceProduct(handle),
+    ])
 
-  const product = response.data[0]
+    const product = response.data[0]
 
-  if (!product) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: `Product "${handle}" was not found in Strapi.`,
-    })
-  }
+    if (!product) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: `Product "${handle}" was not found in Strapi.`,
+      })
+    }
 
-  return {
-    ...product,
-    commerce,
-  }
+    return {
+      ...product,
+      commerce,
+    }
+  })
 })

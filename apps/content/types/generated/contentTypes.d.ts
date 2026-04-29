@@ -512,7 +512,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
 export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
   collectionName: 'landing_pages';
   info: {
-    description: 'Campaign and marketing landing pages. URL: /lp/[slug]. Each LP controls its own header/footer visibility.';
+    description: 'Campaign and marketing landing pages. URL: /lpage/[slug]. Each LP controls its own header/footer visibility.';
     displayName: 'Landing Page';
     pluralName: 'landing-pages';
     singularName: 'landing-page';
@@ -524,7 +524,6 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    hero: Schema.Attribute.Component<'sections.hero', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -534,11 +533,11 @@ export interface ApiLandingPageLandingPage extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     sections: Schema.Attribute.DynamicZone<
       [
-        'sections.logos-slider',
-        'sections.best-sellers',
-        'sections.all-products',
-        'sections.insta-block',
-        'sections.cart-main',
+        'landing.advertorial-hero',
+        'landing.reason-list',
+        'landing.video-block',
+        'landing.sale-offer',
+        'landing.reviews-anchor',
       ]
     >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
@@ -590,6 +589,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'sections.all-products',
         'sections.insta-block',
         'sections.cart-main',
+        'sections.checkout-main',
       ]
     >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
@@ -627,7 +627,16 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<['pdp.add-to-cart-regular']>;
+    sections: Schema.Attribute.DynamicZone<
+      [
+        'pdp.add-to-cart-regular',
+        'pdp.add-to-cart-tabs',
+        'pdp.ingredients-accordion',
+        'pdp.reviews-carousel',
+        'pdp.stamped-reviews',
+        'pdp.more-products',
+      ]
+    >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     subtitle: Schema.Attribute.String;
     thumbnail: Schema.Attribute.Media<'images'>;

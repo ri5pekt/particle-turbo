@@ -1,0 +1,65 @@
+{
+  "collectionName": "components_pdp_ingredients_accordions",
+  "info": {
+    "displayName": "Ingredients Accordion",
+    "icon": "bulletList",
+    "description": "PDP accordion section with ingredients, comparison table, FAQ, guarantee, and supporting image."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "image_alt": {
+      "type": "string"
+    },
+    "ingredients_title": {
+      "type": "string",
+      "default": "Premium Ingredients"
+    },
+    "ingredients": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.ingredient-item"
+    },
+    "comparison_title": {
+      "type": "string",
+      "default": "Particle Face Cream VS Competitors"
+    },
+    "particle_heading": {
+      "type": "string",
+      "default": "Particle Face Cream"
+    },
+    "competitor_heading": {
+      "type": "string",
+      "default": "Competitors"
+    },
+    "comparison_rows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.comparison-row"
+    },
+    "faq_title": {
+      "type": "string",
+      "default": "Frequently Asked Questions"
+    },
+    "faq_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.faq-item"
+    },
+    "guarantee_title": {
+      "type": "string",
+      "default": "30 Day Money Back Guarantee"
+    },
+    "guarantee_body": {
+      "type": "text"
+    }
+  }
+}

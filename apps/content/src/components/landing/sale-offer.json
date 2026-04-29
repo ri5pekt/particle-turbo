@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_landing_sale_offers",
+  "info": {
+    "displayName": "Sale Offer",
+    "icon": "priceTag",
+    "description": "Promotional sale callout with countdown labels and CTA."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "background_color": {
+      "type": "string",
+      "default": "#ECF0F4"
+    },
+    "headline_html": {
+      "type": "text",
+      "required": true
+    },
+    "body_html": {
+      "type": "richtext"
+    },
+    "countdown_hours": {
+      "type": "integer",
+      "default": 4
+    },
+    "cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link"
+    }
+  }
+}

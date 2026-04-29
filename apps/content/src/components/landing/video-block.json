@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_landing_video_blocks",
+  "info": {
+    "displayName": "Video Block",
+    "icon": "play",
+    "description": "Landing page video section."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["videos"]
+    },
+    "poster": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

@@ -21,6 +21,7 @@
           v-else
           class="mega-menu__link"
           :to="item.url || '#'"
+          @click="$emit('link-click')"
         >
           {{ item.label }}
         </AppLink>
@@ -45,6 +46,10 @@ withDefaults(defineProps<{
   items: () => [],
   narrow: false,
 })
+
+defineEmits<{
+  'link-click': []
+}>()
 </script>
 
 <style scoped lang="scss">

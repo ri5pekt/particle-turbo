@@ -1,6 +1,6 @@
 # particle-turbo — Dev Plan
 
-Last updated: 2026-04-26 (rev 6 — Nuxt home/PDP/cart flows implemented; Medusa-backed cart active)
+Last updated: 2026-04-29 (rev 8 — checkout, PPU, account, and Medusa pricing flows implemented)
 
 ---
 
@@ -26,7 +26,8 @@ Last updated: 2026-04-26 (rev 6 — Nuxt home/PDP/cart flows implemented; Medusa
 | Cross-system linking key | **Product `handle`** | Nuxt server routes query Medusa and Strapi independently using the same handle string (e.g. `particle-face-wash`). No sync, no shared foreign key, no duplication. |
 | WooCommerce compatibility | Deferred | Thin Nuxt server routes when actually needed |
 | Production deployment | VPS + Docker Compose | Hostinger or similar, single-server |
-| Cloudflare | Staging/prod only | Not needed locally |
+| Cloudflare edge/cache | Staging/prod only | Not needed locally |
+| Media storage | Cloudflare R2 Object Storage | Strapi uploads and migrated Medusa product images live in R2; local dev should not depend on copying upload folders |
 | Multi-currency / multi-language | **Yes, required** | Independent prices per region (not converted); Strapi i18n from day one |
 | WooCommerce data migration | **Required** | Customers, orders, subscriptions — full migration before go-live |
 | URL structure | Must match WooCommerce exactly | SEO preservation; 301 redirects for any paths that must change |
@@ -38,31 +39,44 @@ Last updated: 2026-04-26 (rev 6 — Nuxt home/PDP/cart flows implemented; Medusa
 
 ---
 
-## Current implementation snapshot — 2026-04-26
+## Current implementation snapshot — 2026-04-29
 
 Done locally:
 
 - Nuxt storefront shell with fixed header, mega menu, mobile menu, footer, self-hosted fonts, and original-site styling tokens.
 - Strapi home page renders `hero`, `logos-slider`, `best-sellers`, `all-products`, and `insta-block`.
-- Strapi product page for `particle-face-mask` uses a PDP-only dynamic zone with `pdp.add-to-cart-regular`.
+- Strapi product pages use PDP dynamic zones with regular and tabbed add-to-cart layouts. All scraped PDP pages have been seeded from local HTML references.
 - Nuxt PDP route `/product/[handle]` fetches Strapi editorial content and Medusa commerce data by matching `handle`.
-- Medusa-backed add-to-cart works from the PDP quantity cards.
+- PDP quantity cards and cart unit pricing use Medusa variant prices and quantity tiers, not static Strapi prices.
+- Medusa-backed add-to-cart works from regular and tabbed PDP quantity cards.
 - Cart drawer opens after add-to-cart and updates the header cart count.
 - `/cart` exists as a Strapi-backed page with `sections.cart-main`, showing live Medusa line items and recalculated totals after quantity update/remove.
 - Dev/admin toolbar exists as a collapsed top tab with Strapi edit, Medusa edit, open cart, clear cart, and reload actions.
+- Cloudflare R2 is configured as the external media store for Strapi uploads and migrated Medusa product images.
+- Redis caches public read-only Nuxt API responses for PDPs, regular pages, site settings, and recommendations. Cart, checkout, account, payment, and PPU routes are not cached.
+- Braintree payment provider is implemented in Medusa and exposed through Nuxt checkout with Hosted Fields.
+- Checkout submits Braintree payments for settlement immediately and vaults reusable payment tokens for PPU.
+- Post-purchase upsell is implemented with Medusa-owned rules/state, searchable Admin rule pickers, storefront offer page, accept/skip APIs, and timeout release job.
+- Customer account page exists at `/account` with sign in, create account, sign out, dev admin customer bridge, and previous order history by customer email.
 
 Important operational findings:
 
 - Do not reintroduce Strapi `medusaId`; matching `handle` is the active cross-system link.
-- Strapi editorial media must use upload/media fields, not external image URLs.
+- Strapi editorial media must use upload/media fields backed by Cloudflare R2, not local filesystem paths.
+- Medusa product image URLs should point to R2-hosted objects, not legacy WordPress `wp-content/uploads` URLs.
 - Local Medusa cart needed publishable key → sales channel linking and local inventory checks disabled until stock locations are configured.
 - Medusa line-item delete returns `204`, so Nuxt must refetch and return the updated cart.
+- Braintree `BRAINTREE_SUBMIT_FOR_SETTLEMENT` should be `true` for normal checkout/PPU testing.
+- PPU same-product offers are allowed; use the rule's excluded products field when a purchased product should block an offer.
+- Storefront admin tools bar is not a customer session. Local `/account` bridges `MEDUSA_ADMIN_EMAIL` into a customer session for development testing only.
+- Medusa `payment_collection.status` may lag Braintree settlement state and should be normalized in a follow-up.
 
 Next major work:
 
-- Checkout: shipping, payment session, order placement, confirmation page.
-- Customer/guest auth: Medusa customer login/register/logout, previous orders, guest cart attach/merge.
-- Remaining PDPs and PDP sections for the catalog.
+- Normalize Medusa payment collection/payment captured state with Braintree submitted-for-settlement state.
+- Harden PPU order mutation by replacing direct DB inserts with an official Medusa order workflow if available.
+- Add delete/duplicate controls for PPU rules in Medusa Admin.
+- Continue storefront polish for account/order details and PPU offer page.
 - Category/product listing pages matching WooCommerce URL patterns.
 - Additional cart sections from Strapi (`Bundle and Save`, reviews, trust blocks, upsells).
 

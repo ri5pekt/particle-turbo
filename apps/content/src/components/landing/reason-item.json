@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_landing_reason_items",
+  "info": {
+    "displayName": "Landing Reason Item",
+    "icon": "check",
+    "description": "A numbered advertorial reason with body copy and either one image or a gallery."
+  },
+  "options": {},
+  "attributes": {
+    "number": {
+      "type": "integer",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body_html": {
+      "type": "richtext"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "alt": {
+      "type": "string"
+    },
+    "gallery": {
+      "type": "component",
+      "repeatable": true,
+      "component": "landing.media-item"
+    }
+  }
+}

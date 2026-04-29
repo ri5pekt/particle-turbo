@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_pdp_ingredient_items",
+  "info": {
+    "displayName": "PDP Ingredient Item",
+    "icon": "check",
+    "description": "A single ingredient row in the PDP ingredients accordion."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

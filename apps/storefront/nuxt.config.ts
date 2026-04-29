@@ -11,11 +11,17 @@ export default defineNuxtConfig({
     // Server-only secrets — never exposed to the browser
     medusaApiKey: '',
     strapiApiToken: '',
+    redisUrl: '',
+    stampedPublicKey: '',
+    stampedStoreHash: '',
+    stampedStoreUrl: 'www.particleformen.com',
+    stampedWidgetCacheTtl: 86400,
     // Public values — exposed to the browser via useRuntimeConfig().public
     public: {
       adminBarEnabled: false,
       medusaUrl: '',
       strapiUrl: '',
+      googleMapsApiKey: '',
     },
   },
 
@@ -30,6 +36,7 @@ export default defineNuxtConfig({
     '/collections/**': { swr: 300 },
     '/blog/**': { swr: 600 },
     '/page/**': { swr: 600 },
+    '/lpage/**': { swr: 300 },
     // Private — never cached
     '/cart': { ssr: true, headers: { 'cache-control': 'no-store' } },
     '/checkout/**': { ssr: true, headers: { 'cache-control': 'no-store' } },

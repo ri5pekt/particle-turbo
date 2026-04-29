@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_landing_reviews_anchors",
+  "info": {
+    "displayName": "Reviews Anchor",
+    "icon": "star",
+    "description": "Landing page review widget placeholder or anchor."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "default": "Customer Reviews"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "body": {
+      "type": "text"
+    }
+  }
+}

@@ -1,15 +1,15 @@
 <template>
   <NuxtLink
-    v-if="isInternal"
+    v-if="isRoutableInternal"
     v-bind="attrs"
-    :to="to"
+    :to="href"
   >
     <slot />
   </NuxtLink>
   <a
     v-else
     v-bind="attrs"
-    :href="to"
+    :href="href"
     :target="target"
     :rel="target === '_blank' ? 'noopener noreferrer' : undefined"
   >
@@ -28,7 +28,14 @@ const props = withDefaults(defineProps<{
 
 const attrs = useAttrs()
 
-const isInternal = computed(() => {
-  return props.to.startsWith('/') || props.to.startsWith('#')
+const href = computed(() => {
+  return props.to.replace(/^\/products\//, '/product/')
+})
+
+const isRoutableInternal = computed(() => {
+  return href.value === '/'
+    || href.value === '/cart'
+    || href.value.startsWith('/lpage/')
+    || href.value.startsWith('/product/')
 })
 </script>

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_pdp_faq_items",
+  "info": {
+    "displayName": "PDP FAQ Item",
+    "icon": "question",
+    "description": "A question and answer row for PDP accordion sections."
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_pdp_review_items",
+  "info": {
+    "displayName": "PDP Review Item",
+    "icon": "star",
+    "description": "A customer review card for PDP review carousels."
+  },
+  "options": {},
+  "attributes": {
+    "quote": {
+      "type": "richtext",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "about": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "image_alt": {
+      "type": "string"
+    },
+    "video_url": {
+      "type": "text"
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "collectionName": "components_sections_checkout_main",
+  "info": {
+    "displayName": "Checkout Main",
+    "icon": "creditCard",
+    "description": "Checkout form labels and supporting copy powered by Medusa."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "billing_title_prefix": {
+      "type": "string",
+      "default": "Billing"
+    },
+    "billing_title_accent": {
+      "type": "string",
+      "default": "details"
+    },
+    "payment_title_prefix": {
+      "type": "string",
+      "default": "Payment"
+    },
+    "payment_title_accent": {
+      "type": "string",
+      "default": "Information"
+    },
+    "free_shipping_text": {
+      "type": "string",
+      "default": "Free Shipping"
+    },
+    "guarantee_text": {
+      "type": "string",
+      "default": "30 Day Money Back Guarantee"
+    },
+    "ship_different_label": {
+      "type": "string",
+      "default": "Ship to a different address?"
+    },
+    "payment_note": {
+      "type": "text",
+      "default": "Payment provider fields will replace this section when Medusa payments are configured."
+    },
+    "email_label": {
+      "type": "string",
+      "default": "Email address"
+    },
+    "first_name_label": {
+      "type": "string",
+      "default": "First name"
+    },
+    "last_name_label": {
+      "type": "string",
+      "default": "Last name"
+    },
+    "address_1_label": {
+      "type": "string",
+      "default": "Street address"
+    },
+    "address_2_label": {
+      "type": "string",
+      "default": "Apartment, suite, unit, etc."
+    },
+    "city_label": {
+      "type": "string",
+      "default": "Town / City"
+    },
+    "state_label": {
+      "type": "string",
+      "default": "State"
+    },
+    "postcode_label": {
+      "type": "string",
+      "default": "Postcode / ZIP"
+    },
+    "phone_label": {
+      "type": "string",
+      "default": "Phone"
+    },
+    "card_number_label": {
+      "type": "string",
+      "default": "Card number"
+    },
+    "card_expiry_label": {
+      "type": "string",
+      "default": "Expiration date"
+    },
+    "card_cvv_label": {
+      "type": "string",
+      "default": "CVV"
+    }
+  }
+}

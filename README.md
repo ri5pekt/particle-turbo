@@ -12,6 +12,7 @@ Headless e-commerce platform built on Nuxt 3, Medusa v2, and Strapi v5.
 | Database (commerce) | PostgreSQL 16 |
 | Database (content) | PostgreSQL 16 |
 | Cache / infra | Redis 7 |
+| Media storage | Cloudflare R2 Object Storage |
 | Monorepo | pnpm workspaces + Turborepo |
 | Local dev | Docker Compose |
 
@@ -48,6 +49,12 @@ pnpm docker:up
 | Commerce admin | http://localhost:9000/app |
 | Content (Strapi) | http://localhost:1337 |
 | Strapi admin | http://localhost:1337/admin |
+
+### Media storage
+
+Strapi media uploads and migrated Medusa product images are stored in Cloudflare R2 instead of the local filesystem. Local development, staging, and production should use environment-specific R2 buckets or prefixes so developers do not need to copy `apps/content/public/uploads` between machines.
+
+The local Strapi upload provider uses the S3-compatible R2 API. Browser image requests should resolve directly to the configured public R2 URL, not to `localhost:1337/uploads`.
 
 ### Common commands
 
@@ -103,4 +110,5 @@ particle-turbo/
 
 - [Dev Plan](docs/DEV-PLAN.md) — phased development plan and architectural constraints
 - [Project Description](docs/project-description.md) — original project spec
+- [Commerce Flows](docs/COMMERCE-FLOWS.md) — checkout, Braintree, PPU, account, and order-history behavior
 - [Architecture Decisions](docs/decisions/) — ADR log

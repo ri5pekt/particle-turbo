@@ -48,7 +48,12 @@
     "sections": {
       "type": "dynamiczone",
       "components": [
-        "pdp.add-to-cart-regular"
+        "pdp.add-to-cart-regular",
+        "pdp.add-to-cart-tabs",
+        "pdp.ingredients-accordion",
+        "pdp.reviews-carousel",
+        "pdp.stamped-reviews",
+        "pdp.more-products"
       ]
     }
   }

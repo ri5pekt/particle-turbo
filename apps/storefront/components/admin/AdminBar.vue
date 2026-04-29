@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PageData, ProductData } from '~/types/content'
+import type { LandingPageData, PageData, ProductData } from '~/types/content'
 
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -86,9 +86,14 @@ const productHandle = computed(() => {
 })
 const { data: productData } = useNuxtData<ProductData>(`product-page-${productHandle.value}`)
 const { data: homePageData } = useNuxtData<PageData>('home-page')
+const landingSlug = computed(() => {
+  return route.name === 'lpage-slug' ? String(route.params.slug || '') : ''
+})
+const { data: landingPageData } = useNuxtData<LandingPageData>(`landing-page-${landingSlug.value}`)
 
 const currentProduct = computed(() => productHandle.value ? productData.value : null)
 const currentPage = computed(() => route.name === 'index' ? homePageData.value : null)
+const currentLandingPage = computed(() => landingSlug.value ? landingPageData.value : null)
 
 const cleanBaseUrl = (url?: string) => {
   return (url || '').replace(/\/$/, '')
@@ -104,6 +109,10 @@ const strapiEditUrl = computed(() => {
 
   if (currentPage.value?.documentId || currentPage.value?.id) {
     return `${strapiBaseUrl.value}/admin/content-manager/collection-types/api::page.page/${currentPage.value.documentId || currentPage.value.id}`
+  }
+
+  if (currentLandingPage.value?.documentId || currentLandingPage.value?.id) {
+    return `${strapiBaseUrl.value}/admin/content-manager/collection-types/api::landing-page.landing-page/${currentLandingPage.value.documentId || currentLandingPage.value.id}`
   }
 
   return ''
@@ -122,6 +131,10 @@ const contextLabel = computed(() => {
 
   if (currentPage.value?.title) {
     return `Page: ${currentPage.value.title}`
+  }
+
+  if (currentLandingPage.value?.title) {
+    return `Landing page: ${currentLandingPage.value.title}`
   }
 
   return 'Admin tools'

@@ -11,6 +11,7 @@ Medusa as the commerce engine
 Strapi as the content management system
 PostgreSQL for persistent storage
 Redis for caching and infrastructure support
+Cloudflare R2 Object Storage for media files
 Docker Compose for local multi-service development
 pnpm workspaces + Turborepo for monorepo management
 
@@ -63,6 +64,7 @@ marketing sections
 FAQs
 banners
 media-heavy structured content
+media library records and editorial asset metadata
 Nuxt owns presentation and orchestration
 routing
 SSR
@@ -132,6 +134,7 @@ Node.js
 Infrastructure
 PostgreSQL
 Redis
+Cloudflare R2 Object Storage
 Docker Compose
 Monorepo tooling
 pnpm workspaces
@@ -140,8 +143,9 @@ Edge / production later
 Cloudflare
 
 Important:
-Cloudflare is not required in local development.
-The app should be built in a cache-friendly way from day 1, but Cloudflare can be added later in staging/production.
+Cloudflare edge caching is not required in local development.
+Cloudflare R2 is used for media storage in local development as well as staging/production.
+The app should be built in a cache-friendly way from day 1, but Cloudflare edge caching can be added later in staging/production.
 
 5. Development principles
    Do not modify Medusa core directly.
@@ -174,12 +178,12 @@ redis
 Optional later:
 
 mailpit
-local S3-compatible storage like MinIO
 Local dev goals
 one command should boot the full environment
 source code should be mounted for live development
 services should be reachable via predictable local URLs
 databases should be isolated per app
+media should live in external object storage so developers do not move upload folders between environments
 
 Suggested local URLs:
 

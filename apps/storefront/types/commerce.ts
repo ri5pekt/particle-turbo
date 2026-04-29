@@ -10,11 +10,21 @@ export interface MedusaCalculatedPrice {
   currency_code?: string
 }
 
+export interface MedusaVariantPrice {
+  id: string
+  amount?: number
+  currency_code?: string
+  min_quantity?: number | null
+  max_quantity?: number | null
+  price_list_id?: string | null
+}
+
 export interface MedusaVariant {
   id: string
   title?: string
   sku?: string
   calculated_price?: MedusaCalculatedPrice | null
+  prices?: MedusaVariantPrice[]
 }
 
 export interface MedusaProductSummary {

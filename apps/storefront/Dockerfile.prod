@@ -1,0 +1,30 @@
+# Production Dockerfile for apps/storefront (Nuxt 3)
+# Build context: project root.
+
+FROM node:20-alpine
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable && pnpm config set store-dir /pnpm/store --global
+
+WORKDIR /workspace
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
+COPY packages ./packages
+COPY apps/storefront ./apps/storefront
+
+RUN pnpm install --filter @particle-turbo/storefront... --frozen-lockfile
+RUN pnpm --filter @particle-turbo/storefront build
+
+WORKDIR /workspace/apps/storefront
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3000
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
+
+EXPOSE 3000
+
+CMD ["node", ".output/server/index.mjs"]

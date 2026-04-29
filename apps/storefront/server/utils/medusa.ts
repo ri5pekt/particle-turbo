@@ -10,6 +10,7 @@ interface MedusaRequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
   query?: Record<string, QueryValue>
   body?: Record<string, unknown>
+  headers?: Record<string, string>
 }
 
 interface MedusaRegionResponse {
@@ -70,11 +71,10 @@ export const useMedusaServer = () => {
       method: options.method || 'GET',
       query: toSearchParams(options.query),
       body: options.body,
-      headers: publishableKey
-        ? {
-            'x-publishable-api-key': publishableKey,
-          }
-        : undefined,
+      headers: {
+        ...(publishableKey ? { 'x-publishable-api-key': publishableKey } : {}),
+        ...(options.headers || {}),
+      },
     })
   }
 }

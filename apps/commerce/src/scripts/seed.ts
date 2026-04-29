@@ -141,18 +141,18 @@ export default async function seed({ container }: ExecArgs) {
     const regionList = await regionService.listRegions()
 
     const currencyPrices: Record<string, number> = {
-      usd: 2900,
-      gbp: 2300,
-      aud: 4400,
-      cad: 3900,
-      eur: 2700,
-      brl: 14900,
+      usd: 29,
+      gbp: 23,
+      aud: 44,
+      cad: 39,
+      eur: 27,
+      brl: 149,
       jpy: 4400,
-      ils: 10900,
+      ils: 109,
     }
 
     for (const variant of product.variants ?? []) {
-      const baseAmount = variant.sku === "PFW-100ML" ? 4900 : 2900
+      const baseAmount = variant.sku === "PFW-100ML" ? 49 : 29
 
       const priceSet = await pricingService.createPriceSets([
         {

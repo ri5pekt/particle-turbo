@@ -1,0 +1,30 @@
+# Production Dockerfile for apps/content (Strapi v5)
+# Build context: project root.
+
+FROM node:20-alpine
+
+RUN apk add --no-cache python3 make g++
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable && pnpm config set store-dir /pnpm/store --global
+
+WORKDIR /workspace
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
+COPY packages ./packages
+COPY apps/content ./apps/content
+
+RUN pnpm install --filter @particle-turbo/content... --frozen-lockfile
+RUN pnpm --filter @particle-turbo/content build
+
+WORKDIR /workspace/apps/content
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=1337
+
+EXPOSE 1337
+
+CMD ["pnpm", "start"]

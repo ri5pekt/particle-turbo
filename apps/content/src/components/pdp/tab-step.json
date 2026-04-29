@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_pdp_tab_steps",
+  "info": {
+    "displayName": "PDP Tab Step",
+    "icon": "check",
+    "description": "A short title/body step used inside a PDP tab."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text"
+    }
+  }
+}

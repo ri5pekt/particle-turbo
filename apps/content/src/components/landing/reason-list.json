@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_landing_reason_lists",
+  "info": {
+    "displayName": "Reason List",
+    "icon": "bulletList",
+    "description": "A landing-only list of numbered advertorial reasons."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "landing.reason-item"
+    }
+  }
+}

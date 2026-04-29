@@ -3,6 +3,8 @@
     v-if="hasMegaMenu"
     as="div"
     class="nav-item nav-item--mega"
+    :class="{ 'nav-item--suppressed': isMegaMenuSuppressed }"
+    @mouseleave="isMegaMenuSuppressed = false"
   >
     <MenuButton class="nav-item__button">
       {{ item.label }}
@@ -14,6 +16,7 @@
       <MegaMenu
         :items="item.mega_menu"
         :narrow="isNarrowMegaMenu"
+        @link-click="closeMegaMenu"
       />
     </MenuItems>
   </Menu>
@@ -35,12 +38,21 @@ const props = defineProps<{
 }>()
 
 const hasMegaMenu = computed(() => Boolean(props.item.mega_menu?.length))
+const isMegaMenuSuppressed = ref(false)
 const isNarrowMegaMenu = computed(() => {
   const megaMenu = props.item.mega_menu || []
 
   return megaMenu.length > 0
     && megaMenu.every((entry) => !entry.is_heading && !entry.image)
 })
+
+const closeMegaMenu = () => {
+  isMegaMenuSuppressed.value = true
+
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur()
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -101,8 +113,8 @@ const isNarrowMegaMenu = computed(() => {
   transition: opacity 0.15s ease-in;
 }
 
-.nav-item--mega:hover .nav-item__dropdown,
-.nav-item--mega:focus-within .nav-item__dropdown {
+.nav-item--mega:not(.nav-item--suppressed):hover .nav-item__dropdown,
+.nav-item--mega:not(.nav-item--suppressed):focus-within .nav-item__dropdown {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;

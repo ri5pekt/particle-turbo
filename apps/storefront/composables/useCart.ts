@@ -138,6 +138,36 @@ export const useCart = () => {
     }
   }
 
+  const applyPromotion = async (promoCode: string) => {
+    const code = promoCode.trim()
+
+    if (!code) {
+      error.value = 'Please enter a coupon code.'
+      return null
+    }
+
+    const currentCart = await ensureCart()
+    isLoading.value = true
+    error.value = null
+
+    try {
+      cart.value = await $fetch<MedusaCart>(`/api/cart/${currentCart.id}/promotions`, {
+        method: 'POST',
+        body: {
+          promo_code: code,
+        },
+      })
+      cartId.value = cart.value.id
+
+      return cart.value
+    } catch (caughtError) {
+      error.value = caughtError instanceof Error ? caughtError.message : 'Coupon could not be applied.'
+      throw caughtError
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const clearCart = async () => {
     if (!cart.value?.id) {
       cartId.value = null
@@ -193,6 +223,7 @@ export const useCart = () => {
     addItem,
     updateItem,
     removeItem,
+    applyPromotion,
     clearCart,
     refreshCart,
     openCart,
