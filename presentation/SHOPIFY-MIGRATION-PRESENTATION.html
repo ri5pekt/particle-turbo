@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shopify Migration Decision - Particle for Men</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --soft: #f4f6f9;
+      --blue: #153e91;
+      --green: #1f7a4d;
+      --amber: #9a6200;
+      --red: #b42318;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e8ebf0;
+    }
+
+    .slide {
+      width: 1280px;
+      min-height: 720px;
+      margin: 28px auto;
+      padding: 54px 64px;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--line);
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide--title {
+      justify-content: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 980px;
+      margin: 0;
+      font-size: 54px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: 38px;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.45;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin-top: 26px;
+      font-size: 25px;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #7a8390;
+      font-size: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-text {
+      min-width: 0;
+    }
+
+    .back-to-toc {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      padding: 24px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .card p,
+    .card li {
+      font-size: 19px;
+    }
+
+    .summary {
+      padding: 22px 26px;
+      margin-bottom: 26px;
+      background: #eef3ff;
+      border-left: 6px solid var(--blue);
+      border-radius: 12px;
+    }
+
+    .summary p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 22px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 14px;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 999px;
+    }
+
+    .tag-green {
+      background: var(--green);
+    }
+
+    .tag-amber {
+      background: var(--amber);
+    }
+
+    .tag-red {
+      background: var(--red);
+    }
+
+    .tag-blue {
+      background: var(--blue);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 18px;
+    }
+
+    .table th {
+      padding: 14px 12px;
+      text-align: left;
+      color: var(--ink);
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 14px 12px;
+      vertical-align: top;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .table strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .metric {
+      padding: 20px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .metric b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--blue);
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .two-column-list {
+      columns: 2;
+      column-gap: 42px;
+    }
+
+    .decision {
+      padding: 30px;
+      background: #fff7ed;
+      border: 1px solid #f0c28b;
+      border-radius: 20px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 28px;
+      margin-top: 8px;
+      counter-reset: toc;
+    }
+
+    .toc-item {
+      position: relative;
+      display: block;
+      min-height: 42px;
+      padding: 12px 16px 12px 54px;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      counter-increment: toc;
+    }
+
+    .toc-item::before {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 14px;
+      background: var(--blue);
+      border-radius: 999px;
+      content: counter(toc);
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      body {
+        background: var(--white);
+      }
+
+      .slide {
+        width: 16in;
+        height: 9in;
+        min-height: 9in;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide slide--title">
+    <p class="eyebrow">Infrastructure Upgrade Decision</p>
+    <h1>Should Particle for Men migrate to Shopify?</h1>
+    <p class="subtitle">A practical review of Shopify as a path to faster site performance, smoother customer flow, and scalable traffic growth.</p>
+    <div class="footer"><span class="footer-text">Prepared for management discussion</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="table-of-contents">
+    <h2>Table Of Contents</h2>
+    <div class="toc">
+      <a class="toc-item" href="#executive-summary">Executive Summary</a>
+      <a class="toc-item" href="#goals">What We Are Trying To Achieve</a>
+      <a class="toc-item" href="#shopify-strengths">What Shopify Would Be Good For</a>
+      <a class="toc-item" href="#easy-migration">What Shopify Can Migrate Relatively Easily</a>
+      <a class="toc-item" href="#seo-url-structure">Top Problem 1: SEO And URL Structure</a>
+      <a class="toc-item" href="#orders-customers-subscriptions">Top Problem 2: Existing Orders, Customers, And Subscriptions</a>
+      <a class="toc-item" href="#saved-payments">Why Saved Payment Details Are A Problem</a>
+      <a class="toc-item" href="#checkout-upsells-fulfillment">Top Problem 3: Custom Checkout, Upsells, And Fulfillment</a>
+      <a class="toc-item" href="#not-fully-replicated">What Cannot Be Fully Replicated On Shopify</a>
+      <a class="toc-item" href="#decision-conditions">Shopify Decision Conditions</a>
+      <a class="toc-item" href="#recommendation">Shopify Recommendation</a>
+      <a class="toc-item" href="#next-steps">Suggested Next Steps</a>
+    </div>
+    <div class="footer"><span class="footer-text">Use this deck to evaluate Shopify as one possible infrastructure path.</span></div>
+  </section>
+
+  <section class="slide" id="executive-summary">
+    <h2>Executive Summary</h2>
+    <div class="summary">
+      <p><strong>Recommendation:</strong> treat Shopify as a possible path only if we are willing to simplify parts of the current customer journey. Shopify can help with platform stability, but it creates serious migration risk around SEO, subscriptions, post-purchase upsells, and custom fulfillment flows.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-green">Shopify Strength</span>
+        <h3>Operational simplicity</h3>
+        <p>Shopify can reduce hosting, security, infrastructure, and day-to-day platform maintenance work.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Main Concern</span>
+        <h3>Business flow mismatch</h3>
+        <p>Our current site has custom subscriptions, upsells, landing pages, warehouse routing, SEO paths, and reporting flows.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-red">Key Risk</span>
+        <h3>Revenue disruption</h3>
+        <p>The largest risks are SEO loss, subscription migration friction, and changes to post-purchase upsell behavior.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify is strong, but it works best when the business can adapt to Shopify’s model.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="goals">
+    <h2>What We Are Trying To Achieve</h2>
+    <div class="grid grid-2">
+      <div>
+        <p>The goal is not just to rebuild the website. The goal is to upgrade the ecommerce platform so it can support growth.</p>
+        <ul>
+          <li>Faster page loads and smoother customer flow.</li>
+          <li>Better stability during traffic spikes and campaigns.</li>
+          <li>Reduced checkout friction and fewer technical slowdowns.</li>
+          <li>Preserved SEO value from existing pages and landing pages.</li>
+          <li>Reliable subscriptions, upsells, fulfillment, analytics, and support workflows.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>The Shopify decision is about tradeoffs</h3>
+        <p><strong>What Shopify improves:</strong> platform stability, managed infrastructure, standard ecommerce operations, and less maintenance burden.</p>
+        <p><strong>What Shopify risks:</strong> less control over URLs, checkout behavior, subscriptions, upsells, and custom operational flows.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Decision lens: speed and scale matter, but revenue continuity matters more.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="shopify-strengths">
+    <h2>What Shopify Would Be Good For</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-green">Pros</span>
+        <ul>
+          <li>Less responsibility for hosting, security patches, and core ecommerce uptime.</li>
+          <li>Strong admin experience for standard ecommerce operations.</li>
+          <li>Large app ecosystem for common needs: reviews, email, loyalty, analytics, shipping, and payments.</li>
+          <li>Stable checkout and payment infrastructure.</li>
+          <li>Built-in scaling for normal ecommerce traffic growth.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Best Fit</span>
+        <p>Shopify is a good fit if we are willing to simplify the current store and use more standard ecommerce flows.</p>
+        <p>It is less ideal if we need to preserve every custom path, landing page, upsell, subscription rule, and warehouse process exactly.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify lowers platform maintenance, but it also reduces flexibility.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="easy-migration">
+    <h2>What Shopify Can Migrate Relatively Easily</h2>
+    <div class="summary">
+      <p>Basic ecommerce data can move. The hard part is not the catalog. The hard part is preserving the custom business engine around the catalog.</p>
+    </div>
+    <ul class="two-column-list">
+      <li>Products, titles, descriptions, images, SKUs.</li>
+      <li>Simple product variants.</li>
+      <li>Basic collections.</li>
+      <li>Standard content pages.</li>
+      <li>Basic promotions and discount codes.</li>
+      <li>Simple customer profiles.</li>
+      <li>Basic reviews, email, loyalty, and support app integrations.</li>
+      <li>Basic multilingual and multicurrency setup through Shopify Markets.</li>
+    </ul>
+    <div class="footer"><span class="footer-text">Summary: the simple store layer is portable; the custom revenue flows are not simple.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="seo-url-structure">
+    <h2>Top Problem 1: SEO And URL Structure</h2>
+    <div class="grid grid-2">
+      <div>
+        <p>Shopify does not allow full control over core URL structure. Products, collections, pages, and blogs must follow Shopify’s fixed patterns.</p>
+        <ul>
+          <li>Current site has custom product paths, language/country paths, landing page paths, and SEO history.</li>
+          <li>Shopify can redirect old URLs, but redirects are not the same as preserving the exact original URLs.</li>
+          <li>Organic traffic, backlinks, paid campaign landing pages, and indexed pages all need a careful migration map.</li>
+        </ul>
+      </div>
+      <div class="decision">
+        <h3>Business impact</h3>
+        <p>Potential SEO ranking loss during and after launch, especially for pages that currently bring organic traffic or are used in campaigns.</p>
+        <p><strong>Risk level:</strong> high.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: this is one of the strongest arguments against a native Shopify migration.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="orders-customers-subscriptions">
+    <h2>Top Problem 2: Existing Orders, Customers, And Subscriptions</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Data Area</th>
+          <th>What Can Move</th>
+          <th>Main Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Customers</strong></td>
+          <td>Names, emails, addresses, tags, marketing consent if mapped correctly.</td>
+          <td>Passwords usually cannot move directly. Customers may need account activation. Duplicates and consent rules need cleanup.</td>
+        </tr>
+        <tr>
+          <td><strong>Orders</strong></td>
+          <td>Historical orders can be imported for reference and support.</td>
+          <td>Old orders may not behave like native Shopify orders for refunds, tracking, tax, fraud, chargebacks, and reporting.</td>
+        </tr>
+        <tr>
+          <td><strong>Subscriptions</strong></td>
+          <td>Products, renewal dates, shipping details, and subscription records may be imported.</td>
+          <td>Saved payment methods may not migrate cleanly. Some customers may need to re-enter payment details before renewal.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: subscription migration is the highest-risk data workstream.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="saved-payments">
+    <h2>Why Saved Payment Details Are A Problem</h2>
+    <div class="grid grid-2">
+      <div>
+        <p>For subscriptions, the platform needs a saved payment method so it can charge the customer again on renewal.</p>
+        <p>We do not store full card numbers. Payment providers store secure tokens. Those tokens are often tied to the current payment setup and may not work automatically inside Shopify.</p>
+      </div>
+      <div class="card">
+        <h3>Possible outcome</h3>
+        <ul>
+          <li>Customer and subscription data migrate.</li>
+          <li>Renewal dates migrate.</li>
+          <li>But some saved payment methods fail to migrate.</li>
+          <li>Those customers need to add payment details again.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="summary" style="margin-top: 28px;">
+      <p><strong>Business risk:</strong> failed renewals, customer support load, and subscription churn if the transition is not handled carefully.</p>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: this needs a test migration before any Shopify commitment.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="checkout-upsells-fulfillment">
+    <h2>Top Problem 3: Custom Checkout, Upsells, And Fulfillment</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-red">Checkout</span>
+        <p>Current checkout has custom fields, payment rules, account behavior, address behavior, and marketing consent.</p>
+        <p>Shopify checkout is stable, but less flexible. Deep changes often require Shopify Plus.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-red">Upsells</span>
+        <p>Current post-purchase upsell flow can charge the customer after purchase and update the order/subscription.</p>
+        <p>Shopify post-purchase offers have payment, currency, and checkout restrictions.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Fulfillment</span>
+        <p>Current warehouse flow includes custom order routing, address validation, shipment updates, and tracking behavior.</p>
+        <p>This would need a custom Shopify-compatible workflow.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify apps can cover standard cases, but our current flow is not standard.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="not-fully-replicated">
+    <h2>What Cannot Be Fully Replicated On Shopify</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Current Capability</th>
+          <th>Shopify Reality</th>
+          <th>Expected Compromise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Exact URL preservation</strong></td>
+          <td>Shopify uses fixed URL patterns.</td>
+          <td>Redirects and SEO monitoring instead of exact path preservation.</td>
+        </tr>
+        <tr>
+          <td><strong>Exact checkout behavior</strong></td>
+          <td>Shopify checkout is controlled and limited.</td>
+          <td>Use apps/extensions and possibly Shopify Plus, but accept some differences.</td>
+        </tr>
+        <tr>
+          <td><strong>Exact post-purchase upsell flow</strong></td>
+          <td>Shopify post-purchase offers do not run for every payment or order type.</td>
+          <td>Lower control and possible upsell coverage gaps.</td>
+        </tr>
+        <tr>
+          <td><strong>Exact subscription portal and renewal rules</strong></td>
+          <td>Subscription providers have their own models.</td>
+          <td>Rebuild and QA the customer portal, dunning, renewals, and payment migration.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: Shopify can approximate many flows, but not copy them exactly.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="decision-conditions">
+    <h2>Shopify Decision Conditions</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>If The Answer Is Yes</th>
+          <th>If The Answer Is No</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Can we accept URL changes and rely on redirects?</strong></td>
+          <td>Shopify remains possible, with a strong SEO migration plan.</td>
+          <td>Shopify becomes high risk for organic traffic and campaign landing pages.</td>
+        </tr>
+        <tr>
+          <td><strong>Can we simplify the checkout and post-purchase flow?</strong></td>
+          <td>Shopify apps and Plus features may be enough.</td>
+          <td>Shopify will likely force revenue-impacting compromises.</td>
+        </tr>
+        <tr>
+          <td><strong>Can active subscriptions migrate without major payment failures?</strong></td>
+          <td>Shopify can be considered after a successful test migration.</td>
+          <td>Shopify creates churn risk and support load.</td>
+        </tr>
+        <tr>
+          <td><strong>Can our warehouse and reporting flows be rebuilt with Shopify apps or middleware?</strong></td>
+          <td>Shopify can support operations with custom setup.</td>
+          <td>Daily operations may become less reliable after launch.</td>
+        </tr>
+        <tr>
+          <td><strong>Are we willing to use Shopify Plus if needed?</strong></td>
+          <td>More checkout and post-purchase options become available.</td>
+          <td>Some important customizations may be unavailable.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: Shopify should be approved only if these conditions are acceptable.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="recommendation">
+    <h2>Shopify Recommendation</h2>
+    <div class="grid grid-2">
+      <div>
+        <p><strong>Recommendation:</strong> do not approve a Shopify migration yet as a direct replacement for the current site.</p>
+        <p>Shopify should move forward only after proof that it can handle the highest-risk areas:</p>
+        <ul>
+          <li>SEO URL migration without unacceptable traffic loss.</li>
+          <li>Active subscription migration without major payment failures.</li>
+          <li>Post-purchase upsells with acceptable coverage and conversion impact.</li>
+          <li>Warehouse routing and reporting that match daily operational needs.</li>
+        </ul>
+      </div>
+      <div class="decision">
+        <h3>When Shopify makes sense</h3>
+        <p>Shopify becomes more attractive if management wants to reduce platform maintenance and is comfortable simplifying parts of the current ecommerce flow.</p>
+        <p>That means accepting URL changes, checkout limitations, app dependency, and a dedicated subscription migration project.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify is not a safe direct copy of the current business without validation.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="next-steps">
+    <h2>Suggested Next Steps</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-blue">1</span>
+        <h3>SEO inventory</h3>
+        <p>Create a full list of current URLs, high-traffic pages, landing pages, backlinks, and campaign URLs. Score what Shopify cannot preserve.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">2</span>
+        <h3>Subscription test migration</h3>
+        <p>Run a small proof of concept with real subscription scenarios, saved payment methods, renewal dates, and account management.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">3</span>
+        <h3>Flow prototype</h3>
+        <p>Test one post-purchase upsell, one warehouse route, one loyalty/coupon case, and one multilingual landing page before making a final Shopify decision.</p>
+      </div>
+    </div>
+    <div class="summary" style="margin-top: 28px;">
+      <p><strong>Decision gate:</strong> if Shopify cannot pass these tests without major revenue or SEO compromises, we should not proceed with Shopify as the migration path.</p>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: prove the risky flows before committing to a platform change.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+</body>
+</html>

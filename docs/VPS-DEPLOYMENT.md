@@ -1,6 +1,6 @@
 # VPS Deployment Plan
 
-Last updated: 2026-04-29
+Last updated: 2026-04-30
 
 This plan describes how to deploy `particle-turbo` to a single VPS for QA/staging.
 
@@ -9,8 +9,13 @@ This plan describes how to deploy `particle-turbo` to a single VPS for QA/stagin
 ## Target URLs
 
 - Storefront: `https://particle-turbo.pfm-qa.com/`
-- Medusa Admin/API: `https://particle-turbo.pfm-qa.com/admin-commerce/`
-- Strapi Admin/API: `https://particle-turbo.pfm-qa.com/admin-content/`
+- Medusa Admin/API, temporary path route: `https://particle-turbo.pfm-qa.com/admin-commerce/`
+- Strapi Admin/API, temporary path route: `https://particle-turbo.pfm-qa.com/admin-content/`
+
+Recommended admin targets:
+
+- Medusa Admin/API: `https://commerce-particle-turbo.pfm-qa.com/app`
+- Strapi Admin/API: `https://content-particle-turbo.pfm-qa.com/admin`
 
 The initial target is a single VPS running all services in Docker:
 
@@ -26,14 +31,90 @@ DNS is already pointed correctly:
 
 - `particle-turbo.pfm-qa.com` resolves to `31.220.56.146`
 
+Admin DNS records are configured as one-level subdomains so Cloudflare Universal SSL covers them:
+
+- `commerce-particle-turbo.pfm-qa.com`
+- `content-particle-turbo.pfm-qa.com`
+
+## Current Deployment Status
+
+The QA storefront is deployed and serving from the VPS.
+
+Current deployed app commit on `main`: `bda676d`
+
+Live checks completed on 2026-04-30:
+
+- `https://particle-turbo.pfm-qa.com/` returns `200`.
+- `https://particle-turbo.pfm-qa.com/cart` returns `200`.
+- `https://particle-turbo.pfm-qa.com/checkout` returns `200`.
+- `https://particle-turbo.pfm-qa.com/admin-commerce/` redirects to `/admin-commerce/app`.
+- `https://particle-turbo.pfm-qa.com/admin-commerce/app` returns Medusa Admin HTML.
+- `https://particle-turbo.pfm-qa.com/admin-content/` responds, but Strapi redirects to `/admin`.
+- `https://commerce-particle-turbo.pfm-qa.com/` redirects to `/app`.
+- `https://commerce-particle-turbo.pfm-qa.com/app` returns `200`.
+- `https://content-particle-turbo.pfm-qa.com/` redirects to `/admin`.
+- `https://content-particle-turbo.pfm-qa.com/admin` returns `200`.
+- All project containers are running on the VPS:
+    - `particle-turbo-storefront-1`
+    - `particle-turbo-commerce-1`
+    - `particle-turbo-content-1`
+    - `particle-turbo-postgres-commerce-1`
+    - `particle-turbo-postgres-content-1`
+    - `particle-turbo-redis-1`
+- HTTPS certificate for the storefront was issued by Certbot and expires on `2026-07-28`.
+- HTTPS certificates for the admin subdomains were issued by Certbot and expire on `2026-07-29`.
+- Local commerce/content databases were dumped and restored to the VPS.
+
+Known current limitations:
+
+- Admin path-prefixing is not fully reliable. Medusa emits admin assets under root `/app/...`, and Strapi redirects `/admin-content/` to `/admin`. Use the one-level admin subdomains for reliable admin access.
+- A sample check for `https://particle-turbo.pfm-qa.com/product/face-cream` returned `404`; verify the actual product handles in the restored Medusa/Strapi data before using that URL as a smoke test.
+- UFW is still reported inactive on the shared VPS. Coordinate firewall hardening with the existing projects on the server.
+
+## 2026-04-30 Deployment Notes
+
+Changes deployed on 2026-04-30:
+
+- Cart drawer now opens immediately after the add-line-item response; cart recommendations load in the background instead of blocking the drawer.
+- PDP pages now pre-create a cart in the background after mount when the product is purchasable. If the user clicks while warmup is still in flight, add-to-cart reuses the same pending cart creation promise.
+- Add-to-cart buttons, cart drawer "My Cart", and cart page checkout navigation now show spinner feedback while the relevant action is loading.
+- DNS for `particle-turbo.pfm-qa.com` was confirmed through Cloudflare after changing the local workstation DNS resolver from the office router cache to Cloudflare DNS.
+- One-level admin subdomains were added because nested names such as `content.particle-turbo.pfm-qa.com` are not covered by Cloudflare Universal SSL.
+- Nginx sites and Certbot certificates were added for:
+    - `commerce-particle-turbo.pfm-qa.com` -> `127.0.0.1:9030`
+    - `content-particle-turbo.pfm-qa.com` -> `127.0.0.1:1338`
+
+Performance spot checks after the cart warmup deploy:
+
+- Remote Cloudflare cold first add total: median `~832 ms`.
+- Remote Cloudflare click after cart warmup: median `~449 ms`.
+- Remote Cloudflare existing-cart add: median `~433 ms`.
+- Remote Cloudflare quantity update: median `~423 ms`.
+- Remote Cloudflare recommendations cache hit: median `~204 ms`.
+- Local click after cart warmup: median `~127 ms`.
+
+Useful load/stress test endpoints:
+
+- Home: `https://particle-turbo.pfm-qa.com/`
+- PDP: `https://particle-turbo.pfm-qa.com/product/advanced-bundle`
+- Cart: `https://particle-turbo.pfm-qa.com/cart`
+- Checkout: `https://particle-turbo.pfm-qa.com/checkout`
+- Recommendations: `https://particle-turbo.pfm-qa.com/api/cart/recommendations?limit=5`
+- Add-to-cart API flow:
+    - `POST https://particle-turbo.pfm-qa.com/api/cart`
+    - `POST https://particle-turbo.pfm-qa.com/api/cart/{cart_id}/line-items`
+    - Test variant: `variant_01KPY7CWCFBCWB394ZDQ7F38X7`
+
 ## Recommended Architecture
 
 ```mermaid
 flowchart TD
   Browser[Browser] --> Proxy[Reverse Proxy]
   Proxy -->|"Storefront /"| Storefront[Nuxt Storefront]
-  Proxy -->|"Admin Commerce /admin-commerce"| Commerce[Medusa]
-  Proxy -->|"Admin Content /admin-content"| Content[Strapi]
+  Proxy -->|"Storefront /admin-commerce temporary"| Commerce[Medusa]
+  Proxy -->|"Storefront /admin-content temporary"| Content[Strapi]
+  Proxy -.->|"Recommended commerce subdomain"| Commerce
+  Proxy -.->|"Recommended content subdomain"| Content
   Storefront --> Commerce
   Storefront --> Content
   Storefront --> Redis[(Redis)]
@@ -48,16 +129,23 @@ Do not use the existing Caddy container for this project. The host Caddy service
 
 ## Important Path Prefix Note
 
-Serving Medusa Admin and Strapi Admin under paths like `/admin-commerce/` and `/admin-content/` may require extra base URL/public URL configuration. Some admin apps assume they are served from root.
+Serving Medusa Admin and Strapi Admin under paths like `/admin-commerce/` and `/admin-content/` is not reliable for the current app builds. Both admin apps assume root-level routes in ways that are hard to proxy safely under a shared path.
 
-If either admin panel has broken assets, API calls, redirects, or login after path-prefix proxying, switch to subdomains:
+Observed during the 2026-04-29 deployment:
 
-- `commerce.particle-turbo.pfm-qa.com`
-- `content.particle-turbo.pfm-qa.com`
+- Medusa Admin can be reached through `/admin-commerce/app`, but its HTML references assets under `/app/assets/...` instead of `/admin-commerce/app/assets/...`.
+- Strapi Admin redirects `/admin-content/` to `/admin`, escaping the intended path prefix.
 
-Subdomains are usually safer for admin apps, but path routing can be attempted first.
+Use subdomains for reliable admin access:
 
-## Current Repo Gap
+- `commerce-particle-turbo.pfm-qa.com`
+- `content-particle-turbo.pfm-qa.com`
+
+Do not use nested names such as `commerce.particle-turbo.pfm-qa.com` with Cloudflare Universal SSL unless an advanced/custom certificate covers them. Cloudflare's free wildcard covers `*.pfm-qa.com`, not `*.*.pfm-qa.com`.
+
+Path routing can stay temporarily for API/debug access, but do not treat it as the final admin access pattern.
+
+## Development And Production Docker Setup
 
 The current Docker setup is development-oriented:
 
@@ -82,7 +170,7 @@ Production containers should:
 - expose app ports only on the Docker network
 - expose only `80` and `443` publicly through the reverse proxy
 
-Current readiness: closer, but not deploy-ready until `.env.prod` is created on the VPS, Nginx is installed/enabled for this host, the GitHub deployment branch is pushed, and database/content bootstrap is completed.
+Current readiness: deployed for QA storefront access. Admin access needs subdomain DNS/proxy follow-up.
 
 Local validation completed on 2026-04-29:
 
@@ -92,6 +180,66 @@ docker compose -f compose.prod.yml --env-file env build --progress=plain storefr
 ```
 
 Both commands completed successfully.
+
+VPS validation completed on 2026-04-29:
+
+```bash
+docker compose -f compose.prod.yml --env-file .env.prod build storefront commerce content
+docker compose -f compose.prod.yml --env-file .env.prod run --rm commerce pnpm db:migrate
+docker compose -f compose.prod.yml --env-file .env.prod up -d commerce content storefront
+```
+
+Production image builds, migrations, and container startup completed successfully on the VPS after the fixes documented below.
+
+## Deployment Issues Faced And Fixes
+
+Issues found during the first VPS deploy on 2026-04-29:
+
+1. **Deploy required GitHub, but the deployable code was uncommitted.**
+    - Symptom: VPS had no `/var/www/particle-turbo`, and the plan required deploying from GitHub.
+    - Fix: Committed and pushed deployable code to `origin/main`.
+    - Relevant commits:
+        - `e023d43` - deployment setup and checkout flows
+        - `de6b62a` - Medusa production start fix
+        - `3eeaea7` - first Medusa admin asset path attempt
+        - `3905070` - correct Medusa runtime admin asset path
+        - `c17acf9` - Medusa admin prefix redirect
+
+2. **VPS `.env.prod` did not exist.**
+    - Symptom: `docker compose --env-file .env.prod config` could not be run until the file existed.
+    - Fix: Copied local `env` to `/var/www/particle-turbo/.env.prod`, set mode `600`, and normalized production-safe non-secret values:
+        - `NODE_ENV=production`
+        - `REDIS_URL=redis://redis:6379`
+        - `MEDUSA_REDIS_URL=redis://redis:6379`
+        - `DATABASE_SSL=false`
+        - `NUXT_MEDUSA_INTERNAL_URL=http://commerce:9000`
+        - `NUXT_STRAPI_INTERNAL_URL=http://content:1337`
+        - `NUXT_REDIS_URL=redis://redis:6379`
+        - public/CORS URLs for `https://particle-turbo.pfm-qa.com`
+
+3. **Medusa production container could not start with the original start command.**
+    - Symptom: commerce container restarted with `Cannot find module '/workspace/apps/commerce/.medusa/server/src/main.js'`.
+    - Cause: `medusa build` did not produce `.medusa/server/src/main.js`.
+    - Fix: Changed `apps/commerce/package.json` production start script from `node .medusa/server/src/main.js` to `medusa start`.
+
+4. **Medusa production admin bundle was not in the runtime directory.**
+    - Symptom: commerce container started with `medusa start` but failed with `Could not find index.html in the admin build directory`.
+    - Cause: Medusa runtime serves admin from `./public/admin`, while the build output was in `dist/public/admin`.
+    - Fix: `apps/commerce/Dockerfile.prod` copies `apps/commerce/dist/public/admin/.` into `apps/commerce/public/admin/` after `medusa build`.
+
+5. **Fresh VPS databases made the storefront fail against Strapi.**
+    - Symptom: storefront returned `401 Unauthorized` from Strapi-backed routes such as `/api/site-setting`.
+    - Cause: `.env.prod` contained the local Strapi API token, but the fresh VPS Strapi database did not contain the matching token/content.
+    - Fix: Dumped local `postgres-commerce` and `postgres-content`, copied dumps to the VPS, backed up the fresh VPS DBs, restored both dumps, then reran Medusa migrations.
+
+6. **Path-prefixed admin routing is only partially usable.**
+    - Symptom: `/admin-commerce/` initially returned `404` because it proxied to Medusa root; Strapi `/admin-content/` redirects to `/admin`.
+    - Fix applied: Nginx now redirects `/admin-commerce/` to `/admin-commerce/app`.
+    - Remaining issue: Medusa Admin HTML still references `/app/assets/...`, and Strapi still escapes to `/admin`. Add admin subdomains and proxy each admin at root.
+
+7. **The Nginx config has an unrelated existing warning.**
+    - Symptom: `nginx -t` succeeds but warns `protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/tools.pfm-qa.com:16`.
+    - Action: Left untouched because it belongs to another site and does not block this deployment.
 
 ## Deployment Source
 
@@ -135,7 +283,7 @@ Host:
 Current project layout:
 
 - Existing apps are under `/var/www`, not `/opt`.
-- `/var/www/particle-turbo` does not exist yet.
+- `/var/www/particle-turbo` exists and is a Git checkout of `https://github.com/ri5pekt/particle-turbo.git`.
 - `/opt/particle-turbo` does not exist.
 - Existing directories include `blurr-tools`, `lost-orders`, `particle_dashboard`, `pfm-chargebacks`, `pfm-marketing`, `pfm-tools`, and `surveys.pfm-qa.com`.
 
@@ -144,7 +292,7 @@ Current proxy setup:
 - Nginx is listening on ports `80` and `443`.
 - Existing enabled Nginx sites include `surveys.pfm-qa.com`, `marketing.pfm-qa.com`, `tools.pfm-qa.com`, `chargebacks.pfm-qa.com`, and others.
 - Nginx config test succeeds, with an existing warning in `tools.pfm-qa.com` about protocol options redefined.
-- No enabled Nginx site for `particle-turbo.pfm-qa.com` exists yet.
+- An enabled Nginx site for `particle-turbo.pfm-qa.com` exists.
 - Existing Nginx sites proxy to loopback app ports such as `127.0.0.1:3000`, `127.0.0.1:3001`, `127.0.0.1:5173`, and `127.0.0.1:8001`.
 
 Current Docker state:
@@ -158,7 +306,7 @@ Implications for this deploy:
 - Use `/var/www/particle-turbo` as the app directory to match the server.
 - Use Nginx + Certbot, not Caddy.
 - Do not publish PostgreSQL or Redis ports to the host.
-- Publish app containers only to unused loopback ports for Nginx:
+- App containers are published only to loopback ports for Nginx:
     - Storefront: `127.0.0.1:3030 -> 3000`
     - Medusa: `127.0.0.1:9030 -> 9000`
     - Strapi: `127.0.0.1:1338 -> 1337`
@@ -278,6 +426,10 @@ server {
         return 301 /admin-commerce/;
     }
 
+    location = /admin-commerce/ {
+        return 302 /admin-commerce/app;
+    }
+
     location /admin-commerce/ {
         rewrite ^/admin-commerce/?(.*)$ /$1 break;
         proxy_pass http://127.0.0.1:9030;
@@ -320,7 +472,36 @@ nginx -t
 systemctl reload nginx
 ```
 
-If either admin panel breaks under the path prefix, switch to subdomains rather than adding complex rewrites.
+This path-prefix config is good enough for storefront QA and basic backend reachability checks. It is not the final admin access pattern.
+
+### Admin Subdomain Plan
+
+DNS and Nginx sites exist for the one-level admin subdomains:
+
+- `commerce-particle-turbo.pfm-qa.com` -> `http://127.0.0.1:9030`
+- `content-particle-turbo.pfm-qa.com` -> `http://127.0.0.1:1338`
+
+Both have Certbot-managed HTTPS certificates. The root paths redirect to the relevant admin app paths:
+
+- `https://commerce-particle-turbo.pfm-qa.com/` -> `/app`
+- `https://content-particle-turbo.pfm-qa.com/` -> `/admin`
+
+If public browser-facing admin URLs are changed from the temporary path routes, update `.env.prod`:
+
+```env
+NUXT_PUBLIC_MEDUSA_URL=https://commerce-particle-turbo.pfm-qa.com
+NUXT_PUBLIC_STRAPI_URL=https://content-particle-turbo.pfm-qa.com
+STORE_CORS=https://particle-turbo.pfm-qa.com
+ADMIN_CORS=https://commerce-particle-turbo.pfm-qa.com
+AUTH_CORS=https://particle-turbo.pfm-qa.com,https://commerce-particle-turbo.pfm-qa.com
+CORS_ORIGIN=https://particle-turbo.pfm-qa.com,https://content-particle-turbo.pfm-qa.com
+```
+
+Recreate affected containers after changing `.env.prod`:
+
+```bash
+docker compose -f compose.prod.yml --env-file .env.prod up -d commerce content storefront
+```
 
 ## Production Environment
 
@@ -388,7 +569,7 @@ HOST=0.0.0.0
 PORT=1337
 ```
 
-Secrets should be generated fresh for the VPS. Do not reuse local development secrets.
+For the first QA deploy, the local `env` file was copied to `.env.prod` so the restored local databases and tokens matched. Before sharing broader QA access or moving toward production, rotate secrets and admin credentials on the VPS.
 
 ## App Configuration Checks
 
@@ -397,8 +578,8 @@ Before launch, verify:
 - Nuxt uses internal Docker URLs for server-to-server calls and public HTTPS URLs for browser-visible URLs.
 - Medusa CORS allows `https://particle-turbo.pfm-qa.com`.
 - Strapi CORS allows `https://particle-turbo.pfm-qa.com`.
-- Strapi public URL/base URL works under `/admin-content/`, or switch Strapi to a subdomain.
-- Medusa Admin works under `/admin-commerce/`, or switch Medusa to a subdomain.
+- Strapi Admin should use a subdomain for reliable admin access.
+- Medusa Admin should use a subdomain for reliable admin access.
 - The local development admin/customer bridge is disabled in production by `NODE_ENV=production`.
 
 ## Data Bootstrap
@@ -630,14 +811,16 @@ Verify:
 
 Medusa Admin:
 
-- URL target: `/admin-commerce/`
+- Temporary URL target: `/admin-commerce/`
+- Reliable URL target: `https://commerce-particle-turbo.pfm-qa.com/app`
 - Configure/check Braintree under Settings.
 - Configure PPU rules under Settings → Post-purchase upsells.
 - Create publishable API key for storefront.
 
 Strapi Admin:
 
-- URL target: `/admin-content/`
+- Temporary URL target: `/admin-content/`
+- Reliable URL target: `https://content-particle-turbo.pfm-qa.com/admin`
 - Confirm media upload uses R2.
 - Confirm content APIs are readable by the storefront token.
 
@@ -668,7 +851,7 @@ Restore procedures must be documented and tested once.
 - Keep Braintree in sandbox for QA.
 - Use production `NODE_ENV=production`.
 - Do not commit `.env.prod`.
-- Consider basic auth or IP allowlist for `/admin-commerce/` and `/admin-content/`.
+- Consider Cloudflare Access, Nginx basic auth, or IP allowlists for `commerce-particle-turbo.pfm-qa.com` and `content-particle-turbo.pfm-qa.com`.
 - Rotate admin passwords before sharing QA access.
 - Confirm the dev admin/customer account bridge is not available in production.
 
@@ -678,6 +861,7 @@ After every deploy:
 
 - Home page loads over HTTPS.
 - PDP loads Strapi content and Medusa price data.
+- Product smoke tests use a real restored product handle, not a guessed handle.
 - Add to cart works.
 - Cart quantity update/remove works.
 - Checkout completes.
@@ -686,8 +870,8 @@ After every deploy:
 - PPU accept works and adds item to same order.
 - Thank-you page loads.
 - Account page shows placed order.
-- Medusa Admin loads.
-- Strapi Admin loads.
+- Medusa Admin loads at `https://commerce-particle-turbo.pfm-qa.com/app`.
+- Strapi Admin loads at `https://content-particle-turbo.pfm-qa.com/admin`.
 - Public cached pages are fast.
 - Cart, checkout, payment, account, and PPU routes are not cached.
 
@@ -697,4 +881,5 @@ After every deploy:
 - Replace direct PPU order table inserts with official Medusa order workflows if a stable workflow supports this case.
 - Add delete/duplicate controls for PPU rules in Medusa Admin.
 - Add a formal backup/restore script.
-- Decide whether admin paths should stay path-based or move to subdomains.
+- Add Cloudflare Access, Nginx basic auth, or IP allowlists before sharing admin subdomain access broadly.
+- Harden firewall rules after coordinating with the other projects on the shared VPS.

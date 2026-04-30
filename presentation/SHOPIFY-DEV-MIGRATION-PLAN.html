@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shopify Migration Development Plan - Particle for Men</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --soft: #f4f6f9;
+      --blue: #153e91;
+      --green: #1f7a4d;
+      --amber: #9a6200;
+      --red: #b42318;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e8ebf0;
+    }
+
+    .slide {
+      width: 1280px;
+      min-height: 720px;
+      margin: 28px auto;
+      padding: 54px 64px;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--line);
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide--title {
+      justify-content: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 1060px;
+      margin: 0;
+      font-size: 54px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: 38px;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.45;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.32;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .subtitle {
+      max-width: 960px;
+      margin-top: 26px;
+      font-size: 25px;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #7a8390;
+      font-size: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-text {
+      min-width: 0;
+    }
+
+    .back-to-toc {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      padding: 22px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .card p,
+    .card li {
+      font-size: 18px;
+    }
+
+    .summary {
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      background: #eef5ff;
+      border-left: 7px solid var(--blue);
+      border-radius: 14px;
+    }
+
+    .summary p {
+      margin-bottom: 0;
+      color: var(--ink);
+      font-size: 24px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 10px;
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 999px;
+    }
+
+    .tag-blue {
+      background: var(--blue);
+    }
+
+    .tag-green {
+      background: var(--green);
+    }
+
+    .tag-amber {
+      background: var(--amber);
+    }
+
+    .tag-red {
+      background: var(--red);
+    }
+
+    .phase-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 24px;
+      counter-reset: phase;
+    }
+
+    .phase-item {
+      position: relative;
+      padding: 15px 18px 15px 56px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      counter-increment: phase;
+    }
+
+    .phase-item::before {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--blue);
+      border-radius: 999px;
+      content: counter(phase);
+    }
+
+    .phase-item h3 {
+      margin-bottom: 5px;
+      font-size: 20px;
+    }
+
+    .phase-item p {
+      margin-bottom: 0;
+      font-size: 17px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      counter-reset: toc;
+    }
+
+    .toc-item {
+      position: relative;
+      display: block;
+      min-height: 39px;
+      padding: 10px 14px 10px 50px;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.22;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      counter-increment: toc;
+    }
+
+    .toc-item::before {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 13px;
+      background: var(--blue);
+      border-radius: 999px;
+      content: counter(toc);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .table th,
+    .table td {
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.32;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table th {
+      color: var(--ink);
+      font-weight: 700;
+      background: var(--soft);
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .compact li {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      body {
+        background: var(--white);
+      }
+
+      .slide {
+        width: 16in;
+        height: 9in;
+        min-height: 9in;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide slide--title">
+    <p class="eyebrow">Developer Migration Plan</p>
+    <h1>Shopify migration plan from a development perspective</h1>
+    <p class="subtitle">A practical plan for moving Particle for Men to Shopify, including the short meeting version and the detailed technical workstreams behind it.</p>
+    <div class="footer"><span class="footer-text">Prepared for management and development planning</span></div>
+  </section>
+
+  <section class="slide" id="table-of-contents">
+    <h2>Table Of Contents</h2>
+    <div class="toc">
+      <a class="toc-item" href="#executive-summary">Executive Summary</a>
+      <a class="toc-item" href="#meeting-plan">Short Plan For Meeting</a>
+      <a class="toc-item" href="#decision-gates">Decision Gates Before Build</a>
+      <a class="toc-item" href="#workstreams">Development Workstreams</a>
+      <a class="toc-item" href="#discovery">Phase 1: Discovery And Mapping</a>
+      <a class="toc-item" href="#risk-validation">Phase 2: Risk Validation</a>
+      <a class="toc-item" href="#seo">SEO And URL Migration</a>
+      <a class="toc-item" href="#data-migration">Customer And Order Data</a>
+      <a class="toc-item" href="#subscriptions">Subscriptions And Saved Payments</a>
+      <a class="toc-item" href="#storefront">Storefront Build</a>
+      <a class="toc-item" href="#commerce-config">Commerce Configuration</a>
+      <a class="toc-item" href="#integrations">Apps And Integrations</a>
+      <a class="toc-item" href="#custom-dev">Custom Development</a>
+      <a class="toc-item" href="#qa">QA And Acceptance Testing</a>
+      <a class="toc-item" href="#launch">Launch Runbook</a>
+      <a class="toc-item" href="#post-launch">Post-Launch Stabilization</a>
+      <a class="toc-item" href="#timeline">Timeline And Team Shape</a>
+      <a class="toc-item" href="#risks">Key Risks To Present</a>
+    </div>
+    <div class="footer"><span class="footer-text">Use the first slides for the meeting summary, then keep the later slides as backup detail.</span></div>
+  </section>
+
+  <section class="slide" id="executive-summary">
+    <h2>Executive Summary</h2>
+    <div class="summary">
+      <p><strong>Development view:</strong> a Shopify migration is possible, but it must be run as a controlled migration project with proof phases before full build. The risky areas are subscriptions, saved payments, URLs, historical data, upsells, and fulfillment logic.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-green">Good Fit</span>
+        <h3>Standard commerce</h3>
+        <p>Products, collections, basic checkout, payments, shipping, discounts, and admin operations can move well to Shopify.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Needs Proof</span>
+        <h3>Custom flows</h3>
+        <p>Subscriptions, post-purchase upsells, fulfillment exports, landing pages, and account behavior need real tests.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-red">Biggest Risk</span>
+        <h3>Revenue continuity</h3>
+        <p>The launch must protect SEO traffic, active subscriptions, payment success, and warehouse processing.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: approve discovery and proof work before approving a full Shopify build.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="meeting-plan">
+    <h2>Short Plan For Meeting</h2>
+    <div class="phase-list">
+      <div class="phase-item"><h3>Audit current flows</h3><p>List products, URLs, subscriptions, customers, orders, upsells, fulfillment, and integrations.</p></div>
+      <div class="phase-item"><h3>Prove high-risk items</h3><p>Test subscription migration, saved payments, SEO redirects, upsells, and warehouse export before build.</p></div>
+      <div class="phase-item"><h3>Choose Shopify model</h3><p>Decide Shopify plan, theme/headless approach, subscription app, upsell app, and landing page approach.</p></div>
+      <div class="phase-item"><h3>Build Shopify store</h3><p>Create storefront, product templates, cart, checkout settings, content templates, and tracking.</p></div>
+      <div class="phase-item"><h3>Migrate and validate data</h3><p>Move products, customers, historical orders, subscriptions, SEO data, and redirects with reconciliation reports.</p></div>
+      <div class="phase-item"><h3>Connect operations</h3><p>Configure payments, shipping, taxes, reviews, loyalty, email, fraud, support, and fulfillment exports.</p></div>
+      <div class="phase-item"><h3>Run full QA</h3><p>Test every purchase path, subscription path, payment method, mobile flow, redirect, and warehouse handoff.</p></div>
+      <div class="phase-item"><h3>Launch and stabilize</h3><p>Freeze old site, run final import, switch DNS, monitor 404s, payments, subscriptions, orders, and support tickets.</p></div>
+    </div>
+    <div class="footer"><span class="footer-text">Meeting summary: Shopify is not just a theme project, it is a data, SEO, subscription, and operations migration.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="decision-gates">
+    <h2>Decision Gates Before Full Build</h2>
+    <table class="table">
+      <thead>
+        <tr><th>Gate</th><th>What Must Be Proven</th><th>Why It Matters</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Subscription migration</strong></td><td>Active subscriptions, renewal dates, prices, discounts, and payment tokens can move or be reauthorized.</td><td>Subscription revenue can be disrupted if customers must manually restart too many plans.</td></tr>
+        <tr><td><strong>SEO and URLs</strong></td><td>All valuable URLs have a redirect or equivalent Shopify page strategy.</td><td>Organic traffic loss can be expensive and slow to recover.</td></tr>
+        <tr><td><strong>Upsell behavior</strong></td><td>Post-purchase and cart upsells work with our products, payment methods, and subscriptions.</td><td>Upsell revenue may not transfer 1:1 to Shopify apps.</td></tr>
+        <tr><td><strong>Fulfillment export</strong></td><td>Orders reach warehouses with the correct tags, addresses, SKUs, quantities, and statuses.</td><td>Operations must not break after launch.</td></tr>
+        <tr><td><strong>Historical data</strong></td><td>Customers and support team can find past orders, refunds, notes, and subscription history.</td><td>Support and reporting need reliable history after migration.</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: these gates should be passed with real sample data before committing to the full migration.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="workstreams">
+    <h2>Development Workstreams</h2>
+    <div class="grid grid-3">
+      <div class="card"><span class="tag tag-blue">Storefront</span><h3>Customer-facing build</h3><ul><li>Theme or headless frontend</li><li>Product and collection pages</li><li>Cart and checkout handoff</li><li>Landing pages and tracking</li></ul></div>
+      <div class="card"><span class="tag tag-blue">Data</span><h3>Migration tooling</h3><ul><li>Products and variants</li><li>Customers and accounts</li><li>Orders and refunds</li><li>Subscriptions and redirects</li></ul></div>
+      <div class="card"><span class="tag tag-blue">Operations</span><h3>Business systems</h3><ul><li>Payments and fraud</li><li>Fulfillment exports</li><li>Email, loyalty, reviews</li><li>Support and reporting</li></ul></div>
+    </div>
+    <div class="grid grid-2" style="margin-top:22px;">
+      <div class="card"><span class="tag tag-amber">Validation</span><h3>QA workstream</h3><p>Every major flow must be tested against the current website behavior, including mobile, subscriptions, upsells, discounts, and warehouse handoff.</p></div>
+      <div class="card"><span class="tag tag-green">Launch</span><h3>Cutover workstream</h3><p>Launch needs a freeze window, final sync, DNS plan, rollback decision point, live monitoring, and support coverage.</p></div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: the project should run as parallel workstreams, not a single linear theme build.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="discovery">
+    <h2>Phase 1: Discovery And Mapping</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-blue">Audit</span>
+        <ul class="compact">
+          <li>Export all URLs and categorize by page type, traffic, revenue, and SEO value.</li>
+          <li>Map products, variants, bundles, kits, landing pages, content pages, and redirects.</li>
+          <li>Document purchase flows, subscription flows, upsells, account actions, refunds, and support actions.</li>
+          <li>List every integration: payments, fraud, warehouse, reviews, loyalty, email, analytics, marketplaces, and support.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Deliverables</span>
+        <ul class="compact">
+          <li>Current-state flow document.</li>
+          <li>Shopify fit/gap matrix.</li>
+          <li>Full URL and redirect inventory.</li>
+          <li>Data migration inventory.</li>
+          <li>Integration replacement plan.</li>
+          <li>Risk register with owners and test plans.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: this phase prevents surprises by making hidden WooCommerce behavior visible before Shopify build starts.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="risk-validation">
+    <h2>Phase 2: Risk Validation</h2>
+    <div class="summary">
+      <p>This phase should use real sample data, not assumptions. The goal is to prove whether Shopify can support the business-critical flows before we spend heavily on implementation.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><h3>Build test store</h3><p>Create a private Shopify test store with sample products, payment setup, subscription app, upsell app, and app candidates.</p></div>
+      <div class="card"><h3>Run sample imports</h3><p>Import representative customers, orders, products, discounts, and subscriptions. Record what works and what needs custom handling.</p></div>
+      <div class="card"><h3>Test critical flows</h3><p>Run checkout, subscription purchase, renewal, upsell acceptance, refund, failed payment, and warehouse export scenarios.</p></div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: risk validation is the difference between a planned migration and a launch surprise.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="seo">
+    <h2>SEO And URL Migration</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-red">Risk</span>
+        <p>Shopify has fixed URL patterns for products, collections, blogs, and pages. Existing WooCommerce URLs may not be preserved exactly.</p>
+        <ul class="compact">
+          <li>Build full redirect map from old URL to Shopify URL.</li>
+          <li>Preserve metadata, titles, descriptions, canonicals, image alt text, and structured data where possible.</li>
+          <li>Check language/country URL behavior and hreflang if applicable.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Acceptance Criteria</span>
+        <ul class="compact">
+          <li>Top traffic and revenue URLs have approved destination URLs.</li>
+          <li>Redirects work in bulk tests before launch.</li>
+          <li>New sitemaps are clean and submitted after launch.</li>
+          <li>404 monitoring is active from day one.</li>
+          <li>SEO traffic is monitored daily after launch.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: SEO migration should be treated as a revenue protection workstream.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="data-migration">
+    <h2>Customer And Order Data</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-blue">Tasks</span>
+        <ul class="compact">
+          <li>Export customers, addresses, tags, marketing consent, account status, and custom fields.</li>
+          <li>Export orders, line items, discounts, refunds, taxes, shipping, payment status, fulfillment status, notes, and metadata.</li>
+          <li>Transform data into Shopify import format and metafields where needed.</li>
+          <li>Create failed-record reports and reconciliation reports.</li>
+          <li>Decide whether all history lives in Shopify or some remains in an archive/reporting system.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Open Questions</span>
+        <ul class="compact">
+          <li>Can old order IDs be preserved, or do we need a visible legacy order ID field?</li>
+          <li>How will support search old orders after launch?</li>
+          <li>Which custom customer fields must be available in Shopify admin?</li>
+          <li>Which records are required for accounting, legal, and customer service?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: data migration is not only import count, it must preserve support, reporting, and operational usability.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="subscriptions">
+    <h2>Subscriptions And Saved Payments</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-red">Highest Risk</span>
+        <p>Active subscriptions depend on product mapping, renewal schedules, prices, discounts, customer records, and saved payment tokens. Not all saved payment details can always be transferred into Shopify.</p>
+        <ul class="compact">
+          <li>Choose subscription app and confirm migration process.</li>
+          <li>Run sample migration with real subscription shapes.</li>
+          <li>Validate renewals, skipped orders, failed payments, cancellations, and discount behavior.</li>
+          <li>Prepare customer reauthorization flow if saved payment details cannot move.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Acceptance Criteria</span>
+        <ul class="compact">
+          <li>Subscription counts reconcile before and after import.</li>
+          <li>Next billing dates are correct.</li>
+          <li>Recurring prices and discounts are correct.</li>
+          <li>Customers can manage subscriptions after launch.</li>
+          <li>Support has a clear process for failed or unmigrated subscriptions.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: subscriptions should be proven before the migration is approved as feasible.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="storefront">
+    <h2>Storefront Build</h2>
+    <div class="grid grid-3">
+      <div class="card"><span class="tag tag-blue">Templates</span><ul><li>Homepage</li><li>Product pages</li><li>Collection pages</li><li>Landing pages</li><li>Content/blog pages</li><li>Account pages</li></ul></div>
+      <div class="card"><span class="tag tag-blue">UX Flows</span><ul><li>Cart drawer or cart page</li><li>Product selectors</li><li>Subscription selectors</li><li>Upsell placements</li><li>Mobile navigation</li><li>Trust and review blocks</li></ul></div>
+      <div class="card"><span class="tag tag-blue">Performance</span><ul><li>Image optimization</li><li>Script cleanup</li><li>App load monitoring</li><li>Mobile speed testing</li><li>Core Web Vitals checks</li><li>Tracking script control</li></ul></div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: the storefront must be built for speed, but app-heavy Shopify builds need strict performance control.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="commerce-config">
+    <h2>Commerce Configuration</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-blue">Shopify Setup</span>
+        <ul class="compact">
+          <li>Products, variants, SKUs, images, collections, tags, and metafields.</li>
+          <li>Markets, currencies, languages, taxes, shipping zones, and shipping rates.</li>
+          <li>Payment gateways, wallet options, fraud rules, and checkout branding.</li>
+          <li>Discounts, coupons, bundles, selling plans, and gift/loyalty behavior.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Validation</span>
+        <ul class="compact">
+          <li>Compare prices and discounts with current site.</li>
+          <li>Confirm checkout works for each major payment method.</li>
+          <li>Confirm taxes and shipping match expected regions.</li>
+          <li>Confirm subscription products and one-time products behave correctly together.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify admin configuration is a major build task, not a quick setting pass.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="integrations">
+    <h2>Apps And Integrations</h2>
+    <table class="table">
+      <thead>
+        <tr><th>Area</th><th>Development Tasks</th><th>Validation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Email and SMS</strong></td><td>Connect customer events, checkout events, subscription events, and segmentation.</td><td>Confirm events trigger the right flows without duplicate sends.</td></tr>
+        <tr><td><strong>Reviews and loyalty</strong></td><td>Migrate review display, loyalty points, rewards, coupons, and customer tags.</td><td>Confirm customer balances and coupon behavior.</td></tr>
+        <tr><td><strong>Fraud and payments</strong></td><td>Configure fraud tools, payment statuses, risk tags, and manual review rules.</td><td>Confirm held orders and approved orders follow the right path.</td></tr>
+        <tr><td><strong>Fulfillment</strong></td><td>Connect warehouse export, SKU mapping, order tags, address data, and fulfillment status sync.</td><td>Confirm test orders arrive correctly in warehouse flow.</td></tr>
+        <tr><td><strong>Analytics</strong></td><td>Set up pixels, server-side events if needed, attribution, and ecommerce tracking.</td><td>Confirm purchase, subscription, and upsell events are accurate.</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: every app must be tested as part of the customer journey, not only installed.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="custom-dev">
+    <h2>Custom Development</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-amber">Likely Custom Work</span>
+        <ul class="compact">
+          <li>Custom fulfillment export logic if no app matches current rules.</li>
+          <li>Custom order/customer tagging and reporting fields.</li>
+          <li>Custom data migration scripts and validation reports.</li>
+          <li>Custom landing page sections if page-builder output is too limited or slow.</li>
+          <li>Custom app proxy or middleware for workflows Shopify apps cannot cover.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-red">Not Safe To Assume</span>
+        <ul class="compact">
+          <li>That a Shopify app can copy every current flow exactly.</li>
+          <li>That post-purchase offers work with every payment method and subscription case.</li>
+          <li>That order history imports will look native to support staff.</li>
+          <li>That saved payment methods can always be transferred without customer action.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: custom development fills Shopify gaps, but each gap adds cost, testing, and maintenance.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="qa">
+    <h2>QA And Acceptance Testing</h2>
+    <div class="grid grid-3">
+      <div class="card"><span class="tag tag-blue">Customer QA</span><ul><li>Mobile and desktop browsing</li><li>One-time checkout</li><li>Subscription checkout</li><li>Account login/reset</li><li>Subscription management</li><li>Discount and coupon use</li></ul></div>
+      <div class="card"><span class="tag tag-blue">Operations QA</span><ul><li>Payment capture</li><li>Fraud review</li><li>Refunds</li><li>Fulfillment export</li><li>Order status updates</li><li>Support order lookup</li></ul></div>
+      <div class="card"><span class="tag tag-blue">Migration QA</span><ul><li>Product counts</li><li>Customer counts</li><li>Order counts</li><li>Subscription counts</li><li>Redirect tests</li><li>Analytics events</li></ul></div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: acceptance testing should compare Shopify behavior against the current business behavior, not only check if pages load.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="launch">
+    <h2>Launch Runbook</h2>
+    <div class="phase-list">
+      <div class="phase-item"><h3>Pre-launch freeze</h3><p>Define cutoff for content, products, orders, and subscription changes.</p></div>
+      <div class="phase-item"><h3>Final data sync</h3><p>Run final exports/imports and reconcile products, customers, orders, and subscriptions.</p></div>
+      <div class="phase-item"><h3>Go/no-go checks</h3><p>Validate checkout, payments, redirects, warehouse export, analytics, and support access.</p></div>
+      <div class="phase-item"><h3>DNS switch</h3><p>Point production traffic to Shopify and confirm SSL, domain, sitemap, and redirects.</p></div>
+      <div class="phase-item"><h3>Live order watch</h3><p>Monitor real orders, payment status, fraud status, fulfillment export, and customer issues.</p></div>
+      <div class="phase-item"><h3>Rollback decision</h3><p>Define the point where issues require rollback or hotfix instead of continuing.</p></div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: launch must be a rehearsed checklist with owners, not an ad hoc DNS switch.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="post-launch">
+    <h2>Post-Launch Stabilization</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-red">First 72 Hours</span>
+        <ul class="compact">
+          <li>Monitor checkout errors, payment failures, subscription issues, warehouse export failures, and 404s.</li>
+          <li>Review customer support tickets several times per day.</li>
+          <li>Fix critical data, redirect, payment, and fulfillment issues immediately.</li>
+          <li>Compare order volume and conversion rate against normal baseline.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">First 30 Days</span>
+        <ul class="compact">
+          <li>Review organic traffic, conversion rate, page speed, subscription churn, upsell revenue, and support volume.</li>
+          <li>Improve redirects and landing pages based on Search Console and analytics.</li>
+          <li>Clean up failed imports and edge cases.</li>
+          <li>Decide what additional custom Shopify development is needed.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: migration is not finished at DNS switch, it needs active stabilization after launch.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="timeline">
+    <h2>Timeline And Team Shape</h2>
+    <table class="table">
+      <thead>
+        <tr><th>Stage</th><th>Typical Duration</th><th>Team Needed</th><th>Output</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Discovery</strong></td><td>2-4 weeks</td><td>Developer, ecommerce lead, operations, SEO, support</td><td>Fit/gap plan, redirect inventory, integration plan, risk register.</td></tr>
+        <tr><td><strong>Proof phase</strong></td><td>2-4 weeks</td><td>Developer, Shopify/app specialist, subscriptions/payment owner</td><td>Validated subscription, SEO, upsell, fulfillment, and data samples.</td></tr>
+        <tr><td><strong>Build phase</strong></td><td>8-16+ weeks</td><td>Frontend, Shopify developer, migration developer, QA, SEO</td><td>Storefront, apps, custom logic, migration scripts, QA environment.</td></tr>
+        <tr><td><strong>Launch phase</strong></td><td>1-2 weeks</td><td>Full project team plus support and operations</td><td>Final migration, DNS switch, live monitoring, critical fixes.</td></tr>
+        <tr><td><strong>Stabilization</strong></td><td>2-4 weeks</td><td>Developers, QA, SEO, support, operations</td><td>Issue cleanup, performance tuning, reporting review, redirect improvements.</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: timeline depends mostly on subscription/payment migration, app fit, data quality, and custom fulfillment needs.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="risks">
+    <h2>Key Risks To Present</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-red">Main Risks</span>
+        <ul class="compact">
+          <li>SEO loss from changed URLs or incomplete redirects.</li>
+          <li>Subscription disruption if payment details cannot migrate cleanly.</li>
+          <li>Historical order data may not look or behave exactly like native Shopify orders.</li>
+          <li>Post-purchase and cart upsells may be limited by apps or payment methods.</li>
+          <li>Fulfillment export logic may require custom development.</li>
+          <li>Too many apps can slow the storefront and create maintenance risk.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Controls</span>
+        <ul class="compact">
+          <li>Run proof-of-risk phase before full approval.</li>
+          <li>Use real sample data for migration testing.</li>
+          <li>Build a full redirect map and monitor 404s after launch.</li>
+          <li>Prepare customer communication for password or payment reauthorization.</li>
+          <li>Run launch rehearsal and keep rollback decision criteria clear.</li>
+          <li>Track conversion, speed, subscriptions, and support tickets after launch.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Shopify can be considered, but the risky flows must be proven before the business commits.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+</body>
+</html>

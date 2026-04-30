@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Custom Ecommerce Stack - Particle for Men</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --soft: #f4f6f9;
+      --blue: #153e91;
+      --green: #1f7a4d;
+      --amber: #9a6200;
+      --red: #b42318;
+      --white: #ffffff;
+      --purple: #4c2a85;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #e8ebf0;
+    }
+
+    .slide {
+      width: 1280px;
+      min-height: 720px;
+      margin: 28px auto;
+      padding: 54px 64px;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--line);
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide--title {
+      justify-content: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 1040px;
+      margin: 0;
+      font-size: 54px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: 38px;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.45;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    strong {
+      color: var(--ink);
+    }
+
+    .subtitle {
+      max-width: 960px;
+      margin-top: 26px;
+      font-size: 25px;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #7a8390;
+      font-size: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-text {
+      min-width: 0;
+    }
+
+    .back-to-toc {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .card {
+      padding: 24px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .card p,
+    .card li {
+      font-size: 19px;
+    }
+
+    .summary {
+      padding: 22px 26px;
+      margin-bottom: 26px;
+      background: #eef3ff;
+      border-left: 6px solid var(--blue);
+      border-radius: 12px;
+    }
+
+    .summary p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 22px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 14px;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 999px;
+    }
+
+    .tag-green {
+      background: var(--green);
+    }
+
+    .tag-amber {
+      background: var(--amber);
+    }
+
+    .tag-red {
+      background: var(--red);
+    }
+
+    .tag-blue {
+      background: var(--blue);
+    }
+
+    .tag-purple {
+      background: var(--purple);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 18px;
+    }
+
+    .table th {
+      padding: 14px 12px;
+      text-align: left;
+      color: var(--ink);
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 14px 12px;
+      vertical-align: top;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .table strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .metric {
+      padding: 20px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .metric b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--blue);
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .diagram {
+      padding: 24px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .diagram-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .node {
+      flex: 1;
+      padding: 14px 16px;
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .two-column-list {
+      columns: 2;
+      column-gap: 42px;
+    }
+
+    .decision {
+      padding: 30px;
+      background: #ecfdf3;
+      border: 1px solid #a6d9b8;
+      border-radius: 20px;
+    }
+
+    .tech-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .tech-logo {
+      max-width: 210px;
+      max-height: 74px;
+      object-fit: contain;
+    }
+
+    .tech-logo--wide {
+      max-width: 260px;
+    }
+
+    .url-list {
+      margin-top: 18px;
+      padding: 18px 20px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .url-list p {
+      margin-bottom: 7px;
+      font-size: 17px;
+    }
+
+    .url-list a {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .url-list a:hover {
+      text-decoration: underline;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 28px;
+      margin-top: 8px;
+      counter-reset: toc;
+    }
+
+    .toc-item {
+      position: relative;
+      display: block;
+      min-height: 42px;
+      padding: 12px 16px 12px 54px;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      counter-increment: toc;
+    }
+
+    .toc-item::before {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 14px;
+      background: var(--blue);
+      border-radius: 999px;
+      content: counter(toc);
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      body {
+        background: var(--white);
+      }
+
+      .slide {
+        width: 16in;
+        height: 9in;
+        min-height: 9in;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide slide--title">
+    <p class="eyebrow">Infrastructure Upgrade Proposal</p>
+    <h1>Custom headless ecommerce stack: Nuxt + Medusa + Strapi</h1>
+    <p class="subtitle">A scalable path to a faster customer experience while preserving the existing business flows, SEO structure, subscriptions, upsells, landing pages, and fulfillment logic.</p>
+    <div class="footer"><span class="footer-text">Prepared for management discussion</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="table-of-contents">
+    <h2>Table Of Contents</h2>
+    <div class="toc">
+      <a class="toc-item" href="#executive-summary">Executive Summary</a>
+      <a class="toc-item" href="#what-we-are-building">What We Are Building</a>
+      <a class="toc-item" href="#nuxt-vue">Technology 1: Nuxt 3 + Vue 3</a>
+      <a class="toc-item" href="#medusa-commerce">Technology 2: Medusa Commerce</a>
+      <a class="toc-item" href="#strapi-cms">Technology 3: Strapi CMS</a>
+      <a class="toc-item" href="#supporting-infrastructure">Supporting Infrastructure</a>
+      <a class="toc-item" href="#flow-replication">Why Existing Flows Can Be Replicated</a>
+      <a class="toc-item" href="#mvp-status">Current MVP Status</a>
+      <a class="toc-item" href="#mvp-flows">Implemented MVP Flows</a>
+      <a class="toc-item" href="#production-structure">Suggested Production Structure</a>
+      <a class="toc-item" href="#hosting-costs">Hosting Cost Options</a>
+      <a class="toc-item" href="#traffic-scaling">Traffic And Scaling Assumptions</a>
+      <a class="toc-item" href="#risks-controls">Key Risks And Controls</a>
+    </div>
+    <div class="footer"><span class="footer-text">Use this deck to explain the custom stack option and its infrastructure shape.</span></div>
+  </section>
+
+  <section class="slide" id="executive-summary">
+    <h2>Executive Summary</h2>
+    <div class="summary">
+      <p><strong>Recommendation:</strong> continue building the custom Strapi + Medusa + Nuxt stack. It gives us the control needed to replicate the current website flow while improving speed, stability, and long-term scalability.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-green">Main Benefit</span>
+        <h3>Full control</h3>
+        <p>We control URLs, checkout, subscriptions, post-purchase upsells, landing pages, fulfillment logic, integrations, and reporting.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Business Goal</span>
+        <h3>Faster customer journey</h3>
+        <p>Public pages can be optimized for speed and caching while cart, checkout, account, and subscription pages stay personalized and safe.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-amber">Tradeoff</span>
+        <h3>More ownership</h3>
+        <p>We own hosting, monitoring, releases, backups, and custom integrations. This needs disciplined engineering and support planning.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: this path gives maximum business flexibility, with more engineering responsibility.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="what-we-are-building">
+    <h2>What We Are Building</h2>
+    <div class="grid grid-3" style="margin-bottom: 22px;">
+      <div class="card">
+        <img class="tech-logo" src="assets/nuxt-logo.svg" alt="Nuxt logo">
+        <p>Customer-facing storefront and application layer.</p>
+      </div>
+      <div class="card">
+        <img class="tech-logo" src="assets/Medusa_logo.svg" alt="Medusa logo">
+        <p>Commerce engine for products, carts, checkout, customers, orders, and custom business logic.</p>
+      </div>
+      <div class="card">
+        <img class="tech-logo tech-logo--wide" src="assets/Strapi.full.logo.dark.svg" alt="Strapi logo">
+        <p>Content platform for landing pages, product content, SEO, articles, and marketing sections.</p>
+      </div>
+    </div>
+    <div class="diagram">
+      <div class="diagram-row">
+        <div class="node">Customer Browser</div>
+        <div class="arrow">></div>
+        <div class="node">Nuxt Storefront</div>
+        <div class="arrow">></div>
+        <div class="node">Medusa Commerce</div>
+      </div>
+      <div class="diagram-row">
+        <div class="node">Content Editors</div>
+        <div class="arrow">></div>
+        <div class="node">Strapi CMS</div>
+        <div class="arrow">></div>
+        <div class="node">Nuxt Page Rendering</div>
+      </div>
+      <div class="diagram-row">
+        <div class="node">PostgreSQL</div>
+        <div class="node">Redis Cache</div>
+        <div class="node">Cloudflare R2 Media</div>
+        <div class="node">Cloudflare CDN/WAF</div>
+      </div>
+    </div>
+    <div class="summary" style="margin-top: 28px;">
+      <p>The storefront combines commerce data from Medusa and content data from Strapi into one fast, SEO-friendly customer experience.</p>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: separate systems own separate responsibilities, then Nuxt composes the final customer-facing page.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="nuxt-vue">
+    <div class="tech-head">
+      <h2>Technology 1: Nuxt 3 + Vue 3</h2>
+      <img class="tech-logo" src="assets/nuxt-logo.svg" alt="Nuxt logo">
+    </div>
+    <div class="grid grid-2">
+      <div>
+        <p><strong>Nuxt</strong> is the main website application layer. It is built on <strong>Vue</strong>, a modern frontend framework for interactive customer experiences.</p>
+        <ul>
+          <li>Renders fast public pages for SEO and performance.</li>
+          <li>Builds product pages, landing pages, cart, checkout, account, and post-purchase pages.</li>
+          <li>Combines data from Medusa and Strapi before showing it to the customer.</li>
+          <li>Controls URL structure, redirects, SEO metadata, and caching strategy.</li>
+          <li>Can show server-rendered pages to Google while still supporting rich interactive components for shoppers.</li>
+          <li>Lets us keep cart, checkout, account, and post-purchase flows inside one consistent customer experience.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Why It Matters</span>
+        <p>Nuxt lets us keep the website fast without giving up control of the customer journey.</p>
+        <p>It is especially valuable for SEO-heavy ecommerce, landing pages, product pages, and campaign traffic.</p>
+        <div class="url-list">
+          <p><strong>Official sites:</strong></p>
+          <p><a href="https://nuxt.com/">nuxt.com</a></p>
+          <p><a href="https://vuejs.org/">vuejs.org</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Nuxt is the customer-facing engine and the place where speed, SEO, and UX come together.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="medusa-commerce">
+    <div class="tech-head">
+      <h2>Technology 2: Medusa Commerce</h2>
+      <img class="tech-logo" src="assets/Medusa_logo.svg" alt="Medusa logo">
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-purple">Commerce Engine</span>
+        <p><strong>Medusa</strong> owns the business data that must be correct for selling products.</p>
+        <ul>
+          <li>Products, variants, prices, regions, promotions, cart, checkout, customers, orders, and payments.</li>
+          <li>Custom modules for subscriptions, post-purchase upsells, fulfillment rules, fraud, and warehouse routing.</li>
+          <li>Admin tools for ecommerce managers and customer support workflows.</li>
+          <li>Multiple regions and currencies with independent pricing, not just automatic conversion.</li>
+          <li>Extensible backend workflows for our current order lifecycle and future integrations.</li>
+        </ul>
+      </div>
+      <div>
+        <p>Medusa gives us a commerce backend that can be extended without forcing our business into a fixed SaaS checkout model.</p>
+        <p>This is important because our current store has custom subscription, upsell, payment, warehouse, tax, and reporting behavior.</p>
+        <p>For management, Medusa should be seen as the replacement for the ecommerce engine: it is where product availability, pricing, cart rules, checkout rules, customer data, and order behavior live.</p>
+        <div class="url-list">
+          <p><strong>Official site:</strong></p>
+          <p><a href="https://medusajs.com/">medusajs.com</a></p>
+          <p><a href="https://docs.medusajs.com/">docs.medusajs.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Medusa is where custom commerce behavior can be rebuilt under our control.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="strapi-cms">
+    <div class="tech-head">
+      <h2>Technology 3: Strapi CMS</h2>
+      <img class="tech-logo tech-logo--wide" src="assets/Strapi.full.logo.dark.svg" alt="Strapi logo">
+    </div>
+    <div class="grid grid-2">
+      <div>
+        <p><strong>Strapi</strong> is the content management system for the marketing and editorial side of the store.</p>
+        <ul>
+          <li>Landing pages.</li>
+          <li>Product page content sections.</li>
+          <li>SEO fields, metadata, FAQs, banners, images, articles, and reusable marketing blocks.</li>
+          <li>Content editing by non-developers.</li>
+          <li>Role-based access for content and marketing teams.</li>
+          <li>Reusable page sections so teams can build pages from approved content blocks.</li>
+          <li>Localization support for translated content and market-specific messaging.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Manager Benefit</span>
+        <p>Marketing and content teams can update pages without asking developers for every text, image, banner, or landing page change.</p>
+        <p>Strapi also lets us structure content instead of burying it inside hardcoded templates.</p>
+        <p>For management, Strapi is the content operations system: it makes the site easier to update while keeping product pricing and checkout logic safely in Medusa.</p>
+        <div class="url-list">
+          <p><strong>Official site:</strong></p>
+          <p><a href="https://strapi.io/">strapi.io</a></p>
+          <p><a href="https://docs.strapi.io/">docs.strapi.io</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: Strapi gives business teams flexible content control while keeping commerce data separate.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="supporting-infrastructure">
+    <h2>Supporting Infrastructure</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-blue">PostgreSQL</span>
+        <h3>Reliable database</h3>
+        <p>Stores commerce and content data. We use separate databases for Medusa and Strapi so each system has clean ownership.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Redis</span>
+        <h3>Cache and jobs</h3>
+        <p>Supports caching and background processing. Helps reduce repeated work during high traffic and keeps public pages faster.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Cloudflare R2</span>
+        <h3>Media storage</h3>
+        <p>Stores images and uploaded assets outside the server, so deployments and scaling do not depend on local upload folders.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-purple">Docker</span>
+        <h3>Repeatable deployment</h3>
+        <p>Packages the storefront, commerce, content, database, and cache services so environments are easier to reproduce.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-purple">Cloudflare</span>
+        <h3>CDN and protection</h3>
+        <p>Can cache public pages, reduce origin traffic, and provide security protection before requests reach our servers.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-purple">Nginx</span>
+        <h3>Traffic routing</h3>
+        <p>Routes public storefront, Medusa admin/API, and Strapi admin/API to the correct service with HTTPS.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: the stack is modular and scalable, not one large application doing everything.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="flow-replication">
+    <h2>Why Existing Flows Can Be Replicated</h2>
+    <div class="summary">
+      <p>Because this is a custom stack, we are not limited by a fixed platform checkout or fixed URL model. In practical terms, the current business flows can be replicated 100% if we build and test them intentionally.</p>
+    </div>
+    <ul class="two-column-list">
+      <li>Existing URL structure and SEO paths.</li>
+      <li>Product pages and landing pages.</li>
+      <li>Cart drawer and cart page behavior.</li>
+      <li>Checkout fields and payment rules.</li>
+      <li>Post-purchase upsells.</li>
+      <li>Subscriptions and account workflows.</li>
+      <li>Warehouse routing and tracking updates.</li>
+      <li>Loyalty, coupons, store credits, and reporting.</li>
+      <li>Fraud, analytics, CRM, and marketing events.</li>
+      <li>Country, language, and currency behavior.</li>
+    </ul>
+    <div class="footer"><span class="footer-text">Summary: the main risk is implementation effort and QA, not platform limitations.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="mvp-status">
+    <h2>Current MVP Status</h2>
+    <div class="grid grid-2">
+      <div>
+        <p>The first MVP is already deployed to a simple VPS for QA and proof of concept.</p>
+        <ul>
+          <li>QA storefront is deployed at <strong>particle-turbo.pfm-qa.com</strong>.</li>
+          <li>Home page, cart page, and checkout page returned successful live checks.</li>
+          <li>Medusa Admin route is reachable through the temporary admin path.</li>
+          <li>Strapi is running, with admin path-prefix limitations identified.</li>
+          <li>All main containers are running: storefront, commerce, content, two PostgreSQL databases, and Redis.</li>
+          <li>HTTPS certificate has been issued.</li>
+          <li>Local commerce/content databases were restored to the VPS.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">What This Proves</span>
+        <p>The full stack can run together on a low-cost VPS. This validates the basic architecture before investing in a larger production setup.</p>
+        <p>The MVP is not the final production architecture, but it proves the first vertical slice works.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: we already have a working QA deployment, not just a theory.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="mvp-flows">
+    <h2>Implemented MVP Flows</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag tag-green">Storefront</span>
+        <p>Nuxt storefront shell, header, mega menu, mobile menu, footer, original styling tokens, product pages, cart, checkout, and account basics.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Content</span>
+        <p>Strapi content pages, home sections, product page sections, media through Cloudflare R2, and structured marketing blocks.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Commerce</span>
+        <p>Medusa product data, variant prices, add-to-cart, cart drawer, cart totals, promotions, checkout, Braintree Hosted Fields, and order history basics.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Performance</span>
+        <p>Redis-backed caching for public read-only data like product pages, regular pages, site settings, and recommendations.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">PPU</span>
+        <p>Post-purchase upsell rules, offer page, accept/skip APIs, timeout release job, and Medusa-owned upsell state.</p>
+      </div>
+      <div class="card">
+        <span class="tag tag-blue">Admin Tools</span>
+        <p>Development toolbar and admin links for faster QA while the stack is still in active development.</p>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: core ecommerce flows are already being proven in the new architecture.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="production-structure">
+    <h2>Suggested Production Structure</h2>
+    <div class="diagram">
+      <div class="diagram-row">
+        <div class="node">Customer</div>
+        <div class="arrow">></div>
+        <div class="node">Cloudflare CDN/WAF</div>
+        <div class="arrow">></div>
+        <div class="node">Load Balancer</div>
+      </div>
+      <div class="diagram-row">
+        <div class="node">App Node A: Nuxt + Medusa + Strapi</div>
+        <div class="node">App Node B: Nuxt + Medusa + Strapi</div>
+      </div>
+      <div class="diagram-row">
+        <div class="node">Managed PostgreSQL HA</div>
+        <div class="node">Managed Redis/Valkey HA</div>
+        <div class="node">Cloudflare R2 Media</div>
+      </div>
+    </div>
+    <div class="summary" style="margin-top: 28px;">
+      <p>Runtime data should not depend on app-node local disk. Databases, cache, and media should be shared services so app nodes can be replaced or scaled safely.</p>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: production should move from one VPS to redundant app nodes plus managed data services.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="hosting-costs">
+    <h2>Hosting Cost Options</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Monthly Estimate</th>
+          <th>Shape</th>
+          <th>Best Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Minimal Production</strong></td>
+          <td>~EUR 60-90/month</td>
+          <td>One VPS with 8-16 vCPU, 32 GB RAM, 500-640 GB NVMe/SSD. Docker runs Nuxt, Medusa, Strapi, PostgreSQL, Redis, and Nginx.</td>
+          <td>Lowest cost launch or controlled early production. Main risk: one server failure can take down the full store.</td>
+        </tr>
+        <tr>
+          <td><strong>Best Middle Ground</strong></td>
+          <td>~USD 900-1,200/month</td>
+          <td>Two app nodes, load balancer, managed PostgreSQL HA, managed Redis/Valkey HA, backups, Cloudflare Pro/Business, standard support.</td>
+          <td>Recommended practical production choice. Removes major single-server risks and supports TV ad bursts.</td>
+        </tr>
+        <tr>
+          <td><strong>Best Of The Best</strong></td>
+          <td>~USD 2,500/month, or ~USD 2,750 with Cloudflare Business</td>
+          <td>Larger app nodes, larger managed PostgreSQL and Redis, backup/log buffer, monitoring buffer, DigitalOcean Premium Support, optional Cloudflare Business.</td>
+          <td>Best for major campaigns, high downtime sensitivity, and faster provider response needs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer"><span class="footer-text">Summary: the middle-ground option is the best balance of cost, reliability, and scale.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="traffic-scaling">
+    <h2>Traffic And Scaling Assumptions</h2>
+    <div class="grid grid-4">
+      <div class="metric">
+        <b>500/min</b>
+        <span>Regular expected traffic, about 8 requests per second.</span>
+      </div>
+      <div class="metric">
+        <b>1,500-3,000/min</b>
+        <span>TV ad spike range, about 25-50 requests per second.</span>
+      </div>
+      <div class="metric">
+        <b>2 nodes</b>
+        <span>Recommended production app layer for high availability.</span>
+      </div>
+      <div class="metric">
+        <b>HA data</b>
+        <span>Managed database and cache reduce the biggest outage risks.</span>
+      </div>
+    </div>
+    <div class="summary" style="margin-top: 30px;">
+      <p>Public product and landing pages should be aggressively cache-friendly. Cart, checkout, account, and subscription pages should remain dynamic and customer-specific.</p>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: scaling comes from caching public pages, separating data services, and adding app nodes behind a load balancer.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+
+  <section class="slide" id="risks-controls">
+    <h2>Key Risks And Controls</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag tag-amber">Risks</span>
+        <ul>
+          <li>More engineering ownership than a SaaS platform.</li>
+          <li>Custom flows need complete QA before launch.</li>
+          <li>Production monitoring and backups must be treated as business-critical.</li>
+          <li>Data migration for customers, orders, subscriptions, URLs, and content must be rehearsed.</li>
+          <li>Payment and fulfillment integrations need end-to-end testing.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag tag-green">Controls</span>
+        <ul>
+          <li>Use managed database and cache for production.</li>
+          <li>Keep media in R2, not on app servers.</li>
+          <li>Use Cloudflare for CDN, WAF, and traffic offload.</li>
+          <li>Maintain staging environment before every release.</li>
+          <li>Run launch rehearsals and rollback planning.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span class="footer-text">Summary: the custom path is controllable if operations are planned from the start.</span><a class="back-to-toc" href="#table-of-contents">Back to TOC</a></div>
+  </section>
+</body>
+</html>
