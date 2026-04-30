@@ -13,6 +13,7 @@
 import type { ProductData } from '~/types/content'
 
 const route = useRoute()
+const cart = useCart()
 const handle = computed(() => String(route.params.handle || ''))
 
 const { data: product, error } = await useAsyncData<ProductData>(
@@ -41,4 +42,14 @@ useHead(() => ({
       ]
     : [],
 }))
+
+onMounted(() => {
+  if (!product.value?.commerce?.purchasable) {
+    return
+  }
+
+  window.setTimeout(() => {
+    void cart.prepareCart()
+  }, 250)
+})
 </script>

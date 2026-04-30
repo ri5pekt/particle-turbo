@@ -5,6 +5,8 @@ interface AddItemInput {
   quantity: number
 }
 
+let pendingCartPromise: Promise<MedusaCart> | null = null
+
 export const useCart = () => {
   const cartId = useCookie<string | null>('particle_cart_id', {
     sameSite: 'lax',
@@ -26,21 +28,41 @@ export const useCart = () => {
       return cart.value
     }
 
-    if (cartId.value) {
-      try {
-        cart.value = await $fetch<MedusaCart>(`/api/cart/${cartId.value}`)
-        return cart.value
-      } catch {
-        cartId.value = null
-      }
+    if (pendingCartPromise) {
+      return pendingCartPromise
     }
 
-    cart.value = await $fetch<MedusaCart>('/api/cart', {
-      method: 'POST',
-    })
-    cartId.value = cart.value.id
+    pendingCartPromise = (async () => {
+      if (cartId.value) {
+        try {
+          cart.value = await $fetch<MedusaCart>(`/api/cart/${cartId.value}`)
+          return cart.value
+        } catch {
+          cartId.value = null
+        }
+      }
 
-    return cart.value
+      cart.value = await $fetch<MedusaCart>('/api/cart', {
+        method: 'POST',
+      })
+      cartId.value = cart.value.id
+
+      return cart.value
+    })()
+
+    try {
+      return await pendingCartPromise
+    } finally {
+      pendingCartPromise = null
+    }
+  }
+
+  const prepareCart = async () => {
+    try {
+      await ensureCart()
+    } catch {
+      // Background cart warmup should never surface an error before the user acts.
+    }
   }
 
   const refreshCart = async () => {
@@ -223,6 +245,7 @@ export const useCart = () => {
     lastAddedItem,
     recommendations,
     addItem,
+    prepareCart,
     updateItem,
     removeItem,
     applyPromotion,

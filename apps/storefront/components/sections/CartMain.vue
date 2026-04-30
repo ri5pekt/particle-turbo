@@ -140,9 +140,17 @@
           </table>
 
           <div class="wc-proceed-to-checkout btn-wrapper">
-            <AppLink class="checkout-button button alt wc-forward btn btn-sky" to="/checkout">
-              {{ section.checkout_label || 'Proceed to secure checkout' }}
-            </AppLink>
+            <button
+              class="checkout-button button alt wc-forward btn btn-sky btn-reset"
+              type="button"
+              :class="{ loading: isCheckoutLoading }"
+              :disabled="isCheckoutLoading"
+              :aria-busy="isCheckoutLoading"
+              @click="handleCheckoutClick"
+            >
+              <span>{{ section.checkout_label || 'Proceed to secure checkout' }}</span>
+              <span v-if="isCheckoutLoading" class="checkout-button__spinner" aria-hidden="true" />
+            </button>
             <p v-if="section.monthly_orders_text" class="after-checkout-button">
               {{ section.monthly_orders_text }}
             </p>
@@ -169,8 +177,10 @@ defineProps<{
 }>()
 
 const { cart, isLoading, refreshCart, updateItem, removeItem } = useCart()
+const router = useRouter()
 const quantityOptions = [1, 2, 3, 4, 5]
 const openQuantityItemId = ref<string | null>(null)
+const isCheckoutLoading = ref(false)
 
 const cartItems = computed(() => cart.value?.items || [])
 const hasItems = computed(() => cartItems.value.length > 0)
@@ -206,6 +216,20 @@ const toggleQuantityMenu = (lineId: string) => {
 const handleQuantityChange = async (lineId: string, quantity: number) => {
   openQuantityItemId.value = null
   await updateItem(lineId, quantity)
+}
+
+const handleCheckoutClick = async () => {
+  if (isCheckoutLoading.value) {
+    return
+  }
+
+  isCheckoutLoading.value = true
+
+  try {
+    await router.push('/checkout')
+  } finally {
+    isCheckoutLoading.value = false
+  }
 }
 
 onMounted(() => {
@@ -553,16 +577,19 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   width: 100%;
   height: 60px;
   margin-top: 10px;
   margin-bottom: 15px;
+  border: 0;
   color: $color-white;
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   background: #4e8b5f;
   border-radius: 999px;
+  cursor: pointer;
   transition: background-color 0.25s;
 }
 
@@ -577,8 +604,36 @@ onMounted(() => {
   mask: url('/icons/lock-icon.svg') center / contain no-repeat;
 }
 
+.checkout-button.loading::before {
+  display: none;
+}
+
+.checkout-button:disabled {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+.checkout-button:disabled:hover {
+  background: #4e8b5f;
+}
+
+.checkout-button__spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $color-white;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: checkout-button-spin 0.8s linear infinite;
+}
+
 .checkout-button:hover {
   background: #28a84d;
+}
+
+@keyframes checkout-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .after-checkout-button {
