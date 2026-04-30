@@ -79,10 +79,18 @@
             <div v-if="cart?.total !== undefined" class="cart-sidebar__total">
               Total: {{ formatMoney(cart.total, cart.currency_code) }}
             </div>
-            <AppLink class="button-cart" to="/cart" @click="closeCart">
+            <button
+              class="button-cart btn-reset"
+              type="button"
+              :class="{ loading: isCartPageLoading }"
+              :disabled="isCartPageLoading"
+              :aria-busy="isCartPageLoading"
+              @click="handleCartPageClick"
+            >
               <span>My Cart</span>
-              <img src="/icons/basket.svg" alt="">
-            </AppLink>
+              <span v-if="isCartPageLoading" class="button-cart__spinner" aria-hidden="true" />
+              <img v-else src="/icons/basket.svg" alt="">
+            </button>
             <button class="button-shopping btn-reset" type="button" @click="closeCart">
               Continue Shopping
             </button>
@@ -117,6 +125,8 @@ const {
 } = useCart()
 
 const remainingSeconds = ref(12 * 60)
+const router = useRouter()
+const isCartPageLoading = ref(false)
 let timerId: number | undefined
 
 const displayItem = computed(() => {
@@ -134,6 +144,22 @@ const formatMoney = (amount: number, currencyCode = 'usd') => {
     style: 'currency',
     currency: currencyCode.toUpperCase(),
   }).format(amount)
+}
+
+const handleCartPageClick = async () => {
+  if (isCartPageLoading.value) {
+    return
+  }
+
+  isCartPageLoading.value = true
+
+  try {
+    await refreshCart()
+    await router.push('/cart')
+    closeCart()
+  } finally {
+    isCartPageLoading.value = false
+  }
 }
 
 watch(isOpen, (open) => {
@@ -377,14 +403,17 @@ const handleKeydown = (event: KeyboardEvent) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   margin-top: 10px;
   padding: 15px 0;
+  border: 0;
   color: $color-white;
   font-size: 25px;
   font-weight: 700;
   line-height: 1;
   background-color: #0038b1;
   border-radius: 200px;
+  cursor: pointer;
   transition: background-color 0.25s;
 }
 
@@ -396,8 +425,27 @@ const handleKeydown = (event: KeyboardEvent) => {
   animation: bag-shake 4s ease-in-out infinite;
 }
 
+.button-cart:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.button-cart__spinner {
+  width: 25px;
+  height: 25px;
+  margin-left: 7px;
+  border: 3px solid $color-white;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: cart-button-spin 0.8s linear infinite;
+}
+
 .button-cart:hover {
   background-color: #3269e0;
+}
+
+.button-cart:disabled:hover {
+  background-color: #0038b1;
 }
 
 .button-shopping {
@@ -444,6 +492,12 @@ const handleKeydown = (event: KeyboardEvent) => {
   4%,
   8% {
     transform: rotate(10deg);
+  }
+}
+
+@keyframes cart-button-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

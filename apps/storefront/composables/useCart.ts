@@ -87,8 +87,10 @@ export const useCart = () => {
         || cart.value.items?.find((item) => item.variant_id === variantId)
         || cart.value.items?.[cart.value.items.length - 1]
         || null
-      await fetchRecommendations(lastAddedItem.value?.product_handle)
       isOpen.value = true
+      void fetchRecommendations(lastAddedItem.value?.product_handle).catch(() => {
+        recommendations.value = []
+      })
 
       return cart.value
     } catch (caughtError) {

@@ -792,10 +792,35 @@ onBeforeUnmount(() => {
   opacity: 0.65;
 }
 
+.single_add_to_cart_button.loading {
+  position: relative;
+  color: transparent;
+}
+
+.single_add_to_cart_button.loading::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: pdp-tabs-button-spin 0.8s linear infinite;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
 .product-cart__commerce-message {
   margin: 12px 0 0;
   color: #e2401c;
   font-size: 14px;
+}
+
+@keyframes pdp-tabs-button-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 @media (max-width: 1024px) {
