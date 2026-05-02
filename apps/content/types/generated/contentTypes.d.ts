@@ -629,6 +629,12 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     sections: Schema.Attribute.DynamicZone<
       [
+        'pdp.page-header',
+        'pdp.scroll-tabs',
+        'pdp.banner-section',
+        'pdp.horizontal-accordion',
+        'pdp.price-section',
+        'pdp.carousel-section',
         'pdp.add-to-cart-regular',
         'pdp.add-to-cart-tabs',
         'pdp.ingredients-accordion',

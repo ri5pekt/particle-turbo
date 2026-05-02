@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_pdp_carousel_images",
+  "info": {
+    "displayName": "Carousel Image",
+    "icon": "picture"
+  },
+  "options": {},
+  "attributes": {
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

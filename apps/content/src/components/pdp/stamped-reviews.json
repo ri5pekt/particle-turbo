@@ -30,6 +30,11 @@
     },
     "image_url": {
       "type": "text"
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["default", "dark", "varros"],
+      "default": "default"
     }
   }
 }

@@ -42,8 +42,25 @@
 
         <a href="#stampedcreambot" class="review-scroll">
           <div class="product-cart__reviews">
-            <div class="stars-rating stars-rating--small">
-              <span :style="{ width: `${reviewRatingPercent}%` }" />
+            <div class="stars-rating stars-rating--small" aria-hidden="true">
+              <svg
+                v-for="(fill, index) in reviewStarFills"
+                :key="index"
+                class="stars-rating__star"
+                viewBox="0 0 24 24"
+                focusable="false"
+              >
+                <defs>
+                  <linearGradient :id="starGradientId(index)" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop :offset="`${fill}%`" stop-color="#f5b301" />
+                    <stop :offset="`${fill}%`" stop-color="#d9d9d9" />
+                  </linearGradient>
+                </defs>
+                <path
+                  :fill="`url(#${starGradientId(index)})`"
+                  d="M12 1.5l3.13 6.34 7 .99-5.06 4.93 1.19 6.96L12 17.43l-6.26 3.29 1.19-6.96-5.06-4.93 7-.99L12 1.5z"
+                />
+              </svg>
             </div>
             <span v-if="reviewText" class="text">{{ reviewText }}</span>
           </div>
@@ -207,6 +224,14 @@ const sectionReviewText = computed(() => {
 })
 const reviewRatingPercent = computed(() => stampedSummary.ratingPercent.value ?? sectionRatingPercent.value)
 const reviewText = computed(() => stampedSummary.reviewText.value || sectionReviewText.value)
+const reviewStarFills = computed(() => {
+  const rating = Math.min(5, Math.max(0, (reviewRatingPercent.value / 100) * 5))
+
+  return Array.from({ length: 5 }, (_, index) => Math.min(100, Math.max(0, (rating - index) * 100)))
+})
+const starGradientId = (index: number) => {
+  return `pdp-tabs-star-${props.section.id || 'hero'}-${index}`
+}
 const autoplayMs = computed(() => Math.max(2000, props.section.autoplay_ms || 4500))
 const hurryPercent = computed(() => Math.min(Math.max(props.section.hurry_bar_percent || 0, 0), 100))
 const showHurryBlock = computed(() => Boolean(props.section.hurry_label || props.section.hurry_stock_count))
@@ -413,22 +438,22 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   color: #050446;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
 }
 
-.stars-rating {
-  position: relative;
-  width: 73px;
-  height: 15px;
-  background: #d9d9d9;
-  clip-path: polygon(5% 0, 7% 35%, 0 35%, 6% 56%, 3% 90%, 15% 68%, 27% 90%, 24% 56%, 30% 35%, 20% 35%, 25% 0, 35% 0, 40% 35%, 32% 35%, 38% 56%, 35% 90%, 47% 68%, 59% 90%, 56% 56%, 62% 35%, 54% 35%, 59% 0, 69% 0, 74% 35%, 66% 35%, 72% 56%, 69% 90%, 81% 68%, 93% 90%, 90% 56%, 96% 35%, 88% 35%, 93% 0);
+.stars-rating--small {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: max-content;
 }
 
-.stars-rating span {
+.stars-rating__star {
   display: block;
-  height: 100%;
-  background: #f5b301;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
 }
 
 .pdp-tabs {

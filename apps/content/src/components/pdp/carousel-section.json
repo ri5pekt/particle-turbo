@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_pdp_carousel_sections",
+  "info": {
+    "displayName": "Carousel Section",
+    "icon": "images",
+    "description": "Reusable Gravite-style image carousel."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["gravite", "varros"],
+      "default": "gravite"
+    },
+    "title": {
+      "type": "string"
+    },
+    "autoplay_ms": {
+      "type": "integer",
+      "default": 2000
+    },
+    "images": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.carousel-image"
+    }
+  }
+}

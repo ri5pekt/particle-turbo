@@ -3,6 +3,7 @@
     v-if="section.enabled !== false"
     :id="section.anchor_id || 'stampedcreambot'"
     class="pdp-stamped-reviews"
+    :class="`pdp-stamped-reviews--${section.theme || 'default'}`"
   >
     <div
       id="stamped-main-widget"
@@ -74,6 +75,97 @@ const widgetHtml = computed(() => data.value?.html || '')
   background: #fff;
 }
 
+.pdp-stamped-reviews--dark {
+  color: #fff;
+  background: #14161f;
+
+  .stamped-main-widget {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  :deep(.stamped-container[data-widget-show-product-variant=true] .stamped-review-product a),
+  :deep(.stamped-container[data-widget-show-product-variant=true] .stamped-review-variant a),
+  :deep(.stamped-container ul.stamped-tabs li),
+  :deep(.stamped-header-title),
+  :deep(.stamped-summary),
+  :deep(.stamped-summary-text),
+  :deep(.stamped-summary-text-1),
+  :deep(.stamped-review),
+  :deep(.stamped-review *),
+  :deep(.stamped-review-header .author),
+  :deep(.stamped-review-header-title),
+  :deep(h3.stamped-review-header-title),
+  :deep(.stamped-review-content-body),
+  :deep(p.stamped-review-content-body),
+  :deep(.stamped-review-body),
+  :deep(.stamped-review-content),
+  :deep(.stamped-review-product),
+  :deep(.stamped-review-product a),
+  :deep(.stamped-review-variant),
+  :deep(.stamped-review-variant a) {
+    color: #fff !important;
+  }
+
+  :deep(.stamped-review-header .created) {
+    color: rgb(255 255 255 / 64%) !important;
+  }
+
+  :deep(li#tab-reviews[data-count]::after) {
+    color: #14161f;
+  }
+
+  .pdp-stamped-reviews__notice {
+    border-color: rgb(255 255 255 / 18%);
+    color: rgb(255 255 255 / 76%);
+  }
+}
+
+.pdp-stamped-reviews--varros {
+  color: #100f0d;
+  background: #f1eee9;
+
+  :deep(.stamped-container[data-widget-show-product-variant=true] .stamped-review-product a),
+  :deep(.stamped-container[data-widget-show-product-variant=true] .stamped-review-variant a),
+  :deep(.stamped-container ul.stamped-tabs li) {
+    color: #100f0d;
+  }
+
+  :deep(li#tab-reviews[data-count]::after) {
+    color: #f1eee9;
+    background: #555;
+  }
+
+  :deep(.stamped-reviews .stamped-review) {
+    border-top: 2px solid #14161f !important;
+  }
+
+  :deep(div[data-widget-style] .summary-rating:nth-child(2) .summary-rating-title::before),
+  :deep(div[data-widget-style] .summary-rating:nth-child(3) .summary-rating-title::before),
+  :deep(div[data-widget-style] .summary-rating:nth-child(4) .summary-rating-title::before),
+  :deep(div[data-widget-style] .summary-rating:first-child .summary-rating-title::before),
+  :deep(div[data-widget-style] .summary-rating:nth-child(5) .summary-rating-title::before) {
+    color: #777;
+  }
+
+  :deep(.stamped-review-header .created),
+  :deep(div[data-widget-style*='standard'] .summary-rating-count) {
+    color: #100f0d !important;
+  }
+
+  :deep(.stamped-pagination a) {
+    color: #100f0d;
+  }
+
+  :deep(.stamped-pagination li.page.active a) {
+    color: #f1eee9;
+  }
+
+  :deep(.stamped-summary-actions-newreview) {
+    background: #555;
+  }
+}
+
 .stamped-main-widget {
   width: 100%;
   max-width: 980px;
@@ -95,5 +187,41 @@ const widgetHtml = computed(() => data.value?.html || '')
   color: rgb(34 42 88 / 70%);
   font-size: 16px;
   text-align: center;
+}
+</style>
+
+<style lang="scss">
+.pdp-stamped-reviews--dark {
+  color: #fff !important;
+
+  .stamped-main-widget,
+  .stamped-main-widget .stamped-container,
+  .stamped-main-widget .stamped-container .stamped-header-title,
+  .stamped-main-widget .stamped-container .stamped-summary,
+  .stamped-main-widget .stamped-container .stamped-summary *,
+  .stamped-main-widget .stamped-container .stamped-reviews,
+  .stamped-main-widget .stamped-container .stamped-review,
+  .stamped-main-widget .stamped-container .stamped-review *,
+  .stamped-main-widget .stamped-container .stamped-review-header strong.author,
+  .stamped-main-widget .stamped-container strong.author,
+  .stamped-main-widget .stamped-container h3.stamped-review-header-title,
+  .stamped-main-widget .stamped-container .stamped-review-header-title,
+  .stamped-main-widget .stamped-container .stamped-review-content-body,
+  .stamped-main-widget .stamped-container p.stamped-review-content-body,
+  .stamped-main-widget .stamped-container .stamped-review-body,
+  .stamped-main-widget .stamped-container .stamped-review-content,
+  .stamped-main-widget .stamped-container .stamped-review-content p,
+  .stamped-main-widget .stamped-container .stamped-review-product,
+  .stamped-main-widget .stamped-container .stamped-review-product a,
+  .stamped-main-widget .stamped-container .stamped-review-variant,
+  .stamped-main-widget .stamped-container .stamped-review-variant a {
+    color: #fff !important;
+  }
+
+  .stamped-main-widget .stamped-container .stamped-review-header .created,
+  .stamped-main-widget .stamped-container .review-location,
+  .stamped-main-widget .stamped-container .review-location span {
+    color: rgb(255 255 255 / 64%) !important;
+  }
 }
 </style>

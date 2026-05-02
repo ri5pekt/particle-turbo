@@ -3,43 +3,58 @@
     v-if="items.length"
     class="mega-menu"
     :class="{ 'mega-menu--narrow': narrow }"
+    @mouseleave="activeItem = null"
   >
     <ul class="mega-menu__list">
       <li
-        v-for="item in items"
-        :key="item.id || item.label"
-        class="mega-menu__item"
-        :class="{ 'mega-menu__item--heading': item.is_heading }"
+        v-for="group in groupedItems"
+        :key="group.key"
+        class="mega-menu__group"
       >
         <h3
-          v-if="item.is_heading"
+          v-if="group.heading"
           class="mega-menu__heading"
         >
-          {{ item.label }}
+          {{ group.heading.label }}
         </h3>
-        <AppLink
-          v-else
-          class="mega-menu__link"
-          :to="item.url || '#'"
-          @click="$emit('link-click')"
-        >
-          {{ item.label }}
-        </AppLink>
-        <AppImage
-          v-if="item.image"
-          class="mega-menu__image"
-          :image="item.image"
-          :alt="item.label || ''"
-        />
+        <ul class="mega-menu__group-list">
+          <li
+            v-for="item in group.links"
+            :key="item.id || item.label"
+            class="mega-menu__item"
+          >
+            <AppLink
+              class="mega-menu__link"
+              :to="item.url || '#'"
+              @focus="activeItem = item"
+              @mouseenter="activeItem = item"
+              @click="$emit('link-click')"
+            >
+              {{ item.label }}
+            </AppLink>
+          </li>
+        </ul>
       </li>
     </ul>
+    <AppImage
+      v-if="activeItem?.image"
+      class="mega-menu__image"
+      :image="activeItem.image"
+      :alt="activeItem.label || ''"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { MegaMenuItem } from '~/types/content'
 
-withDefaults(defineProps<{
+interface MegaMenuGroup {
+  key: string
+  heading?: MegaMenuItem
+  links: MegaMenuItem[]
+}
+
+const props = withDefaults(defineProps<{
   items?: MegaMenuItem[]
   narrow?: boolean
 }>(), {
@@ -50,6 +65,32 @@ withDefaults(defineProps<{
 defineEmits<{
   'link-click': []
 }>()
+
+const activeItem = ref<MegaMenuItem | null>(null)
+
+const groupedItems = computed<MegaMenuGroup[]>(() => {
+  const groups: MegaMenuGroup[] = []
+  let currentGroup: MegaMenuGroup | null = null
+
+  props.items.forEach((item, index) => {
+    if (item.is_heading || !currentGroup) {
+      currentGroup = {
+        key: String(item.id || item.label || index),
+        heading: item.is_heading ? item : undefined,
+        links: [],
+      }
+      groups.push(currentGroup)
+
+      if (item.is_heading) {
+        return
+      }
+    }
+
+    currentGroup.links.push(item)
+  })
+
+  return groups.filter((group) => group.heading || group.links.length)
+})
 </script>
 
 <style scoped lang="scss">
@@ -97,14 +138,24 @@ defineEmits<{
   display: contents;
 }
 
-.mega-menu__item {
+.mega-menu__group {
   position: initial;
   width: 250px;
   break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
 
-  &:not(.mega-menu__item--heading) {
-    margin-left: 10px;
-  }
+.mega-menu__group-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mega-menu__item {
+  position: initial;
+  margin-left: 10px;
+  break-inside: avoid;
 }
 
 .mega-menu__heading {
@@ -145,14 +196,8 @@ defineEmits<{
   height: 230px;
   object-fit: contain;
   object-position: center;
-  opacity: 0;
   pointer-events: none;
   transform: translateY(-50%);
-  transition: opacity $transition-base;
-}
-
-.mega-menu__item:hover .mega-menu__image,
-.mega-menu__item:focus-within .mega-menu__image {
   opacity: 1;
 }
 
@@ -162,7 +207,7 @@ defineEmits<{
   padding: 25px;
   columns: 1;
 
-  .mega-menu__item {
+  .mega-menu__group {
     width: auto;
   }
 }

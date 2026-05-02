@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_pdp_price_sections",
+  "info": {
+    "displayName": "Price Section",
+    "icon": "priceTag",
+    "description": "Reusable Gravite-style add to cart price section."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["gravite", "varros"],
+      "default": "gravite"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "select_title": {
+      "type": "string",
+      "default": "Select the quantity:"
+    },
+    "add_to_cart_label": {
+      "type": "string",
+      "default": "Add To Cart"
+    },
+    "hurry_label": {
+      "type": "string",
+      "default": "HURRY! Selling out fast!"
+    },
+    "hurry_stock_count": {
+      "type": "integer"
+    },
+    "hurry_stock_suffix": {
+      "type": "string",
+      "default": "left in stock."
+    },
+    "progress_percent": {
+      "type": "decimal",
+      "default": 23
+    },
+    "gallery": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.price-section-gallery-image"
+    },
+    "purchase_options": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.price-section-option"
+    }
+  }
+}

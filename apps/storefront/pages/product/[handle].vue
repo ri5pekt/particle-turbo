@@ -1,8 +1,8 @@
 <template>
   <div class="product-page">
     <PdpSectionRenderer
-      v-for="section in product?.sections || []"
-      :key="section.id || section.__component"
+      v-for="(section, index) in product?.sections || []"
+      :key="`${section.__component}-${section.id || index}`"
       :section="section"
       :product="product"
     />

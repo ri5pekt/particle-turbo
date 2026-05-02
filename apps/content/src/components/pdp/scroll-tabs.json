@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_pdp_scroll_tabs",
+  "info": {
+    "displayName": "Scroll Tabs",
+    "icon": "layer",
+    "description": "Pinned animated tabs section used by Gravite fragrance pages."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["gravite", "varros"],
+      "default": "gravite"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "tabs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.scroll-tab-item"
+    }
+  }
+}

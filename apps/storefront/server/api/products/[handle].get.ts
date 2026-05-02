@@ -92,6 +92,38 @@ export default defineEventHandler(async (event) => {
             },
             sections: {
               on: {
+                'pdp.page-header': {
+                  populate: {
+                    background_image: true,
+                  },
+                },
+                'pdp.scroll-tabs': {
+                  populate: {
+                    tabs: {
+                      populate: {
+                        images_desktop: true,
+                        images_mobile: true,
+                      },
+                    },
+                  },
+                },
+                'pdp.banner-section': true,
+                'pdp.horizontal-accordion': {
+                  populate: {
+                    items: true,
+                  },
+                },
+                'pdp.price-section': {
+                  populate: {
+                    gallery: true,
+                    purchase_options: true,
+                  },
+                },
+                'pdp.carousel-section': {
+                  populate: {
+                    images: true,
+                  },
+                },
                 'pdp.add-to-cart-regular': {
                   populate: {
                     gallery: {

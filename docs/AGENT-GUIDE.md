@@ -208,6 +208,7 @@ apps/storefront/
   nuxt.config.ts                ← Nuxt config (SSR, runtime config, SCSS)
   pages/                        ← File-based routing
   components/                   ← Vue components
+    pdp/                        ← PDP section renderers; read docs/PDP-SECTIONS.md before changing fragrance PDPs
   layouts/                      ← Page layouts
   server/
     api/                        ← BFF endpoints (query Medusa + Strapi, merge)
@@ -302,8 +303,12 @@ export default defineEventHandler(async (event) => {
 | `page` slug `home` | Published; renders hero + `logos-slider`, `best-sellers`, `all-products`, `insta-block` |
 | `page` slug `cart` | Published; renders `sections.cart-main` |
 | `product` handle `particle-face-mask` | Published; has PDP-only `pdp.add-to-cart-regular` section |
+| `product` handle `particle-gravite` | Section-driven fragrance PDP; uses Gravite themes and dark Stamped reviews |
+| `product` handle `particle-varros` | Section-driven fragrance PDP; uses Varros themes and Varros scroll-tabs layout |
 | `sections.cart-main` | Cart page main table + order summary; copy is editorial, line items/totals are Medusa |
 | `pdp.add-to-cart-regular` | PDP gallery + purchase options; selected quantity is sent to Medusa |
+
+For PDP section architecture, fragrance-page themes, scroll-tabs pitfalls, and Stamped review caching, read `docs/PDP-SECTIONS.md` before editing product sections.
 
 ---
 
@@ -335,6 +340,9 @@ If add-to-cart returns a Medusa 400, check `docker compose logs commerce --tail=
 | Reintroducing `medusaId` in Strapi product content | Use matching `handle` as the cross-system link key |
 | Using external URLs for Strapi editorial images/videos | Upload media to Strapi and use media fields |
 | Returning Medusa `DELETE /line-items` directly to the UI | Medusa returns `204`; refetch and return the updated cart from the Nuxt route |
+| Letting generic PDP CSS leak into themed variants | Scope shared selectors carefully. The Gravite `.items .item` selector broke Varros scroll-tabs until `.scroll-tabs-varros .item` reset inherited width/margin/padding |
+| Calculating `#price` before killing pinned ScrollTriggers | For fragrance hero CTAs, kill/revert tabs first, wait for layout to settle, then query and scroll to `#price` |
+| Adding fallback scraping for Stamped reviews | Do not scrape WooCommerce. Configure `NUXT_STAMPED_PUBLIC_KEY` and fail clearly if it is missing |
 
 ---
 
@@ -376,5 +384,6 @@ docker compose exec postgres-content psql -U strapi -d strapi_db -c "SELECT COUN
 | `docs/ONBOARDING.md` | Setting up the project on a new machine |
 | `docs/TROUBLESHOOTING.md` | Known issues and their fixes |
 | `docs/CONTENT-SEEDING.md` | How to populate Strapi content from the scraped particleformen.com site |
+| `docs/PDP-SECTIONS.md` | PDP section playbook: fragrance pages, scroll-tabs, theming, Stamped reviews |
 | `docs/NUXT-BUILD.md` | Nuxt storefront build plan: design tokens, fonts, build order, component map |
 | `docs/decisions/` | Architecture Decision Records (ADRs) |

@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_pdp_horizontal_accordions",
+  "info": {
+    "displayName": "Horizontal Accordion",
+    "icon": "apps",
+    "description": "Desktop horizontal testimonial gallery with mobile carousel."
+  },
+  "options": {},
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "autoplay_ms": {
+      "type": "integer",
+      "default": 3000
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.horizontal-accordion-item"
+    }
+  }
+}

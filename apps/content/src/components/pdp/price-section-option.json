@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_pdp_price_section_options",
+  "info": {
+    "displayName": "Price Section Option",
+    "icon": "shoppingCart"
+  },
+  "options": {},
+  "attributes": {
+    "quantity": {
+      "type": "integer",
+      "required": true
+    },
+    "unit_label": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "required": true
+    },
+    "image_alt": {
+      "type": "string"
+    },
+    "default_selected": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

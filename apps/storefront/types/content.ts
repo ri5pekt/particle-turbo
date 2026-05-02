@@ -388,6 +388,127 @@ export interface PdpReviewItem {
   video_url?: string
 }
 
+export interface PdpPageHeaderSectionData {
+  id?: number
+  __component: 'pdp.page-header'
+  enabled?: boolean
+  theme?: 'gravite' | 'varros'
+  title?: string
+  rating_label?: string
+  rating_value?: number
+  rating_percent?: number
+  body?: string
+  cta_label?: string
+  cta_href?: string
+  background_video_url?: string
+  background_image_url?: string
+  background_image?: StrapiMedia | null
+}
+
+export interface PdpScrollTabImage {
+  id?: number
+  url?: string
+  alt?: string
+  title?: string
+}
+
+export interface PdpScrollTabItem {
+  id?: number
+  title?: string
+  text?: string
+  images_desktop?: PdpScrollTabImage[]
+  images_mobile?: PdpScrollTabImage[]
+}
+
+export interface PdpScrollTabsSectionData {
+  id?: number
+  __component: 'pdp.scroll-tabs'
+  enabled?: boolean
+  theme?: 'gravite' | 'varros'
+  title?: string
+  tabs?: PdpScrollTabItem[]
+}
+
+export interface PdpBannerSectionData {
+  id?: number
+  __component: 'pdp.banner-section'
+  enabled?: boolean
+  theme?: 'gravite' | 'varros'
+  title?: string
+  body?: string
+  background_image_url?: string
+  background_image_alt?: string
+  background_image_mobile_url?: string
+  background_image_mobile_alt?: string
+  content_position?: 'top' | 'bottom'
+}
+
+export interface PdpHorizontalAccordionItem {
+  id?: number
+  quote?: string
+  customer?: string
+  image_url?: string
+  image_alt?: string
+  image_title?: string
+}
+
+export interface PdpHorizontalAccordionSectionData {
+  id?: number
+  __component: 'pdp.horizontal-accordion'
+  enabled?: boolean
+  title?: string
+  autoplay_ms?: number
+  items?: PdpHorizontalAccordionItem[]
+}
+
+export interface PdpPriceSectionGalleryImage {
+  id?: number
+  url?: string
+  alt?: string
+}
+
+export interface PdpPriceSectionOption {
+  id?: number
+  quantity?: number
+  unit_label?: string
+  image_url?: string
+  image_alt?: string
+  default_selected?: boolean
+}
+
+export interface PdpPriceSectionData {
+  id?: number
+  __component: 'pdp.price-section'
+  enabled?: boolean
+  theme?: 'gravite' | 'varros'
+  title?: string
+  subtitle?: string
+  select_title?: string
+  add_to_cart_label?: string
+  hurry_label?: string
+  hurry_stock_count?: number
+  hurry_stock_suffix?: string
+  progress_percent?: number
+  gallery?: PdpPriceSectionGalleryImage[]
+  purchase_options?: PdpPriceSectionOption[]
+}
+
+export interface PdpCarouselImage {
+  id?: number
+  url?: string
+  alt?: string
+}
+
+export interface PdpCarouselSectionData {
+  id?: number
+  __component: 'pdp.carousel-section'
+  enabled?: boolean
+  theme?: 'gravite' | 'varros'
+  title?: string
+  autoplay_ms?: number
+  images?: PdpCarouselImage[]
+}
+
 export interface PdpAddToCartRegularSectionData {
   id?: number
   __component: 'pdp.add-to-cart-regular'
@@ -471,9 +592,16 @@ export interface PdpStampedReviewsSectionData {
   product_name?: string
   product_url?: string
   image_url?: string
+  theme?: 'default' | 'dark' | 'varros'
 }
 
 export type ProductSection =
+  | PdpPageHeaderSectionData
+  | PdpScrollTabsSectionData
+  | PdpBannerSectionData
+  | PdpHorizontalAccordionSectionData
+  | PdpPriceSectionData
+  | PdpCarouselSectionData
   | PdpAddToCartRegularSectionData
   | PdpAddToCartTabsSectionData
   | PdpIngredientsAccordionSectionData

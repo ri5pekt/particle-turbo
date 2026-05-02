@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_pdp_scroll_tab_images",
+  "info": {
+    "displayName": "Scroll Tab Image",
+    "icon": "picture",
+    "description": "Image URL used in a Gravite scroll tab."
+  },
+  "options": {},
+  "attributes": {
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}

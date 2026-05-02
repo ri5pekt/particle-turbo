@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_pdp_price_section_gallery_images",
+  "info": {
+    "displayName": "Price Section Gallery Image",
+    "icon": "picture"
+  },
+  "options": {},
+  "attributes": {
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "alt": {
+      "type": "string"
+    }
+  }
+}

@@ -275,6 +275,57 @@ export interface PdpAddToCartTabs extends Struct.ComponentSchema {
   };
 }
 
+export interface PdpBannerSection extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_banner_sections';
+  info: {
+    description: 'Gravite image banner with title and rich text overlay.';
+    displayName: 'Banner Section';
+    icon: 'landscape';
+  };
+  attributes: {
+    background_image_alt: Schema.Attribute.String;
+    background_image_mobile_alt: Schema.Attribute.String;
+    background_image_mobile_url: Schema.Attribute.String;
+    background_image_url: Schema.Attribute.String & Schema.Attribute.Required;
+    body: Schema.Attribute.RichText;
+    content_position: Schema.Attribute.Enumeration<['top', 'bottom']> &
+      Schema.Attribute.DefaultTo<'top'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    theme: Schema.Attribute.Enumeration<['gravite', 'varros']> &
+      Schema.Attribute.DefaultTo<'gravite'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpCarouselImage extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_carousel_images';
+  info: {
+    displayName: 'Carousel Image';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpCarouselSection extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_carousel_sections';
+  info: {
+    description: 'Reusable Gravite-style image carousel.';
+    displayName: 'Carousel Section';
+    icon: 'images';
+  };
+  attributes: {
+    autoplay_ms: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<2000>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    images: Schema.Attribute.Component<'pdp.carousel-image', true>;
+    theme: Schema.Attribute.Enumeration<['gravite', 'varros']> &
+      Schema.Attribute.DefaultTo<'gravite'>;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface PdpComparisonRow extends Struct.ComponentSchema {
   collectionName: 'components_pdp_comparison_rows';
   info: {
@@ -327,6 +378,37 @@ export interface PdpGuaranteeItem extends Struct.ComponentSchema {
     alt: Schema.Attribute.String;
     icon: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpHorizontalAccordion extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_horizontal_accordions';
+  info: {
+    description: 'Desktop horizontal testimonial gallery with mobile carousel.';
+    displayName: 'Horizontal Accordion';
+    icon: 'apps';
+  };
+  attributes: {
+    autoplay_ms: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<3000>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    items: Schema.Attribute.Component<'pdp.horizontal-accordion-item', true>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpHorizontalAccordionItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_horizontal_accordion_items';
+  info: {
+    description: 'One testimonial card in the Gravite horizontal accordion.';
+    displayName: 'Horizontal Accordion Item';
+    icon: 'user';
+  };
+  attributes: {
+    customer: Schema.Attribute.String & Schema.Attribute.Required;
+    image_alt: Schema.Attribute.String;
+    image_title: Schema.Attribute.String;
+    image_url: Schema.Attribute.String & Schema.Attribute.Required;
+    quote: Schema.Attribute.Text & Schema.Attribute.Required;
   };
 }
 
@@ -389,6 +471,92 @@ export interface PdpMoreProducts extends Struct.ComponentSchema {
   };
 }
 
+export interface PdpPageHeader extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_page_headers';
+  info: {
+    description: 'Full-screen PDP header with background video or image, title, rating, copy, and CTA.';
+    displayName: 'Page Header';
+    icon: 'crown';
+  };
+  attributes: {
+    background_image: Schema.Attribute.Media<'images'>;
+    background_image_url: Schema.Attribute.String;
+    background_video_url: Schema.Attribute.String;
+    body: Schema.Attribute.RichText;
+    cta_href: Schema.Attribute.String;
+    cta_label: Schema.Attribute.String;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    rating_label: Schema.Attribute.String;
+    rating_percent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<100>;
+    rating_value: Schema.Attribute.Decimal;
+    theme: Schema.Attribute.Enumeration<['gravite', 'varros']> &
+      Schema.Attribute.DefaultTo<'gravite'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpPriceSection extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_price_sections';
+  info: {
+    description: 'Reusable Gravite-style add to cart price section.';
+    displayName: 'Price Section';
+    icon: 'priceTag';
+  };
+  attributes: {
+    add_to_cart_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Add To Cart'>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    gallery: Schema.Attribute.Component<
+      'pdp.price-section-gallery-image',
+      true
+    >;
+    hurry_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'HURRY! Selling out fast!'>;
+    hurry_stock_count: Schema.Attribute.Integer;
+    hurry_stock_suffix: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'left in stock.'>;
+    progress_percent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<23>;
+    purchase_options: Schema.Attribute.Component<
+      'pdp.price-section-option',
+      true
+    >;
+    select_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Select the quantity:'>;
+    subtitle: Schema.Attribute.String;
+    theme: Schema.Attribute.Enumeration<['gravite', 'varros']> &
+      Schema.Attribute.DefaultTo<'gravite'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpPriceSectionGalleryImage extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_price_section_gallery_images';
+  info: {
+    displayName: 'Price Section Gallery Image';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpPriceSectionOption extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_price_section_options';
+  info: {
+    displayName: 'Price Section Option';
+    icon: 'shoppingCart';
+  };
+  attributes: {
+    default_selected: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    image_alt: Schema.Attribute.String;
+    image_url: Schema.Attribute.String & Schema.Attribute.Required;
+    quantity: Schema.Attribute.Integer & Schema.Attribute.Required;
+    unit_label: Schema.Attribute.String;
+  };
+}
+
 export interface PdpPurchaseOption extends Struct.ComponentSchema {
   collectionName: 'components_pdp_purchase_options';
   info: {
@@ -443,6 +611,51 @@ export interface PdpReviewsCarousel extends Struct.ComponentSchema {
   };
 }
 
+export interface PdpScrollTabImage extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_scroll_tab_images';
+  info: {
+    description: 'Image URL used in a Gravite scroll tab.';
+    displayName: 'Scroll Tab Image';
+    icon: 'picture';
+  };
+  attributes: {
+    alt: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpScrollTabItem extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_scroll_tab_items';
+  info: {
+    description: 'One item in the Gravite pinned scroll tabs section.';
+    displayName: 'Scroll Tab Item';
+    icon: 'bulletList';
+  };
+  attributes: {
+    images_desktop: Schema.Attribute.Component<'pdp.scroll-tab-image', true>;
+    images_mobile: Schema.Attribute.Component<'pdp.scroll-tab-image', true>;
+    text: Schema.Attribute.Text;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PdpScrollTabs extends Struct.ComponentSchema {
+  collectionName: 'components_pdp_scroll_tabs';
+  info: {
+    description: 'Pinned animated tabs section used by Gravite fragrance pages.';
+    displayName: 'Scroll Tabs';
+    icon: 'layer';
+  };
+  attributes: {
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    tabs: Schema.Attribute.Component<'pdp.scroll-tab-item', true>;
+    theme: Schema.Attribute.Enumeration<['gravite', 'varros']> &
+      Schema.Attribute.DefaultTo<'gravite'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface PdpStampedReviews extends Struct.ComponentSchema {
   collectionName: 'components_pdp_stamped_reviews';
   info: {
@@ -459,6 +672,8 @@ export interface PdpStampedReviews extends Struct.ComponentSchema {
     product_name: Schema.Attribute.String;
     product_sku: Schema.Attribute.String;
     product_url: Schema.Attribute.String;
+    theme: Schema.Attribute.Enumeration<['default', 'dark', 'varros']> &
+      Schema.Attribute.DefaultTo<'default'>;
   };
 }
 
@@ -768,16 +983,28 @@ declare module '@strapi/strapi' {
       'landing.video-block': LandingVideoBlock;
       'pdp.add-to-cart-regular': PdpAddToCartRegular;
       'pdp.add-to-cart-tabs': PdpAddToCartTabs;
+      'pdp.banner-section': PdpBannerSection;
+      'pdp.carousel-image': PdpCarouselImage;
+      'pdp.carousel-section': PdpCarouselSection;
       'pdp.comparison-row': PdpComparisonRow;
       'pdp.faq-item': PdpFaqItem;
       'pdp.gallery-item': PdpGalleryItem;
       'pdp.guarantee-item': PdpGuaranteeItem;
+      'pdp.horizontal-accordion': PdpHorizontalAccordion;
+      'pdp.horizontal-accordion-item': PdpHorizontalAccordionItem;
       'pdp.ingredient-item': PdpIngredientItem;
       'pdp.ingredients-accordion': PdpIngredientsAccordion;
       'pdp.more-products': PdpMoreProducts;
+      'pdp.page-header': PdpPageHeader;
+      'pdp.price-section': PdpPriceSection;
+      'pdp.price-section-gallery-image': PdpPriceSectionGalleryImage;
+      'pdp.price-section-option': PdpPriceSectionOption;
       'pdp.purchase-option': PdpPurchaseOption;
       'pdp.review-item': PdpReviewItem;
       'pdp.reviews-carousel': PdpReviewsCarousel;
+      'pdp.scroll-tab-image': PdpScrollTabImage;
+      'pdp.scroll-tab-item': PdpScrollTabItem;
+      'pdp.scroll-tabs': PdpScrollTabs;
       'pdp.stamped-reviews': PdpStampedReviews;
       'pdp.tab-item': PdpTabItem;
       'pdp.tab-step': PdpTabStep;

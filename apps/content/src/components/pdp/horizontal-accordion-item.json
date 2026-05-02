@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_pdp_horizontal_accordion_items",
+  "info": {
+    "displayName": "Horizontal Accordion Item",
+    "icon": "user",
+    "description": "One testimonial card in the Gravite horizontal accordion."
+  },
+  "options": {},
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "customer": {
+      "type": "string",
+      "required": true
+    },
+    "image_url": {
+      "type": "string",
+      "required": true
+    },
+    "image_alt": {
+      "type": "string"
+    },
+    "image_title": {
+      "type": "string"
+    }
+  }
+}

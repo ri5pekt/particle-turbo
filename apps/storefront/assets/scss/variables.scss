@@ -93,7 +93,7 @@ $container-max: 1406px;
 $section-inner-max: 1640px;
 $header-height: 77px;
 $topstrip-height: 40px;
-$main-padding-top: 125px;
+$main-padding-top: $header-height + $topstrip-height;
 $container-padding: $space-4;
 
 // -----------------------------------------------------------------------------

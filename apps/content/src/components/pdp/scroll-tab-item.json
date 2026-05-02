@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_pdp_scroll_tab_items",
+  "info": {
+    "displayName": "Scroll Tab Item",
+    "icon": "bulletList",
+    "description": "One item in the Gravite pinned scroll tabs section."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text"
+    },
+    "images_desktop": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.scroll-tab-image"
+    },
+    "images_mobile": {
+      "type": "component",
+      "repeatable": true,
+      "component": "pdp.scroll-tab-image"
+    }
+  }
+}
