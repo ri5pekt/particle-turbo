@@ -10,7 +10,10 @@
     <div v-if="hasItems" class="my-cart__wrapper">
       <form class="woocommerce-cart-form" @submit.prevent>
         <table class="shop_table shop-table-cart shop_table_responsive cart woocommerce-cart-form__contents">
-          <tbody>
+          <TransitionGroup
+            tag="tbody"
+            name="cart-row"
+          >
             <tr
               v-for="item in cartItems"
               :key="item.id"
@@ -34,6 +37,15 @@
                 <div class="custom-select-wrapper">
                   <div class="quantity">
                     <div
+                      v-if="isBasItem(item)"
+                      class="bas-qty-locked"
+                      :aria-label="`Quantity locked at 1`"
+                    >
+                      <span>1</span>
+                      <span class="bas-qty-locked__label">Bundle price</span>
+                    </div>
+                    <div
+                      v-else
                       class="custom-select"
                       :class="{ opened: openQuantityItemId === item.id }"
                     >
@@ -89,13 +101,13 @@
                   type="button"
                   :disabled="isLoading"
                   :aria-label="`Remove ${lineItemTitle(item)} from cart`"
-                  @click="removeItem(item.id)"
+                  @click="handleRemoveItem(item.id)"
                 >
                   <img src="/icons/delete.svg" alt="" aria-hidden="true">
                 </button>
               </td>
             </tr>
-          </tbody>
+          </TransitionGroup>
         </table>
       </form>
 
@@ -159,6 +171,8 @@
       </div>
     </div>
 
+    <CartBundleSave v-if="hasItems" />
+
     <div v-else class="my-cart__empty">
       <p>{{ section.empty_title || 'Your cart is empty.' }}</p>
       <AppLink class="btn btn-sky" :to="section.empty_button_url || '/'">
@@ -185,6 +199,9 @@ const isCheckoutLoading = ref(false)
 const cartItems = computed(() => cart.value?.items || [])
 const hasItems = computed(() => cartItems.value.length > 0)
 const cartCurrency = computed(() => cart.value?.currency_code || 'usd')
+
+const isBasItem = (item: CartLineItem) =>
+  !!(item.metadata && (item.metadata as Record<string, unknown>).is_bas)
 
 const formatMoney = (amount: number, currencyCode = 'usd') => {
   return new Intl.NumberFormat('en-US', {
@@ -215,7 +232,25 @@ const toggleQuantityMenu = (lineId: string) => {
 
 const handleQuantityChange = async (lineId: string, quantity: number) => {
   openQuantityItemId.value = null
+  const item = cartItems.value.find((i) => i.id === lineId)
+  if (item && isBasItem(item)) return
   await updateItem(lineId, quantity)
+}
+
+const handleRemoveItem = async (lineId: string) => {
+  const item = cartItems.value.find((i) => i.id === lineId)
+  const cartId = cart.value?.id
+  await removeItem(lineId)
+  if (item?.variant_id && cartId) {
+    await $fetch('/api/bas/demote', {
+      method: 'DELETE',
+      body: {
+        cart_id: cartId,
+        removed_variant_id: item.variant_id,
+      },
+    }).catch(() => {})
+    await refreshCart()
+  }
 }
 
 const handleCheckoutClick = async () => {
@@ -238,6 +273,39 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+/* Cart row enter animation */
+.cart-row-enter-active {
+  animation: cart-row-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cart-row-leave-active {
+  animation: cart-row-out 0.3s ease forwards;
+}
+
+@keyframes cart-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cart-row-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
 .my-cart {
   position: relative;
   margin-top: 20px;
@@ -490,6 +558,30 @@ onMounted(() => {
 .custom-option:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.bas-qty-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 50px;
+  padding: 4px 8px;
+  color: #222a58;
+  font-size: 22px;
+  font-weight: 600;
+  border: 1px solid rgb(34 42 88 / 8%);
+  border-radius: 10px;
+  background: rgb(34 42 88 / 3%);
+}
+
+.bas-qty-locked__label {
+  font-size: 9px;
+  font-weight: 500;
+  color: #0038b1;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
 .cart-collaterals {

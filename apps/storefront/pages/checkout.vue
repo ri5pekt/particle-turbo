@@ -263,7 +263,7 @@
                   <h4>{{ lineItemTitle(item) }}</h4>
                   <div class="drd-body__qty">Qty:<strong>{{ item.quantity }}</strong></div>
                 </div>
-                <span class="drd-body__price">{{ formatMoney(item.total || 0, cartCurrency) }}</span>
+                <span class="drd-body__price">{{ formatMoney(item.total || (item.unit_price || 0) * item.quantity, cartCurrency) }}</span>
               </li>
             </ul>
 

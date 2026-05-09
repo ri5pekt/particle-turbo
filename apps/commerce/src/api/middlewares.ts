@@ -10,5 +10,10 @@ export default defineMiddlewares({
         authenticate("customer", ["session", "bearer"]),
       ],
     },
+    {
+      method: ["GET", "POST", "DELETE"],
+      matcher: "/store/bas",
+      middlewares: [],
+    },
   ],
 })

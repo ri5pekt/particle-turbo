@@ -15,7 +15,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const medusa = useMedusaServer()
-  const response = await medusa<CartResponse>(`/store/carts/${id}`)
+  const response = await medusa<CartResponse>(`/store/carts/${id}`, {
+    query: { fields: '+items.total' },
+  })
 
   return response.cart
 })

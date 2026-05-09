@@ -66,7 +66,12 @@ export default defineEventHandler(async (event) => {
 
   return cachedResponse(event, {
     key: cacheKey('product', handle),
+    // Short TTL when Medusa is unreachable so the page self-heals quickly.
+    // The factory signals this by including _medusaError: true in the result.
     ttlSeconds: 300,
+    shortTtlSeconds: 10,
+    isShortTtl: (result: unknown) =>
+      !!(result as Record<string, unknown>)?._medusaError,
   }, async () => {
     const strapi = useStrapiServer()
 
@@ -200,9 +205,12 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    const isMedusaError = commerce?.unavailable_reason === 'Medusa product data is unavailable.'
+
     return {
       ...product,
       commerce,
+      ...(isMedusaError ? { _medusaError: true } : {}),
     }
   })
 })

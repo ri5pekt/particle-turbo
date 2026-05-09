@@ -19,7 +19,9 @@ export default defineEventHandler(async (event) => {
   await medusa<void>(`/store/carts/${id}/line-items/${lineId}`, {
     method: 'DELETE',
   })
-  const response = await medusa<CartResponse>(`/store/carts/${id}`)
+  const response = await medusa<CartResponse>(`/store/carts/${id}`, {
+    query: { fields: '+items.total' },
+  })
 
   return response.cart
 })

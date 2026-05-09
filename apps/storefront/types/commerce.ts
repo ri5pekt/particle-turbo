@@ -53,6 +53,29 @@ export interface CartLineItem {
   product_id?: string
   product_title?: string
   product_handle?: string
+  metadata?: Record<string, unknown> | null
+}
+
+export interface BasOffer {
+  id: string
+  name: string
+  status: 'active' | 'draft'
+  priority: number
+  trigger_variant_ids: string[]
+  excluded_variant_ids: string[]
+  offer_variant_id: string
+  special_price: number
+  description: string
+  product_id: string
+  product_title: string
+  product_handle: string
+  thumbnail?: string | null
+  regular_price: number
+  currency_code: string
+}
+
+export interface BasOffersResponse {
+  offers: BasOffer[]
 }
 
 export interface MedusaCart {

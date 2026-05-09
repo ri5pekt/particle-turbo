@@ -6,6 +6,10 @@ type RedisClient = ReturnType<typeof createClient>
 interface CacheOptions {
   key: string
   ttlSeconds: number
+  /** A reduced TTL used when isShortTtl returns true (e.g. upstream error state). */
+  shortTtlSeconds?: number
+  /** If provided, called with the freshly-fetched value to decide which TTL to use. */
+  isShortTtl?: (value: unknown) => boolean
 }
 
 const CACHE_PREFIX = 'particle:storefront:v1'
@@ -51,7 +55,7 @@ const getRedisClient = async () => {
 
 export const cachedResponse = async <T>(
   event: H3Event,
-  { key, ttlSeconds }: CacheOptions,
+  { key, ttlSeconds, shortTtlSeconds, isShortTtl }: CacheOptions,
   factory: () => Promise<T>,
 ) => {
   if (ttlSeconds <= 0) {
@@ -82,8 +86,13 @@ export const cachedResponse = async <T>(
   const value = await factory()
   setHeader(event, 'x-particle-cache', 'miss')
 
+  const effectiveTtl =
+    shortTtlSeconds !== undefined && isShortTtl && isShortTtl(value)
+      ? shortTtlSeconds
+      : ttlSeconds
+
   try {
-    await client.setEx(redisKey, ttlSeconds, JSON.stringify(value))
+    await client.setEx(redisKey, effectiveTtl, JSON.stringify(value))
   } catch (error) {
     console.warn(`[cache] Failed to write ${redisKey}.`, error)
   }

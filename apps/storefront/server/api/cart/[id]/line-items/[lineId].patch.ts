@@ -22,13 +22,17 @@ export default defineEventHandler(async (event) => {
 
   const quantity = Math.max(1, Number(body.quantity || 1))
   const medusa = useMedusaServer()
-  const response = await medusa<CartResponse>(`/store/carts/${id}/line-items/${lineId}`, {
+  await medusa<CartResponse>(`/store/carts/${id}/line-items/${lineId}`, {
     method: 'POST',
     body: {
       quantity,
     },
   })
 
-  return response.cart
+  const updated = await medusa<CartResponse>(`/store/carts/${id}`, {
+    query: { fields: '+items.total' },
+  })
+
+  return updated.cart
 })
 
